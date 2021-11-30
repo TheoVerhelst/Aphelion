@@ -31,9 +31,9 @@ Vector2d PhysicalModel::computeAcceleration(Vector2d position, std::size_t bodyI
 	Vector2d res{0., 0.};
 	for (std::size_t i{0}; i < _bodies.size(); ++i) {
 		if (i != bodyIndex) {
-			Vector2d difference{_bodies[i].position - position};
-			double distance{norm(difference)};
-			res += _bodies[i].mass * difference / (distance * distance * distance);
+			Vector2d dx{_bodies[i].position - position};
+			double dist{norm(dx)};
+			res += _bodies[i].mass * dx / (dist * dist * dist);
 		}
 	}
 

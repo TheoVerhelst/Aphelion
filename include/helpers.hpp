@@ -7,6 +7,9 @@
 typedef sf::Vector2<double> Vector2d;
 
 template <typename T>
+concept FloatingPoint = std::is_floating_point_v<T>;
+
+template <FloatingPoint T>
 T norm(const sf::Vector2<T>& vector) {
 	return std::hypot(vector.x, vector.y);
 }
