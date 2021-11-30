@@ -13,11 +13,13 @@ public:
 
 	void setCanvasSize(Vector2f size);
 	void setPixelsByMeter(float pixelsByMeter);
-	void setTimeScale(double timeScale);
+	void setTimeScale(float timeScale);
 
 private:
 	float _pixelsByMeter{1};
-	double _timeScale{1};
+	float _timeScale{1};
+	sf::Time _timeStep{sf::seconds(0.02)};
+	sf::Time _currentStep{sf::seconds(0)};
 
 	const double _gravitationalConstant{6.67408e-16};
 	std::vector<Body> _bodies;

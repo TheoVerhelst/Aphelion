@@ -36,30 +36,43 @@ Vector2d PhysicalModel::computeAcceleration(Vector2d position, std::size_t bodyI
 }
 
 void PhysicalModel::update(const sf::Time& elapsedTime) {
-	double dt{elapsedTime.asSeconds() * _timeScale};
-	std::vector<Vector2d> dv(_bodies.size());
-	std::vector<Vector2d> dx(_bodies.size());
-	for (std::size_t i{0}; i < _bodies.size(); ++i) {
-		Vector2d vel{_bodies[i].velocity};
-		Vector2d pos{_bodies[i].position};
-		Vector2d l1{dt * computeAcceleration(pos, i)};
-		Vector2d k1{dt * vel};
-		Vector2d l2{dt * computeAcceleration(pos + 0.5 * k1, i)};
-		Vector2d k2{dt * (vel + 0.5 * l1)};
-		Vector2d l3{dt * computeAcceleration(pos + 0.5 * k2, i)};
-		Vector2d k3{dt * (vel + 0.5 * l2)};
-		Vector2d l4{dt * computeAcceleration(pos + k3, i)};
-		Vector2d k4{dt * (vel + l3)};
-		dx[i] = (k1 + 2. * k2 + 2. *  k3 + k4) / 6.;
-		dv[i] = (l1 + 2. * l2 + 2. *  l3 + l4) / 6.;
+	// Skip physics update until we waited for enough time (_timeStep)
+	_currentStep += elapsedTime  * _timeScale;
+	if (_currentStep < _timeStep) {
+		return;
 	}
 
+	while(_currentStep >= _timeStep) {
+		_currentStep -= _timeStep;
+
+		double dt{_timeStep.asSeconds()};
+		std::vector<Vector2d> dv(_bodies.size());
+		std::vector<Vector2d> dx(_bodies.size());
+		for (std::size_t i{0}; i < _bodies.size(); ++i) {
+			Vector2d vel{_bodies[i].velocity};
+			Vector2d pos{_bodies[i].position};
+			Vector2d l1{dt * computeAcceleration(pos, i)};
+			Vector2d k1{dt * vel};
+			Vector2d l2{dt * computeAcceleration(pos + 0.5 * k1, i)};
+			Vector2d k2{dt * (vel + 0.5 * l1)};
+			Vector2d l3{dt * computeAcceleration(pos + 0.5 * k2, i)};
+			Vector2d k3{dt * (vel + 0.5 * l2)};
+			Vector2d l4{dt * computeAcceleration(pos + k3, i)};
+			Vector2d k4{dt * (vel + l3)};
+			dx[i] = (k1 + 2. * k2 + 2. *  k3 + k4) / 6.;
+			dv[i] = (l1 + 2. * l2 + 2. *  l3 + l4) / 6.;
+		}
+
+		for (std::size_t i{0}; i < _bodies.size(); ++i) {
+			_bodies[i].position += dx[i];
+			_bodies[i].velocity += dv[i];
+			_circles[i].setPosition(static_cast<sf::Vector2f>(_bodies[i].position) * _pixelsByMeter);
+		}
+	}
+	// Update the graphic objects only once
 	for (std::size_t i{0}; i < _bodies.size(); ++i) {
-		_bodies[i].position += dx[i];
-		_bodies[i].velocity += dv[i];
 		_circles[i].setPosition(static_cast<sf::Vector2f>(_bodies[i].position) * _pixelsByMeter);
 	}
-	std::cout << std::endl;
 }
 
 void PhysicalModel::draw(sf::RenderTarget& target, sf::RenderStates states) const {
@@ -76,6 +89,6 @@ void PhysicalModel::setPixelsByMeter(float pixelsByMeter) {
 	}
 }
 
-void PhysicalModel::setTimeScale(double timeScale) {
+void PhysicalModel::setTimeScale(float timeScale) {
 	_timeScale = timeScale;
 }
