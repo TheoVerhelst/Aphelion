@@ -5,6 +5,7 @@
 #include <SFML/System/Vector2.hpp>
 
 typedef sf::Vector2<double> Vector2d;
+typedef sf::Vector2<float> Vector2f;
 
 template <typename T>
 concept FloatingPoint = std::is_floating_point_v<T>;

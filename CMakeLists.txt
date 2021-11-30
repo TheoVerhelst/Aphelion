@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 2.8)
-project(Physics)
+project(Perihelion)
 
-set(EXECUTABLE_NAME "Physics")
+set(EXECUTABLE_NAME "Perihelion")
 
 find_package(SFML 2.5 COMPONENTS system graphics window REQUIRED)
 find_package(TGUI 0.9 REQUIRED)

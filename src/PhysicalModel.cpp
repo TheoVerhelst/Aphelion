@@ -4,13 +4,13 @@
 #include <PhysicalModel.hpp>
 #include <helpers.hpp>
 
-PhysicalModel::PhysicalModel(const std::string& filename) {
-	std::ifstream file{filename};
+PhysicalModel::PhysicalModel(const std::string& setupFile) {
+	std::ifstream file{setupFile};
 	std::string line;
 	while (std::getline(file, line)) {
 		if (line[0] != '#') {
 			double mass, radius, p_x, p_y, v_x, v_y;
-			unsigned char r, g, b;
+			unsigned int r, g, b;
 			std::stringstream lineStream{line};
 			lineStream >> mass >> radius >> p_x >> p_y >> v_x >> v_y >> r >> g >> b;
 
@@ -21,10 +21,6 @@ PhysicalModel::PhysicalModel(const std::string& filename) {
 			_circles.push_back(circle);
 		}
 	}
-	_limitRectangle.setPosition({static_cast<float>(_limitOrigin.x), static_cast<float>(_limitOrigin.y)});
-	_limitRectangle.setFillColor(sf::Color::Transparent);
-	_limitRectangle.setOutlineColor(sf::Color::Red);
-	_limitRectangle.setOutlineThickness(2);
 }
 
 Vector2d PhysicalModel::computeAcceleration(Vector2d position, std::size_t bodyIndex) const {
@@ -36,7 +32,6 @@ Vector2d PhysicalModel::computeAcceleration(Vector2d position, std::size_t bodyI
 			res += _bodies[i].mass * dx / (dist * dist * dist);
 		}
 	}
-
 	return res * _gravitationalConstant;
 }
 
@@ -62,10 +57,6 @@ void PhysicalModel::update(const sf::Time& elapsedTime) {
 	for (std::size_t i{0}; i < _bodies.size(); ++i) {
 		_bodies[i].position += dx[i];
 		_bodies[i].velocity += dv[i];
-		// Keep ball in limit box, pacman style. Note that the gravity geomety
-		// does not follow this topology.
-		_bodies[i].position.x = wrap(_bodies[i].position.x - _limitOrigin.x, _limitSize.x) + _limitOrigin.x;
-		_bodies[i].position.y = wrap(_bodies[i].position.y - _limitOrigin.y, _limitSize.y) + _limitOrigin.y;
 		_circles[i].setPosition(static_cast<sf::Vector2f>(_bodies[i].position) * _pixelsByMeter);
 	}
 	std::cout << std::endl;
@@ -75,13 +66,13 @@ void PhysicalModel::draw(sf::RenderTarget& target, sf::RenderStates states) cons
 	for (auto& circle : _circles) {
 		target.draw(circle, states);
 	}
-	target.draw(_limitRectangle, states);
 }
 
 void PhysicalModel::setPixelsByMeter(float pixelsByMeter) {
 	_pixelsByMeter = pixelsByMeter;
 	for (std::size_t i{0}; i < _bodies.size(); ++i) {
 		_circles[i].setRadius(_bodies[i].radius * _pixelsByMeter);
+		// Position update will be done next tick, no need to do it here
 	}
 }
 

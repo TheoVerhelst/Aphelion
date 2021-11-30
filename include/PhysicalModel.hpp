@@ -7,22 +7,21 @@
 
 class PhysicalModel : public sf::Drawable {
 public:
-	PhysicalModel(const std::string& filename);
+	PhysicalModel(const std::string& setupFile);
 	void update(const sf::Time& elapsedTime);
 	virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
+
+	void setCanvasSize(Vector2f size);
 	void setPixelsByMeter(float pixelsByMeter);
 	void setTimeScale(double timeScale);
 
 private:
 	float _pixelsByMeter{1};
 	double _timeScale{1};
+
 	const double _gravitationalConstant{6.67408e-16};
-	Vector2d _limitOrigin{10., 10.};
-	Vector2d _limitSize{800., 800.};
-	sf::RectangleShape _limitRectangle{
-		{static_cast<float>(_limitSize.x), static_cast<float>(_limitSize.y)}
-	};
 	std::vector<Body> _bodies;
+
 	std::vector<sf::CircleShape> _circles;
 
 	/// Computes the acceleration field at a point given the other bodies.

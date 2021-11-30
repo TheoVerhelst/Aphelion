@@ -1,5 +1,5 @@
 #ifndef BODY_HPP
-#define BALL_HPP
+#define BODY_HPP
 
 #include <SFML/Graphics.hpp>
 #include <helpers.hpp>

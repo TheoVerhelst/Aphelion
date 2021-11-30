@@ -1,32 +1,70 @@
-HorizontalLayout {
-	Canvas."simulationCanvas" {
+Renderer.1 {
+    BackgroundColor = transparent;
+    BorderColor = #3C3C3C;
+    Borders = (0, 0, 0, 0);
+    TextColor = #3C3C3C;
+    TextureBackground = None;
+}
 
-	}
-	VerticalLayout {
-		Label {
-		    Text = "Simulation Parameters";
-			TextSize = 20;
-		}
-		Label {
-			Text = "time scale";
-			Renderer {
-				padding = 10;
-			}
-		}
-		Slider."timeScaleSlider" {
-			min = 0.1;
-			max = 10;
-		}
-		Label {
-			Text = "pixel/meter";
-			Renderer {
-				padding = 10;
-			}
-		}
-		Slider."pixelsByMeterSlider" {
-			min = 10;
-			max = 200;
-			step = 1;
-		}
-	}
+Renderer.2 {
+    BorderColor = #3C3C3C;
+    BorderColorHover = black;
+    Borders = (1, 1, 1, 1);
+    TextureThumb = None;
+    TextureThumbHover = None;
+    TextureTrack = None;
+    TextureTrackHover = None;
+    ThumbColor = #F5F5F5;
+    ThumbColorHover = white;
+    TrackColor = #F5F5F5;
+    TrackColorHover = white;
+}
+
+Group.Group1 {
+    Size = (310, 90);
+
+    Renderer {
+    }
+
+    Slider.timeSlider {
+        ChangeValueOnScroll = true;
+        InvertedDirection = false;
+        Maximum = 10;
+        Minimum = 0;
+        Position = (100, 20);
+        Renderer = &2;
+        Size = (200, 16);
+        Step = 1;
+        Value = 0;
+    }
+
+    Slider.spaceSlider {
+        ChangeValueOnScroll = true;
+        InvertedDirection = false;
+        Maximum = 10;
+        Minimum = 0;
+        Position = (100, 50);
+        Renderer = &2;
+        Size = (200, 16);
+        Step = 1;
+        Value = 0;
+    }
+
+    Label.spaceLabel {
+        AutoSize = true;
+        Position = (0, 50);
+        Renderer = &1;
+        Size = (79.2, 18);
+        Text = "Space scale";
+        TextSize = 13;
+    }
+
+    Label.timeLabel {
+        AutoSize = true;
+        Position = (0, 20);
+        Renderer = &1;
+        Size = (78.2, 18);
+        Text = "Time speed";
+        TextSize = 13;
+    }
 }

@@ -1,21 +1,21 @@
 #include <PhysicalModel.hpp>
 #include <TGUI/TGUI.hpp>
 
+void buildGui(tgui::Gui& gui, PhysicalModel& model, const std::string& guiFile);
+
 int main(int argc, char** argv) {
-    if(argc < 2) {
-        std::cerr << "Usage: " << argv[0] << " FILE" << std::endl;
-        return 1;
+    std::string setupFile{"setup.txt"};
+    if(argc >= 2) {
+        setupFile = argv[1];
     }
 
     // Init main objects
-    PhysicalModel model{argv[1]};
+    sf::Clock clock;
     sf::RenderWindow window{sf::VideoMode(1200, 600), "Physics Simulation"};
     tgui::Gui gui{window};
-    sf::Clock clock;
-
-	//gui.loadWidgetsFromFile("gui.txt");
-    //gui.get("timeScaleSlider")->connect("ValueChanged", [&model](float value){model.setTimeScale(value);});
-    //gui.get("pixelsByMeterSlider")->connect("ValueChanged", [&model](float value){model.setPixelsByMeter(value);});
+    PhysicalModel model{setupFile};
+    buildGui(gui, model, "gui.txt");
+    tgui::CanvasSFML::Ptr simulationCanvas{gui.get<tgui::CanvasSFML>("simulationCanvas")};
 
     // Main loop
     while (window.isOpen()) {
@@ -41,10 +41,27 @@ int main(int argc, char** argv) {
 
         // Draw graphics
         window.clear(sf::Color::White);
+        simulationCanvas->clear(sf::Color::Black);
+        simulationCanvas->draw(model);
+        simulationCanvas->display();
         gui.draw();
-        window.draw(model);
         window.display();
     }
 
     return EXIT_SUCCESS;
+}
+
+void buildGui(tgui::Gui& gui, PhysicalModel& model, const std::string& guiFile) {
+	gui.loadWidgetsFromFile(guiFile);
+
+    // Event bindings
+    gui.get<tgui::Slider>("timeSlider")->onValueChange([&model](float value){model.setTimeScale(value);});
+    gui.get<tgui::Slider>("spaceSlider")->onValueChange([&model](float value){model.setPixelsByMeter(value);});
+
+    // Simulation canvas
+    tgui::CanvasSFML::Ptr simulationCanvas = tgui::CanvasSFML::create();
+    gui.add(simulationCanvas, "simulationCanvas");
+    simulationCanvas->setPosition(0, 0);
+    simulationCanvas->setSize({"100%", "100%"});
+    simulationCanvas->moveToBack();
 }
