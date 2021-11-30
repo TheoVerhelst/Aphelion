@@ -1,0 +1,32 @@
+HorizontalLayout {
+	Canvas."simulationCanvas" {
+
+	}
+	VerticalLayout {
+		Label {
+		    Text = "Simulation Parameters";
+			TextSize = 20;
+		}
+		Label {
+			Text = "time scale";
+			Renderer {
+				padding = 10;
+			}
+		}
+		Slider."timeScaleSlider" {
+			min = 0.1;
+			max = 10;
+		}
+		Label {
+			Text = "pixel/meter";
+			Renderer {
+				padding = 10;
+			}
+		}
+		Slider."pixelsByMeterSlider" {
+			min = 10;
+			max = 200;
+			step = 1;
+		}
+	}
+}
