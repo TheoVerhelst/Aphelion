@@ -1,4 +1,5 @@
 #include <fstream>
+#include <cmath>
 #include <iostream>
 #include <sstream>
 #include <PhysicalModel.hpp>
@@ -67,6 +68,40 @@ void PhysicalModel::update(const sf::Time& elapsedTime) {
 			_bodies[i].position += dx[i];
 			_bodies[i].velocity += dv[i];
 			_circles[i].setPosition(static_cast<sf::Vector2f>(_bodies[i].position) * _pixelsByMeter);
+		}
+
+		// Check for collisions
+		for (std::size_t i{0}; i < _bodies.size(); ++i) {
+			for (std::size_t j{i + 1}; j < _bodies.size(); ++j) {
+				const Vector2d dpos = _bodies[j].position - _bodies[i].position;
+				const double dist{norm(dpos)};
+				const double overlap{_bodies[i].radius + _bodies[j].radius - dist};
+
+				// Collision
+				if (overlap > 0) {
+					// Let's use an inertial frame where j has null velocity
+					const Vector2d v_i = _bodies[i].velocity - _bodies[j].velocity;
+					const double m_i = _bodies[i].mass;
+					const double m_j = _bodies[j].mass;
+					const double angle_frame = angle(v_i);
+					const double angle_rebound_j = angle(dpos);
+					const double s_i = norm(v_i);
+					const double theta_j = angle_rebound_j - angle_frame;
+					const double new_s_j = 2 * s_i * std::cos(theta_j) * m_i * m_j
+							/ (m_i * m_i + m_j * m_j);
+					const double theta_i = std::atan2(
+						m_j * new_s_j * std::sin(theta_j),
+						m_i * s_i - m_j * new_s_j * std::cos(theta_j)
+					);
+					const double new_s_i = m_j * new_s_j * std::sin(theta_j) / (m_i * std::sin(theta_i));
+
+					_bodies[i].velocity = Vector2d(new_s_i * std::cos(theta_i), new_s_i * std::sin(theta_i)) + _bodies[j].velocity;
+					_bodies[j].velocity = Vector2d(new_s_j * std::cos(theta_j), new_s_j * std::sin(theta_j)) + _bodies[j].velocity;
+
+					_bodies[i].position -= m_j * overlap * dpos / (dist * (m_i + m_j));
+					_bodies[j].position += m_i * overlap * dpos / (dist * (m_i + m_j));
+				}
+			}
 		}
 	}
 	// Update the graphic objects only once

@@ -15,6 +15,11 @@ T norm(const sf::Vector2<T>& vector) {
 	return std::hypot(vector.x, vector.y);
 }
 
+template <FloatingPoint T>
+T angle(const sf::Vector2<T>& vector) {
+	return std::atan2(vector.y, vector.x);
+}
+
 template <typename T>
 T wrap(T value, T max) {
 	while (value > max)
