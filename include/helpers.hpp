@@ -2,6 +2,7 @@
 #define HELPERS_HPP
 
 #include <cmath>
+#include <iostream>
 #include <SFML/System/Vector2.hpp>
 
 typedef sf::Vector2<double> Vector2d;
@@ -18,6 +19,11 @@ T norm(const sf::Vector2<T>& vector) {
 template <FloatingPoint T>
 T angle(const sf::Vector2<T>& vector) {
 	return std::atan2(vector.y, vector.x);
+}
+
+template <typename T>
+std::ostream& operator<<(std::ostream& os, sf::Vector2<T> v) {
+  return os << "(" << v.x << ", " << v.y << ")";
 }
 
 template <typename T>

@@ -67,7 +67,6 @@ void PhysicalModel::update(const sf::Time& elapsedTime) {
 		for (std::size_t i{0}; i < _bodies.size(); ++i) {
 			_bodies[i].position += dx[i];
 			_bodies[i].velocity += dv[i];
-			_circles[i].setPosition(static_cast<sf::Vector2f>(_bodies[i].position) * _pixelsByMeter);
 		}
 
 		// Check for collisions
@@ -96,14 +95,15 @@ void PhysicalModel::update(const sf::Time& elapsedTime) {
 					const double new_s_i = m_j * new_s_j * std::sin(theta_j) / (m_i * std::sin(theta_i));
 
 					// const double pi{3.14159265};
-					// std::cout << "or_v_i = [" << _bodies[i].velocity.x << ", " << _bodies[i].velocity.y << "]" << std::endl;
-					// std::cout << "or_v_j = [" << _bodies[j].velocity.x << ", " << _bodies[j].velocity.y << "]" << std::endl;
+					// std::cout << "dpos = " << dpos << std::endl;
+					// std::cout << "dist = " << dist << std::endl;
+					// std::cout << "or_v_i = " << _bodies[i].velocity << std::endl;
+					// std::cout << "or_v_j = " << _bodies[j].velocity << std::endl;
 					// std::cout << "or_s_i = " << norm(_bodies[i].velocity) << std::endl;
 					// std::cout << "or_s_j = " << norm(_bodies[j].velocity) << std::endl;
 					// std::cout << "or_theta_i = " << angle(_bodies[i].velocity) * 180 / pi << std::endl;
 					// std::cout << "or_theta_j = " << angle(_bodies[j].velocity) * 180 / pi << std::endl;
-					// std::cout << "dpos = [" << dpos.x << ", " << dpos.y << "]" << std::endl;
-					// std::cout << "v_i = [" << v_i.x << ", " << v_i.y << "]" << std::endl;
+					// std::cout << "v_i = " << v_i << std::endl;
 					// std::cout << "s_i = " << s_i << std::endl;
 					// std::cout << "angle_frame = " << angle_frame * 180 / pi << std::endl;
 					// std::cout << "angle_rebound_j = " << angle_rebound_j * 180 / pi << std::endl;
@@ -116,17 +116,21 @@ void PhysicalModel::update(const sf::Time& elapsedTime) {
 					_bodies[i].velocity = Vector2d(new_s_i * std::cos(theta_i), new_s_i * std::sin(theta_i)) + _bodies[j].velocity;
 					_bodies[j].velocity = Vector2d(new_s_j * std::cos(theta_j), new_s_j * std::sin(theta_j)) + _bodies[j].velocity;
 
-					// Move the bodies so that they just touch and don't overlap
+					// Move the bodies so that they just touch and don't overlap.
+					// The displacement is proportional to the mass of the other body.
 					_bodies[i].position -= m_j * overlap * dpos / (dist * (m_i + m_j));
 					_bodies[j].position += m_i * overlap * dpos / (dist * (m_i + m_j));
-
 				}
 			}
 		}
 	}
+
 	// Update the graphic objects only once
 	for (std::size_t i{0}; i < _bodies.size(); ++i) {
-		_circles[i].setPosition(static_cast<sf::Vector2f>(_bodies[i].position) * _pixelsByMeter);
+		Vector2d r{_bodies[i].radius, _bodies[i].radius};
+		_circles[i].setPosition(
+			static_cast<sf::Vector2f>(_bodies[i].position - r) * _pixelsByMeter);
+		_circles[i].setRadius(_bodies[i].radius * _pixelsByMeter);
 	}
 }
 
