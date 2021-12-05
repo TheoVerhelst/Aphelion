@@ -91,15 +91,35 @@ void PhysicalModel::update(const sf::Time& elapsedTime) {
 							/ (m_i * m_i + m_j * m_j);
 					const double theta_i = std::atan2(
 						m_j * new_s_j * std::sin(theta_j),
-						m_i * s_i - m_j * new_s_j * std::cos(theta_j)
+						m_j * new_s_j * std::cos(theta_j) - m_i * s_i
 					);
 					const double new_s_i = m_j * new_s_j * std::sin(theta_j) / (m_i * std::sin(theta_i));
+
+					// const double pi{3.14159265};
+					// std::cout << "or_v_i = [" << _bodies[i].velocity.x << ", " << _bodies[i].velocity.y << "]" << std::endl;
+					// std::cout << "or_v_j = [" << _bodies[j].velocity.x << ", " << _bodies[j].velocity.y << "]" << std::endl;
+					// std::cout << "or_s_i = " << norm(_bodies[i].velocity) << std::endl;
+					// std::cout << "or_s_j = " << norm(_bodies[j].velocity) << std::endl;
+					// std::cout << "or_theta_i = " << angle(_bodies[i].velocity) * 180 / pi << std::endl;
+					// std::cout << "or_theta_j = " << angle(_bodies[j].velocity) * 180 / pi << std::endl;
+					// std::cout << "dpos = [" << dpos.x << ", " << dpos.y << "]" << std::endl;
+					// std::cout << "v_i = [" << v_i.x << ", " << v_i.y << "]" << std::endl;
+					// std::cout << "s_i = " << s_i << std::endl;
+					// std::cout << "angle_frame = " << angle_frame * 180 / pi << std::endl;
+					// std::cout << "angle_rebound_j = " << angle_rebound_j * 180 / pi << std::endl;
+					// std::cout << "theta_i = " << theta_i * 180 / pi << std::endl;
+					// std::cout << "theta_j = " << theta_j * 180 / pi << std::endl;
+					// std::cout << "new_s_i = " << new_s_i << std::endl;
+					// std::cout << "new_s_j = " << new_s_j << std::endl;
+					// std::cout << "-------------------" << std::endl;
 
 					_bodies[i].velocity = Vector2d(new_s_i * std::cos(theta_i), new_s_i * std::sin(theta_i)) + _bodies[j].velocity;
 					_bodies[j].velocity = Vector2d(new_s_j * std::cos(theta_j), new_s_j * std::sin(theta_j)) + _bodies[j].velocity;
 
+					// Move the bodies so that they just touch and don't overlap
 					_bodies[i].position -= m_j * overlap * dpos / (dist * (m_i + m_j));
 					_bodies[j].position += m_i * overlap * dpos / (dist * (m_i + m_j));
+
 				}
 			}
 		}
