@@ -1,4 +1,4 @@
-Renderer.1 {
+Renderer.labelRenderer {
     BackgroundColor = transparent;
     BorderColor = #3C3C3C;
     Borders = (0, 0, 0, 0);
@@ -6,63 +6,52 @@ Renderer.1 {
     TextureBackground = None;
 }
 
-Renderer.2 {
-    BorderColor = #3C3C3C;
-    BorderColorHover = black;
-    Borders = (1, 1, 1, 1);
-    TextureThumb = None;
-    TextureThumbHover = None;
-    TextureTrack = None;
-    TextureTrackHover = None;
-    ThumbColor = #F5F5F5;
-    ThumbColorHover = white;
-    TrackColor = #F5F5F5;
-    TrackColorHover = white;
+Renderer.spinControlRenderer {
 }
 
-Group.Group1 {
-    Size = (310, 90);
+Panel.controlsPanel {
+    Size = (340, 190);
+    Position = (5, 5);
 
-    Renderer {
+    Renderer = {
+        BorderColor = #333;
+        Borders = (3, 3, 3, 3);
+        BackgroundColor = #999999;
     }
 
-    Slider.timeSlider {
-        ChangeValueOnScroll = true;
-        InvertedDirection = false;
+    SpinControl.timeSpeedControl {
         Maximum = 10;
         Minimum = 0;
         Position = (100, 20);
-        Renderer = &2;
+        Renderer = &spinControlRenderer;
         Size = (200, 16);
-        Step = 1;
-        Value = 0;
+        Step = 0.1;
+        Value = 1;
     }
 
-    Slider.spaceSlider {
-        ChangeValueOnScroll = true;
-        InvertedDirection = false;
-        Maximum = 10;
+    SpinControl.spaceSizeControl {
+        Maximum = 5;
         Minimum = 0;
         Position = (100, 50);
-        Renderer = &2;
+        Renderer = &spinControlRenderer;
         Size = (200, 16);
-        Step = 1;
-        Value = 0;
+        Step = 0.1;
+        Value = 1;
     }
 
     Label.spaceLabel {
         AutoSize = true;
-        Position = (0, 50);
-        Renderer = &1;
+        Position = (10, 50);
+        Renderer = &labelRenderer;
         Size = (79.2, 18);
-        Text = "Space scale";
+        Text = "Space size";
         TextSize = 13;
     }
 
     Label.timeLabel {
         AutoSize = true;
-        Position = (0, 20);
-        Renderer = &1;
+        Position = (10, 20);
+        Renderer = &labelRenderer;
         Size = (78.2, 18);
         Text = "Time speed";
         TextSize = 13;

@@ -3,11 +3,11 @@
 
 #include <PhysicalModel.hpp>
 #include <TGUI/TGUI.hpp>
+#include <TGUI/Backend/SFML-Graphics.hpp>
 
 class Application {
 public:
     Application(const std::string& setupFile);
-    void buildGui();
     void run();
 
 private:
@@ -16,6 +16,9 @@ private:
     tgui::Gui _gui;
     PhysicalModel _model;
     tgui::CanvasSFML::Ptr _simulationCanvas;
+
+    void buildGui();
+    void updateDisplays();
 };
 
 #endif // APPLICATION_HPP

@@ -1,4 +1,5 @@
 #include <Application.hpp>
+#include <format.hpp>
 
 Application::Application(const std::string& setupFile):
         _window{sf::VideoMode(1200, 600), "Physics Simulation"},
@@ -7,28 +8,14 @@ Application::Application(const std::string& setupFile):
     buildGui();
 }
 
-void Application::buildGui() {
-	_gui.loadWidgetsFromFile(_guiFile);
-
-    // Event bindings
-    _gui.get<tgui::Slider>("timeSlider")->onValueChange([this](float value){_model.setTimeScale(value);});
-    _gui.get<tgui::Slider>("spaceSlider")->onValueChange([this](float value){_model.setPixelsByMeter(value);});
-
-    // Simulation canvas
-    _simulationCanvas = tgui::CanvasSFML::create();
-    _gui.add(_simulationCanvas, "simulationCanvas");
-    _simulationCanvas->setPosition(0, 0);
-    _simulationCanvas->setSize({"100%", "100%"});
-    _simulationCanvas->moveToBack();
-}
-
 void Application::run() {
     sf::Clock clock;
 
     while (_window.isOpen()) {
         // Update
         sf::Time elapsedTime{clock.restart()};
-        _model.update(elapsedTime);
+        _model.updateTime(elapsedTime);
+        updateDisplays();
 
         // Handle events
         sf::Event event;
@@ -54,4 +41,46 @@ void Application::run() {
         _gui.draw();
         _window.display();
     }
+}
+
+void Application::buildGui() {
+	_gui.loadWidgetsFromFile(_guiFile);
+
+    // Spin controls. Do not work with GUI text file import for some reason.
+    tgui::SpinControl::Ptr timeSpeedControl = tgui::SpinControl::create(-10, 10, 1, 2, 0.1);
+    timeSpeedControl->setPosition(100, 82);
+    timeSpeedControl->setSize(124, 16);
+    timeSpeedControl->onValueChange([this](float value){_model.setTimeScale(value);});
+    _gui.get<tgui::Panel>("controlsPanel")->add(timeSpeedControl, "timeSpeedcontrol");
+
+    tgui::SpinControl::Ptr spaceSizeControl = tgui::SpinControl::create(0, 10, 1, 2, 0.1);
+    spaceSizeControl->setPosition(100, 20);
+    spaceSizeControl->setSize(124, 16);
+    spaceSizeControl->onValueChange([this](float value){_model.setPixelsByMeter(value);});
+    _gui.get<tgui::Panel>("controlsPanel")->add(spaceSizeControl);
+
+    // Other bindings
+    _gui.get<tgui::Button>("stepBackButton")->onPress([this, &timeSpeedControl] () {
+        //timeSpeedControl->setValue(0);
+        _model.updateSteps(-1);
+    });
+    _gui.get<tgui::Button>("stepForwardButton")->onPress([this, &timeSpeedControl] () {
+        //timeSpeedControl->setValue(0);
+        _model.updateSteps(1);
+    });
+    _gui.get<tgui::Button>("pauseButton")->onPress([this, &timeSpeedControl] () {
+        //timeSpeedControl->setValue(0);
+    });
+
+    // Simulation canvas
+    _simulationCanvas = tgui::CanvasSFML::create();
+    _simulationCanvas->setPosition(0, 0);
+    _simulationCanvas->setSize({"100%", "100%"});
+    _gui.add(_simulationCanvas, "simulationCanvas");
+    _simulationCanvas->moveToBack();
+}
+
+void Application::updateDisplays() {
+    _gui.get<tgui::Label>("timeSecondsDisplay")->setText(formatTime(_model.getElapsedTime()));
+    _gui.get<tgui::Label>("timeStepsDisplay")->setText(std::to_string(_model.getStepCounter()));
 }

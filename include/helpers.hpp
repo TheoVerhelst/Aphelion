@@ -12,6 +12,11 @@ template <typename T>
 concept FloatingPoint = std::is_floating_point_v<T>;
 
 template <FloatingPoint T>
+T dot(const sf::Vector2<T>& a, const sf::Vector2<T>& b) {
+	return a.x * b.x + a.y * b.y;
+}
+
+template <FloatingPoint T>
 T norm(const sf::Vector2<T>& vector) {
 	return std::hypot(vector.x, vector.y);
 }

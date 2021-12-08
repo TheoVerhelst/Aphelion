@@ -4,7 +4,7 @@ project(Perihelion)
 set(EXECUTABLE_NAME "Perihelion")
 
 find_package(SFML 2.5 COMPONENTS system graphics window REQUIRED)
-find_package(TGUI 0.9 REQUIRED)
+find_package(TGUI 0.10 REQUIRED)
 
 # Set the include directory of the project
 include_directories("${CMAKE_SOURCE_DIR}/include" ${SFML_INCLUDE_DIR} ${TGUI_INCLUDE_DIR})
@@ -18,6 +18,7 @@ set(SOURCE_FILES
 	src/main.cpp
 	src/Application.cpp
 	src/PhysicalModel.cpp
+	src/format.cpp
 )
 
 # Create the main executable
