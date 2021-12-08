@@ -120,47 +120,29 @@ void PhysicalModel::updateStep(bool backwards) {
 	// Check for collisions
 	for (std::size_t i{0}; i < _bodies.size(); ++i) {
 		for (std::size_t j{i + 1}; j < _bodies.size(); ++j) {
-			const Vector2d dpos = _bodies[j].position - _bodies[i].position;
-			const double dist{norm(dpos)};
+			const Vector2d x_i = _bodies[i].position;
+			const Vector2d x_j = _bodies[j].position;
+			const Vector2d diff_x = x_j - x_i;
+			const double dist{norm(diff_x)};
 			const double overlap{_bodies[i].radius + _bodies[j].radius - dist};
 
 			// Collision
 			if (overlap > 0) {
-				// Let's use an inertial frame where j has null velocity
-				const Vector2d v_i = _bodies[i].velocity - _bodies[j].velocity;
+				// Distance squared
+				const double dist_2{dot(diff_x, diff_x)};
+				const Vector2d v_i = _bodies[i].velocity;
+				const Vector2d v_j = _bodies[j].velocity;
 				const double m_i = _bodies[i].mass;
 				const double m_j = _bodies[j].mass;
-				// Angle between the absolute frame and the calculation frame
-				const double angle_frame = angle(v_i);
-				// Angle in the absolute frame at which j would rebound,
-				// if it had no speed
-				const double angle_rebound_j = angle(dpos);
-				const double s_i = norm(v_i);
-				const double theta_j = angle_rebound_j - angle_frame;
-				const double new_s_j = 2 * s_i * std::cos(theta_j) * m_i * m_j
-						/ (m_i * m_i + m_j * m_j);
-				const double theta_i = std::atan2(
-					m_j * new_s_j * std::sin(theta_j),
-					m_j * new_s_j * std::cos(theta_j) - m_i * s_i
-				);
-				const double new_s_i = m_j * new_s_j * std::sin(theta_j)
-					/ (m_i * std::sin(theta_i));
-
-				// Translate back to component form, and add back the
-				// original inertial frame.
-				_bodies[i].velocity = Vector2d(
-					new_s_i * std::cos(theta_i),
-					new_s_i * std::sin(theta_i)
-				) + _bodies[j].velocity;
-				_bodies[j].velocity = Vector2d(
-					new_s_j * std::cos(theta_j),
-					new_s_j * std::sin(theta_j)
-				) + _bodies[j].velocity;
+				// Based on stackoverflow.com/questions/35211114/2d-elastic-ball-collision-physics
+				const Vector2d addedVel = 2 * dot(v_i - v_j, diff_x) * diff_x / ((m_i + m_j) * dist_2);
+				_bodies[i].velocity = v_i - addedVel * m_j;
+				_bodies[j].velocity = v_j + addedVel * m_i;
 
 				// Move the bodies so that they just touch and don't overlap.
 				// The displacement is proportional to the mass of the other body.
-				_bodies[i].position -= m_j * overlap * dpos / (dist * (m_i + m_j));
-				_bodies[j].position += m_i * overlap * dpos / (dist * (m_i + m_j));
+				_bodies[i].position -= m_j * overlap * diff_x / (dist * (m_i + m_j));
+				_bodies[j].position += m_i * overlap * diff_x / (dist * (m_i + m_j));
 			}
 		}
 	}
