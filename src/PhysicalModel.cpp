@@ -26,9 +26,9 @@ PhysicalModel::PhysicalModel(const std::string& setupFile) {
 
 void PhysicalModel::updateTime(const sf::Time& elapsedTime) {
 	// Skip physics update until we waited for enough time (which is _timeStep)
-	// We take into account the time scale here
-	// TODO handle negative time speed
-	_currentStep += elapsedTime  * _timeScale;
+	// We take into account the time scale here. If it is negative, we proceed
+	// as if it was positive but we specify to the update function to go backwards.
+	_currentStep += elapsedTime * std::abs(_timeScale);
 	if (_currentStep < _timeStep) {
 		return;
 	}
@@ -37,10 +37,9 @@ void PhysicalModel::updateTime(const sf::Time& elapsedTime) {
 	// Usually only one update will be needed
 	while(_currentStep >= _timeStep) {
 		_currentStep -= _timeStep;
-		updateStep(false);
+		updateStep(_timeScale < 0);
 	}
 
-	// Update the graphic objects only once
 	updateGraphics();
 }
 
@@ -92,7 +91,7 @@ Vector2d PhysicalModel::computeAcceleration(Vector2d position, std::size_t bodyI
 }
 
 void PhysicalModel::updateStep(bool backwards) {
-	_stepCounter += 1;
+	_stepCounter += backwards ? -1 : 1;
 
 	double dt{_timeStep.asSeconds() * (backwards ? -1 : 1)};
 	std::vector<Vector2d> dv(_bodies.size());
@@ -120,9 +119,7 @@ void PhysicalModel::updateStep(bool backwards) {
 	// Check for collisions
 	for (std::size_t i{0}; i < _bodies.size(); ++i) {
 		for (std::size_t j{i + 1}; j < _bodies.size(); ++j) {
-			const Vector2d x_i = _bodies[i].position;
-			const Vector2d x_j = _bodies[j].position;
-			const Vector2d diff_x = x_j - x_i;
+			const Vector2d diff_x = _bodies[j].position - _bodies[i].position;
 			const double dist{norm(diff_x)};
 			const double overlap{_bodies[i].radius + _bodies[j].radius - dist};
 

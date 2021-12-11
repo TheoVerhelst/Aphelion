@@ -47,29 +47,43 @@ void Application::buildGui() {
 	_gui.loadWidgetsFromFile(_guiFile);
 
     // Spin controls. Do not work with GUI text file import for some reason.
-    tgui::SpinControl::Ptr timeSpeedControl = tgui::SpinControl::create(-10, 10, 1, 2, 0.1);
+    auto timeSpeedControl = tgui::SpinControl::create(-10, 10, 1, 2, 0.1);
     timeSpeedControl->setPosition(100, 82);
     timeSpeedControl->setSize(124, 16);
-    timeSpeedControl->onValueChange([this](float value){_model.setTimeScale(value);});
+    timeSpeedControl->onValueChange([this] (float value) {
+        if(not _paused) {
+            _model.setTimeScale(value);
+        }
+    });
     _gui.get<tgui::Panel>("controlsPanel")->add(timeSpeedControl, "timeSpeedcontrol");
 
-    tgui::SpinControl::Ptr spaceSizeControl = tgui::SpinControl::create(0, 10, 1, 2, 0.1);
+    auto spaceSizeControl = tgui::SpinControl::create(0, 10, 1, 2, 0.1);
     spaceSizeControl->setPosition(100, 20);
     spaceSizeControl->setSize(124, 16);
     spaceSizeControl->onValueChange([this](float value){_model.setPixelsByMeter(value);});
     _gui.get<tgui::Panel>("controlsPanel")->add(spaceSizeControl);
 
     // Other bindings
-    _gui.get<tgui::Button>("stepBackButton")->onPress([this, &timeSpeedControl] () {
-        //timeSpeedControl->setValue(0);
+    _gui.get<tgui::Button>("stepBackButton")->onPress([this] () {
+        _model.setTimeScale(0);
+        _paused = true;
         _model.updateSteps(-1);
     });
-    _gui.get<tgui::Button>("stepForwardButton")->onPress([this, &timeSpeedControl] () {
-        //timeSpeedControl->setValue(0);
+    _gui.get<tgui::Button>("stepForwardButton")->onPress([this] () {
+        _model.setTimeScale(0);
+        _paused = true;
         _model.updateSteps(1);
     });
-    _gui.get<tgui::Button>("pauseButton")->onPress([this, &timeSpeedControl] () {
-        //timeSpeedControl->setValue(0);
+    auto pauseButton = _gui.get<tgui::Button>("pauseButton");
+    _gui.get<tgui::Button>("pauseButton")->onPress([this, pauseButton, timeSpeedControl] () {
+        _paused = not _paused;
+        if (_paused) {
+            pauseButton->setText("▶");
+            _model.setTimeScale(0);
+        } else {
+            pauseButton->setText("▌▌");
+            _model.setTimeScale(timeSpeedControl->getValue());
+        }
     });
 
     // Simulation canvas

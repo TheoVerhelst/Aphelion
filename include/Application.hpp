@@ -16,6 +16,7 @@ private:
     tgui::Gui _gui;
     PhysicalModel _model;
     tgui::CanvasSFML::Ptr _simulationCanvas;
+    bool _paused{false};
 
     void buildGui();
     void updateDisplays();
