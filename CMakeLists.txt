@@ -18,6 +18,7 @@ set(SOURCE_FILES
 	src/main.cpp
 	src/Application.cpp
 	src/PhysicalModel.cpp
+	src/SimulationCanvas.cpp
 	src/format.cpp
 )
 

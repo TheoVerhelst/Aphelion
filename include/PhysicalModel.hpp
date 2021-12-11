@@ -12,13 +12,11 @@ public:
 	void updateSteps(int steps);
 	virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 	void setCanvasSize(Vector2f size);
-	void setPixelsByMeter(float pixelsByMeter);
 	void setTimeScale(float timeScale);
 	long long int getStepCounter() const;
 	sf::Time getElapsedTime() const;
 
 private:
-	float _pixelsByMeter{1};
 	float _timeScale{1};
 	sf::Time _timeStep{sf::seconds(0.02)};
 	sf::Time _currentStep{sf::seconds(0)};

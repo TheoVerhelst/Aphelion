@@ -17,7 +17,7 @@ PhysicalModel::PhysicalModel(const std::string& setupFile) {
 
 			Body body{mass, radius, {p_x, p_y}, {v_x, v_y}};
 			_bodies.push_back(body);
-			sf::CircleShape circle{static_cast<float>(radius) * _pixelsByMeter};
+			sf::CircleShape circle{static_cast<float>(radius)};
 			circle.setFillColor(sf::Color(r, g, b));
 			_circles.push_back(circle);
 		}
@@ -55,14 +55,6 @@ void PhysicalModel::updateSteps(int steps) {
 void PhysicalModel::draw(sf::RenderTarget& target, sf::RenderStates states) const {
 	for (auto& circle : _circles) {
 		target.draw(circle, states);
-	}
-}
-
-void PhysicalModel::setPixelsByMeter(float pixelsByMeter) {
-	_pixelsByMeter = pixelsByMeter;
-	for (std::size_t i{0}; i < _bodies.size(); ++i) {
-		_circles[i].setRadius(_bodies[i].radius * _pixelsByMeter);
-		// Position update will be done next tick, no need to do it here
 	}
 }
 
@@ -148,7 +140,6 @@ void PhysicalModel::updateStep(bool backwards) {
 void PhysicalModel::updateGraphics() {
 	for (std::size_t i{0}; i < _bodies.size(); ++i) {
 		const Vector2d r{_bodies[i].radius, _bodies[i].radius};
-		_circles[i].setPosition(
-			static_cast<sf::Vector2f>(_bodies[i].position - r) * _pixelsByMeter);
+		_circles[i].setPosition(static_cast<sf::Vector2f>(_bodies[i].position - r));
 	}
 }

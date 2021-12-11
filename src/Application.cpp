@@ -15,6 +15,7 @@ void Application::run() {
         // Update
         sf::Time elapsedTime{clock.restart()};
         _model.updateTime(elapsedTime);
+        _simulationCanvas->update(elapsedTime);
         updateDisplays();
 
         // Handle events
@@ -47,12 +48,6 @@ void Application::buildGui() {
 	_gui.loadWidgetsFromFile(_guiFile);
 
     // Spin controls. Do not work with GUI text file import for some reason.
-    auto spaceSizeControl = tgui::SpinControl::create(0, 10, 1, 2, 0.1);
-    spaceSizeControl->setPosition("spaceSizeLabel.right", "spaceSizeLabel.top");
-    spaceSizeControl->setSize(124, 16);
-    spaceSizeControl->onValueChange([this](float value){_model.setPixelsByMeter(value);});
-    _gui.get<tgui::Panel>("controlsPanel")->add(spaceSizeControl, "spaceSizeControl");
-
     auto timeSpeedControl = tgui::SpinControl::create(-10, 10, 1, 2, 0.1);
     timeSpeedControl->setPosition("timeSpeedLabel.right", "timeSpeedLabel.top");
     timeSpeedControl->setSize(124, 16);
@@ -87,7 +82,7 @@ void Application::buildGui() {
     });
 
     // Simulation canvas
-    _simulationCanvas = tgui::CanvasSFML::create();
+    _simulationCanvas = SimulationCanvas::create(_model);
     _simulationCanvas->setPosition(0, 0);
     _simulationCanvas->setSize({"100%", "100%"});
     _gui.add(_simulationCanvas, "simulationCanvas");

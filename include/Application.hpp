@@ -1,9 +1,10 @@
 #ifndef APLICATION_HPP
 #define APLICATION_HPP
 
-#include <PhysicalModel.hpp>
 #include <TGUI/TGUI.hpp>
 #include <TGUI/Backend/SFML-Graphics.hpp>
+#include <PhysicalModel.hpp>
+#include <SimulationCanvas.hpp>
 
 class Application {
 public:
@@ -15,7 +16,7 @@ private:
     sf::RenderWindow _window;
     tgui::Gui _gui;
     PhysicalModel _model;
-    tgui::CanvasSFML::Ptr _simulationCanvas;
+    SimulationCanvas::Ptr _simulationCanvas;
     bool _paused{false};
 
     void buildGui();

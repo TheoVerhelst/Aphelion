@@ -20,18 +20,9 @@ Panel.controlsPanel {
         BackgroundColor = #999999;
     }
 
-    Label.spaceSizeLabel {
-        ScrollbarPolicy = Never;
-        Position = (10, 20);
-        Renderer = &labelRenderer;
-        Size = (100, 18);
-        Text = "Space size";
-        TextSize = 13;
-    }
-
     Label.timeControlLabel {
         ScrollbarPolicy = Never;
-        Position = ("spaceSizeLabel.left", "spaceSizeLabel.bottom + 12");
+        Position = (100, 18);
         Renderer = &labelRenderer;
         Size = (100, 18);
         Text = "Time control";
