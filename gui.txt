@@ -1,9 +1,10 @@
 Renderer.labelRenderer {
-    BackgroundColor = transparent;
-    BorderColor = #3C3C3C;
-    Borders = (0, 0, 0, 0);
     TextColor = #3C3C3C;
-    TextureBackground = None;
+}
+
+Renderer.valueDisplayRenderer {
+    TextColor = #000000;
+    TextStyle = Bold;
 }
 
 Renderer.spinControlRenderer {
@@ -19,41 +20,88 @@ Panel.controlsPanel {
         BackgroundColor = #999999;
     }
 
-    SpinControl.timeSpeedControl {
-        Maximum = 10;
-        Minimum = 0;
-        Position = (100, 20);
-        Renderer = &spinControlRenderer;
-        Size = (200, 16);
-        Step = 0.1;
-        Value = 1;
-    }
-
-    SpinControl.spaceSizeControl {
-        Maximum = 5;
-        Minimum = 0;
-        Position = (100, 50);
-        Renderer = &spinControlRenderer;
-        Size = (200, 16);
-        Step = 0.1;
-        Value = 1;
-    }
-
-    Label.spaceLabel {
-        AutoSize = true;
-        Position = (10, 50);
+    Label.spaceSizeLabel {
+        ScrollbarPolicy = Never;
+        Position = (10, 20);
         Renderer = &labelRenderer;
-        Size = (79.2, 18);
+        Size = (100, 18);
         Text = "Space size";
         TextSize = 13;
     }
 
-    Label.timeLabel {
-        AutoSize = true;
-        Position = (10, 20);
+    Label.timeControlLabel {
+        ScrollbarPolicy = Never;
+        Position = ("spaceSizeLabel.left", "spaceSizeLabel.bottom + 12");
         Renderer = &labelRenderer;
-        Size = (78.2, 18);
+        Size = (100, 18);
+        Text = "Time control";
+        TextSize = 13;
+    }
+
+    Label.timeSpeedLabel {
+        ScrollbarPolicy = Never;
+        Position = ("timeControlLabel.left", "timeControlLabel.bottom + 12");
+        Renderer = &labelRenderer;
+        Size = (100, 18);
         Text = "Time speed";
+        TextSize = 13;
+    }
+
+    Label.timeSecondsLabel {
+        ScrollbarPolicy = Never;
+        Position = ("timeSpeedLabel.left", "timeSpeedLabel.bottom + 1");
+        Renderer = &labelRenderer;
+        Size = (100, 18);
+        Text = "Time (sec)";
+        TextSize = 13;
+    }
+
+    Label.timeStepsLabel {
+        ScrollbarPolicy = Never;
+        Position = ("timeSecondsLabel.left", "timeSecondsLabel.bottom + 1");
+        Renderer = &labelRenderer;
+        Size = (100, 18);
+        Text = "Time (steps)";
+        TextSize = 13;
+    }
+
+    Button.stepBackButton {
+        Position = ("timeControlLabel.right", "timeControlLabel.top - 12");
+        Text = "←";
+        TextSize = 20;
+        Size = (40, 40);
+    }
+
+    Button.pauseButton {
+        Position = ("stepBackButton.right + 2", "stepBackButton.top");
+        Text = "▌▌";
+        TextSize = 20;
+        Size = (40, 40);
+    }
+
+    Button.stepForwardButton {
+        Position = ("pauseButton.right + 2", "pauseButton.top");
+        Text = "→";
+        TextSize = 20;
+        Size = (40, 40);
+    }
+
+
+    Label.timeSecondsDisplay {
+        ScrollbarPolicy = Never;
+        Position = ("timeSecondsLabel.right", "timeSecondsLabel.top");
+        Renderer = &valueDisplayRenderer;
+        Size = (100, 18);
+        Text = "0";
+        TextSize = 13;
+    }
+
+    Label.timeStepsDisplay {
+        ScrollbarPolicy = Never;
+        Position = ("timeStepsLabel.right", "timeStepsLabel.top");
+        Renderer = &valueDisplayRenderer;
+        Size = (100, 18);
+        Text = "0";
         TextSize = 13;
     }
 }

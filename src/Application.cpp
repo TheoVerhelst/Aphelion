@@ -47,8 +47,14 @@ void Application::buildGui() {
 	_gui.loadWidgetsFromFile(_guiFile);
 
     // Spin controls. Do not work with GUI text file import for some reason.
+    auto spaceSizeControl = tgui::SpinControl::create(0, 10, 1, 2, 0.1);
+    spaceSizeControl->setPosition("spaceSizeLabel.right", "spaceSizeLabel.top");
+    spaceSizeControl->setSize(124, 16);
+    spaceSizeControl->onValueChange([this](float value){_model.setPixelsByMeter(value);});
+    _gui.get<tgui::Panel>("controlsPanel")->add(spaceSizeControl, "spaceSizeControl");
+
     auto timeSpeedControl = tgui::SpinControl::create(-10, 10, 1, 2, 0.1);
-    timeSpeedControl->setPosition(100, 82);
+    timeSpeedControl->setPosition("timeSpeedLabel.right", "timeSpeedLabel.top");
     timeSpeedControl->setSize(124, 16);
     timeSpeedControl->onValueChange([this] (float value) {
         if(not _paused) {
@@ -56,12 +62,6 @@ void Application::buildGui() {
         }
     });
     _gui.get<tgui::Panel>("controlsPanel")->add(timeSpeedControl, "timeSpeedcontrol");
-
-    auto spaceSizeControl = tgui::SpinControl::create(0, 10, 1, 2, 0.1);
-    spaceSizeControl->setPosition(100, 20);
-    spaceSizeControl->setSize(124, 16);
-    spaceSizeControl->onValueChange([this](float value){_model.setPixelsByMeter(value);});
-    _gui.get<tgui::Panel>("controlsPanel")->add(spaceSizeControl);
 
     // Other bindings
     _gui.get<tgui::Button>("stepBackButton")->onPress([this] () {
