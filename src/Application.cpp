@@ -42,7 +42,7 @@ void Application::buildGui() {
 	_gui.loadWidgetsFromFile(_guiFile);
 
     // Spin controls. Do not work with GUI text file import for some reason.
-    auto timeSpeedControl = tgui::SpinControl::create(-10, 10, 1, 2, 0.1);
+    auto timeSpeedControl = tgui::SpinControl::create(-100, 100, 1, 2, 0.1);
     timeSpeedControl->setPosition("timeSpeedLabel.right", "timeSpeedLabel.top");
     timeSpeedControl->setSize(124, 16);
     timeSpeedControl->onValueChange([this] (float value) {
@@ -67,8 +67,9 @@ void Application::buildGui() {
             pauseTime();
         } else {
             // Start time again
+            pauseButton->getRenderer()->setTexture("resources/pause.png");
+            pauseButton->getRenderer()->setTextureHover("resources/pause_hover.png");
             _paused = false;
-            pauseButton->setText("▌▌");
             _model.setTimeScale(timeSpeedControl->getValue());
         }
     });
@@ -87,7 +88,9 @@ void Application::updateDisplays() {
 }
 
 void Application::pauseTime() {
-    _gui.get<tgui::Button>("pauseButton")->setText("▶");
+    auto renderer = _gui.get<tgui::Button>("pauseButton")->getRenderer();
+    renderer->setTexture("resources/play.png");
+    renderer->setTextureHover("resources/play_hover.png");
     _model.setTimeScale(0);
     _paused = true;
 }

@@ -3,11 +3,14 @@ Renderer.labelRenderer {
 }
 
 Renderer.valueDisplayRenderer {
-    TextColor = #000000;
+    TextColor = #111111;
     TextStyle = Bold;
 }
 
-Renderer.spinControlRenderer {
+Renderer.buttonRenderer {
+    Borders = 0;
+    BackgroundColor = #CCCCCC;
+    TextColor = #3C3C3C;
 }
 
 ChildWindow.controlsPanel {
@@ -17,8 +20,8 @@ ChildWindow.controlsPanel {
     TitleButtons = None;
 
     Renderer = {
-        BorderColor = #333;
-        Borders = (3, 3, 3, 3);
+        BorderColor = #333333;
+        Borders = 0;
         TitleBarColor = #999999;
         BackgroundColor = #999999;
         TitleColor = #000;
@@ -53,22 +56,31 @@ ChildWindow.controlsPanel {
 
     Button.stepBackButton {
         Position = ("timeStepsLabel.left + 50", "timeStepsLabel.bottom + 10");
-        Text = "←";
         TextSize = 20;
+        Renderer = {
+            Texture = "resources/previous.png";
+            TextureHover = "resources/previous_hover.png";
+        }
         Size = (40, 40);
     }
 
     Button.pauseButton {
         Position = ("stepBackButton.right + 2", "stepBackButton.top");
-        Text = "▌▌";
         TextSize = 20;
+        Renderer = {
+            Texture = "resources/pause.png";
+            TextureHover = "resources/pause_hover.png";
+        }
         Size = (40, 40);
     }
 
     Button.stepForwardButton {
         Position = ("pauseButton.right + 2", "pauseButton.top");
-        Text = "→";
         TextSize = 20;
+        Renderer = {
+            Texture = "resources/next.png";
+            TextureHover = "resources/next_hover.png";
+        }
         Size = (40, 40);
     }
 
