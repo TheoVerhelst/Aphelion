@@ -21,16 +21,10 @@ void Application::run() {
         // Handle events
         sf::Event event;
         while (_window.pollEvent(event)) {
-            // Pass the event to all the widgets
             _gui.handleEvent(event);
 
-            // When the window is closed, the application ends
-            if (event.type == sf::Event::Closed)
+            if (event.type == sf::Event::Closed) {
                 _window.close();
-
-            // When the window is resized, the view is changed
-            else if (event.type == sf::Event::Resized) {
-                _window.setView(sf::View(sf::FloatRect(0, 0, (float)event.size.width, (float)event.size.height)));
             }
         }
 
@@ -56,26 +50,24 @@ void Application::buildGui() {
             _model.setTimeScale(value);
         }
     });
-    _gui.get<tgui::Panel>("controlsPanel")->add(timeSpeedControl, "timeSpeedcontrol");
+    _gui.get<tgui::ChildWindow>("controlsPanel")->add(timeSpeedControl, "timeSpeedcontrol");
 
     // Other bindings
     _gui.get<tgui::Button>("stepBackButton")->onPress([this] () {
-        _model.setTimeScale(0);
-        _paused = true;
+        pauseTime();
         _model.updateSteps(-1);
     });
     _gui.get<tgui::Button>("stepForwardButton")->onPress([this] () {
-        _model.setTimeScale(0);
-        _paused = true;
+        pauseTime();
         _model.updateSteps(1);
     });
     auto pauseButton = _gui.get<tgui::Button>("pauseButton");
     _gui.get<tgui::Button>("pauseButton")->onPress([this, pauseButton, timeSpeedControl] () {
-        _paused = not _paused;
-        if (_paused) {
-            pauseButton->setText("▶");
-            _model.setTimeScale(0);
+        if (not _paused) {
+            pauseTime();
         } else {
+            // Start time again
+            _paused = false;
             pauseButton->setText("▌▌");
             _model.setTimeScale(timeSpeedControl->getValue());
         }
@@ -92,4 +84,10 @@ void Application::buildGui() {
 void Application::updateDisplays() {
     _gui.get<tgui::Label>("timeSecondsDisplay")->setText(formatTime(_model.getElapsedTime()));
     _gui.get<tgui::Label>("timeStepsDisplay")->setText(std::to_string(_model.getStepCounter()));
+}
+
+void Application::pauseTime() {
+    _gui.get<tgui::Button>("pauseButton")->setText("▶");
+    _model.setTimeScale(0);
+    _paused = true;
 }

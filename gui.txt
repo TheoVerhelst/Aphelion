@@ -10,28 +10,23 @@ Renderer.valueDisplayRenderer {
 Renderer.spinControlRenderer {
 }
 
-Panel.controlsPanel {
-    Size = (340, 190);
-    Position = (5, 5);
+ChildWindow.controlsPanel {
+    Size = (280, 170);
+    Position = (5, parent.bottom - 175);
+    Title = "Time control";
+    TitleButtons = None;
 
     Renderer = {
         BorderColor = #333;
         Borders = (3, 3, 3, 3);
+        TitleBarColor = #999999;
         BackgroundColor = #999999;
-    }
-
-    Label.timeControlLabel {
-        ScrollbarPolicy = Never;
-        Position = (100, 18);
-        Renderer = &labelRenderer;
-        Size = (100, 18);
-        Text = "Time control";
-        TextSize = 13;
+        TitleColor = #000;
     }
 
     Label.timeSpeedLabel {
         ScrollbarPolicy = Never;
-        Position = ("timeControlLabel.left", "timeControlLabel.bottom + 12");
+        Position = (10, 10);
         Renderer = &labelRenderer;
         Size = (100, 18);
         Text = "Time speed";
@@ -57,7 +52,7 @@ Panel.controlsPanel {
     }
 
     Button.stepBackButton {
-        Position = ("timeControlLabel.right", "timeControlLabel.top - 12");
+        Position = ("timeStepsLabel.left + 50", "timeStepsLabel.bottom + 10");
         Text = "←";
         TextSize = 20;
         Size = (40, 40);

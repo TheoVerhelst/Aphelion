@@ -34,12 +34,6 @@ void SimulationCanvas::update(const sf::Time& elapsedTime) {
         movement = movement * _panSpeed / speed;
     }
 
-    // Increase movement speed when spacebar is pressed
-    float multiplier{1};
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) {
-        multiplier = 4;
-    }
-
     float zoomFactor{1};
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::LShift)
         or sf::Keyboard::isKeyPressed(sf::Keyboard::RShift)) {
@@ -49,8 +43,14 @@ void SimulationCanvas::update(const sf::Time& elapsedTime) {
         or sf::Keyboard::isKeyPressed(sf::Keyboard::RControl)) {
         zoomFactor /= _zoomSpeed;
     }
-    _zoom *= std::pow(zoomFactor, elapsedTime.asSeconds() * multiplier);
 
+    // Increase movement speed when spacebar is pressed
+    float multiplier{1};
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) {
+        multiplier = 4;
+    }
+
+    _zoom *= std::pow(zoomFactor, elapsedTime.asSeconds() * multiplier);
     _position += movement * elapsedTime.asSeconds() * multiplier;
     updateView();
 }
