@@ -6,9 +6,8 @@
 
 class SimulationCanvas : public tgui::CanvasSFML {
 public:
-
-    typedef std::shared_ptr<SimulationCanvas> Ptr; //!< Shared widget pointer
-    typedef std::shared_ptr<const SimulationCanvas> ConstPtr; //!< Shared constant widget pointer
+    typedef std::shared_ptr<SimulationCanvas> Ptr;
+    typedef std::shared_ptr<const SimulationCanvas> ConstPtr;
 
     SimulationCanvas(PhysicalModel& model, tgui::Layout2d size);
     void update(const sf::Time& elapsedTime);
