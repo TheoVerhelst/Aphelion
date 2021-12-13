@@ -1,7 +1,6 @@
 #ifndef BODY_HPP
 #define BODY_HPP
 
-#include <SFML/Graphics.hpp>
 #include <helpers.hpp>
 
 struct Body {

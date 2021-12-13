@@ -1,7 +1,7 @@
+#include <format.hpp>
 #include <iostream>
 #include <iomanip>
 #include <cmath>
-#include <format.hpp>
 
 std::string formatTime(double seconds) {
     double sec{std::fmod(seconds, 60)};

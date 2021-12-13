@@ -1,6 +1,9 @@
 #ifndef PHYSICAL_MODEL_HPP
 #define PHYSICAL_MODEL_HPP
 
+#include <string>
+#include <vector>
+#include <SFML/System.hpp>
 #include <SFML/Graphics.hpp>
 #include <Body.hpp>
 #include <helpers.hpp>

@@ -1,8 +1,10 @@
 #ifndef SIMULATION_CANVAS_HPP
 #define SIMULATION_CANVAS_HPP
 
+#include <memory>
 #include <TGUI/TGUI.hpp>
 #include <PhysicalModel.hpp>
+#include <helpers.hpp>
 
 class SimulationCanvas : public tgui::CanvasSFML {
 public:

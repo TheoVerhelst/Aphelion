@@ -1,9 +1,8 @@
-#include <fstream>
+#include <PhysicalModel.hpp>
 #include <cmath>
 #include <iostream>
 #include <sstream>
-#include <PhysicalModel.hpp>
-#include <helpers.hpp>
+#include <fstream>
 
 PhysicalModel::PhysicalModel(const std::string& setupFile) {
 	std::ifstream file{setupFile};

@@ -21,23 +21,10 @@ T norm(const sf::Vector2<T>& vector) {
 	return std::hypot(vector.x, vector.y);
 }
 
-template <FloatingPoint T>
-T angle(const sf::Vector2<T>& vector) {
-	return std::atan2(vector.y, vector.x);
-}
-
 template <typename T>
 std::ostream& operator<<(std::ostream& os, sf::Vector2<T> v) {
   return os << "(" << v.x << ", " << v.y << ")";
 }
 
-template <typename T>
-T wrap(T value, T max) {
-	while (value > max)
-		value -= max;
-	while (value < static_cast<T>(0))
-		value += max;
-	return value;
-}
 
 #endif // HELPERS_HPP

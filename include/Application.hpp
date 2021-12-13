@@ -1,6 +1,8 @@
 #ifndef APLICATION_HPP
 #define APLICATION_HPP
 
+#include <string>
+#include <SFML/Window.hpp>
 #include <TGUI/TGUI.hpp>
 #include <TGUI/Backend/SFML-Graphics.hpp>
 #include <PhysicalModel.hpp>

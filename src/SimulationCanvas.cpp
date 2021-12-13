@@ -19,17 +19,6 @@ SimulationCanvas::Ptr SimulationCanvas::copy(SimulationCanvas::ConstPtr widget) 
     }
 }
 
-tgui::Widget::Ptr SimulationCanvas::clone() const {
-    return std::make_shared<SimulationCanvas>(*this);
-}
-
-void SimulationCanvas::updateView() {
-    sf::View view{getDefaultView()};
-    view.setCenter(_position);
-    view.setSize(view.getSize() * _zoom);
-    setView(view);
-}
-
 void SimulationCanvas::update(const sf::Time& elapsedTime) {
     Vector2f movement{0, 0};
     if(sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) {
@@ -69,4 +58,15 @@ void SimulationCanvas::update(const sf::Time& elapsedTime) {
     _zoom *= std::pow(zoomFactor, elapsedTime.asSeconds() * multiplier);
     _position += movement * elapsedTime.asSeconds() * multiplier;
     updateView();
+}
+
+tgui::Widget::Ptr SimulationCanvas::clone() const {
+    return std::make_shared<SimulationCanvas>(*this);
+}
+
+void SimulationCanvas::updateView() {
+    sf::View view{getDefaultView()};
+    view.setCenter(_position);
+    view.setSize(view.getSize() * _zoom);
+    setView(view);
 }
