@@ -5,6 +5,7 @@ Application::Application(const std::string& setupFile):
         _window{sf::VideoMode(1200, 600), "Physics Simulation"},
         _gui{_window},
         _model{setupFile} {
+    tgui::WidgetFactory::setConstructFunction("SimulationCanvas", std::make_shared<SimulationCanvas>);
     buildGui();
 }
 
@@ -40,6 +41,7 @@ void Application::run() {
 
 void Application::buildGui() {
 	_gui.loadWidgetsFromFile(_guiFile);
+    _simulationCanvas = _gui.get<SimulationCanvas>("simulationCanvas");
 
     // Spin controls. Do not work with GUI text file import for some reason.
     auto timeSpeedControl = tgui::SpinControl::create(-100, 100, 1, 2, 0.1);
@@ -50,7 +52,7 @@ void Application::buildGui() {
             _model.setTimeScale(value);
         }
     });
-    _gui.get<tgui::ChildWindow>("controlsPanel")->add(timeSpeedControl, "timeSpeedcontrol");
+    _gui.get<tgui::ChildWindow>("controlsPanel")->add(timeSpeedControl, "timeSpeedControl");
 
     // Other bindings
     _gui.get<tgui::Button>("stepBackButton")->onPress([this] () {
@@ -62,24 +64,13 @@ void Application::buildGui() {
         _model.updateSteps(1);
     });
     auto pauseButton = _gui.get<tgui::Button>("pauseButton");
-    _gui.get<tgui::Button>("pauseButton")->onPress([this, pauseButton, timeSpeedControl] () {
-        if (not _paused) {
-            pauseTime();
+    _gui.get<tgui::Button>("pauseButton")->onPress([this] () {
+        if (_paused) {
+            resumeTime();
         } else {
-            // Start time again
-            pauseButton->getRenderer()->setTexture("resources/pause.png");
-            pauseButton->getRenderer()->setTextureHover("resources/pause_hover.png");
-            _paused = false;
-            _model.setTimeScale(timeSpeedControl->getValue());
+            pauseTime();
         }
     });
-
-    // Simulation canvas
-    _simulationCanvas = SimulationCanvas::create(_model);
-    _simulationCanvas->setPosition(0, 0);
-    _simulationCanvas->setSize({"100%", "100%"});
-    _gui.add(_simulationCanvas, "simulationCanvas");
-    _simulationCanvas->moveToBack();
 }
 
 void Application::updateDisplays() {
@@ -93,4 +84,12 @@ void Application::pauseTime() {
     renderer->setTextureHover("resources/play_hover.png");
     _model.setTimeScale(0);
     _paused = true;
+}
+
+void Application::resumeTime() {
+    auto renderer = _gui.get<tgui::Button>("pauseButton")->getRenderer();
+    renderer->setTexture("resources/pause.png");
+    renderer->setTextureHover("resources/pause_hover.png");
+    _paused = false;
+    _model.setTimeScale(_gui.get<tgui::SpinControl>("timeSpeedControl")->getValue());
 }

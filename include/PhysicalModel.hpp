@@ -11,7 +11,6 @@ public:
 	void updateTime(const sf::Time& elapsedTime);
 	void updateSteps(int steps);
 	virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
-	void setCanvasSize(Vector2f size);
 	void setTimeScale(float timeScale);
 	long long int getStepCounter() const;
 	sf::Time getElapsedTime() const;

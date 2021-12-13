@@ -22,6 +22,7 @@ private:
     void buildGui();
     void updateDisplays();
     void pauseTime();
+    void resumeTime();
 };
 
 #endif // APPLICATION_HPP

@@ -1,10 +1,26 @@
 #include <SimulationCanvas.hpp>
 
-SimulationCanvas::SimulationCanvas(PhysicalModel& model, tgui::Layout2d size):
-    _model{model}
-{
-    setSize(size);
+SimulationCanvas::SimulationCanvas(const char* typeName, bool initRenderer):
+        tgui::CanvasSFML(typeName, initRenderer) {
     onSizeChange(&SimulationCanvas::updateView, this);
+}
+
+SimulationCanvas::Ptr SimulationCanvas::create(tgui::Layout2d size) {
+    auto canvas = std::make_shared<SimulationCanvas>();
+    canvas->setSize(size);
+    return canvas;
+}
+
+SimulationCanvas::Ptr SimulationCanvas::copy(SimulationCanvas::ConstPtr widget) {
+    if (widget) {
+        return std::static_pointer_cast<SimulationCanvas>(widget->clone());
+    } else {
+        return nullptr;
+    }
+}
+
+tgui::Widget::Ptr SimulationCanvas::clone() const {
+    return std::make_shared<SimulationCanvas>(*this);
 }
 
 void SimulationCanvas::updateView() {
@@ -53,9 +69,4 @@ void SimulationCanvas::update(const sf::Time& elapsedTime) {
     _zoom *= std::pow(zoomFactor, elapsedTime.asSeconds() * multiplier);
     _position += movement * elapsedTime.asSeconds() * multiplier;
     updateView();
-}
-
-
-SimulationCanvas::Ptr SimulationCanvas::create(PhysicalModel& model, tgui::Layout2d size) {
-    return std::make_shared<SimulationCanvas>(model, size);
 }
