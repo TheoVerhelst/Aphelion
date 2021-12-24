@@ -4,7 +4,8 @@
 Application::Application(const std::string& setupFile):
         _window{sf::VideoMode(1200, 600), "Physics Simulation"},
         _gui{_window},
-        _model{setupFile} {
+        _model{setupFile},
+        _scene{_model} {
     tgui::WidgetFactory::setConstructFunction("SimulationCanvas", std::make_shared<SimulationCanvas>);
     buildGui();
 }
@@ -16,6 +17,7 @@ void Application::run() {
         // Update
         sf::Time elapsedTime{clock.restart()};
         _model.updateTime(elapsedTime);
+        _scene.update();
         _simulationCanvas->update(elapsedTime);
         updateDisplays();
 
@@ -32,7 +34,7 @@ void Application::run() {
         // Draw graphics
         _window.clear(sf::Color::White);
         _simulationCanvas->clear(sf::Color::Black);
-        _simulationCanvas->draw(_model);
+        _simulationCanvas->draw(_scene);
         _simulationCanvas->display();
         _gui.draw();
         _window.display();

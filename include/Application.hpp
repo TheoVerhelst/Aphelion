@@ -6,6 +6,7 @@
 #include <TGUI/TGUI.hpp>
 #include <TGUI/Backend/SFML-Graphics.hpp>
 #include <PhysicalModel.hpp>
+#include <Scene.hpp>
 #include <SimulationCanvas.hpp>
 
 class Application {
@@ -18,6 +19,7 @@ private:
     sf::RenderWindow _window;
     tgui::Gui _gui;
     PhysicalModel _model;
+    Scene _scene;
     SimulationCanvas::Ptr _simulationCanvas;
     bool _paused{false};
 

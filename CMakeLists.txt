@@ -15,11 +15,13 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -std=c++2a -fconcepts -Wall -Wextra -
 
 # List all source files
 set(SOURCE_FILES
-	src/main.cpp
 	src/Application.cpp
-	src/PhysicalModel.cpp
-	src/SimulationCanvas.cpp
+	src/Body.cpp
 	src/format.cpp
+	src/main.cpp
+	src/PhysicalModel.cpp
+	src/Scene.cpp
+	src/SimulationCanvas.cpp
 )
 
 # Create the main executable

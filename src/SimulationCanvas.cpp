@@ -1,4 +1,6 @@
 #include <SimulationCanvas.hpp>
+#include <SFML/Graphics.hpp>
+#include <SFML/Window.hpp>
 
 SimulationCanvas::SimulationCanvas(const char* typeName, bool initRenderer):
         tgui::CanvasSFML(typeName, initRenderer) {
