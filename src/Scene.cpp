@@ -38,7 +38,7 @@ void Scene::update() {
     std::size_t nextIndex{(_traceIndex + 1) % _traceLength};
 
 	for (std::size_t i{0}; i < bodies.size(); ++i) {
-        auto body = bodies[i].lock();
+        auto body = dynamic_pointer_cast<const CircleBody>(bodies[i].lock());
 		_circles[i].setPosition(static_cast<Vector2f>(body->position));
 
         // The new trace line is from the previous one to the new position

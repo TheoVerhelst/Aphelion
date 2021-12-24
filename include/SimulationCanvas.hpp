@@ -3,6 +3,7 @@
 
 #include <memory>
 #include <TGUI/TGUI.hpp>
+#include <TGUI/Backend/SFML-Graphics.hpp>
 #include <PhysicalModel.hpp>
 #include <helpers.hpp>
 

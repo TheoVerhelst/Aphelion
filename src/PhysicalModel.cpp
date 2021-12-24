@@ -107,30 +107,7 @@ void PhysicalModel::updateStep(bool backwards) {
 	// Check for collisions
 	for (std::size_t i{0}; i < _bodies.size(); ++i) {
 		for (std::size_t j{i + 1}; j < _bodies.size(); ++j) {
-			const Vector2d diff_x = _bodies[j]->position - _bodies[i]->position;
-			const double dist{norm(diff_x)};
-			// TODO: handle non-circles
-			auto circle = dynamic_pointer_cast<CircleBody>(_bodies[i]);
-			const double overlap{circle->radius + circle->radius - dist};
-
-			// Collision
-			if (overlap > 0) {
-				// Distance squared
-				const double dist_2{dot(diff_x, diff_x)};
-				const Vector2d v_i = _bodies[i]->velocity;
-				const Vector2d v_j = _bodies[j]->velocity;
-				const double m_i = _bodies[i]->mass;
-				const double m_j = _bodies[j]->mass;
-				// Based on stackoverflow.com/questions/35211114/2d-elastic-ball-collision-physics
-				const Vector2d addedVel = 2 * dot(v_i - v_j, diff_x) * diff_x / ((m_i + m_j) * dist_2);
-				_bodies[i]->velocity = v_i - addedVel * m_j;
-				_bodies[j]->velocity = v_j + addedVel * m_i;
-
-				// Move the bodies so that they just touch and don't overlap.
-				// The displacement is proportional to the mass of the other body.
-				_bodies[i]->position -= m_j * overlap * diff_x / (dist * (m_i + m_j));
-				_bodies[j]->position += m_i * overlap * diff_x / (dist * (m_i + m_j));
-			}
+			_bodies[i]->collide(*_bodies[j]);
 		}
 	}
 }

@@ -5,9 +5,15 @@
 #include <SFML/Graphics/Color.hpp>
 #include <helpers.hpp>
 
-struct Body {
+class CircleBody;
+class PolygonBody;
+
+class Body {
+public:
 	virtual ~Body() = default;
 	virtual void collide(Body& other) = 0;
+	virtual void collide(CircleBody& other) = 0;
+	virtual void collide(PolygonBody& other) = 0;
 
 	double mass;
 	Vector2d position;
@@ -15,15 +21,19 @@ struct Body {
 	sf::Color color;
 };
 
-struct CircleBody : public Body {
+class CircleBody : public Body {
+public:
 	virtual void collide(Body& other) override;
-
+	virtual void collide(CircleBody& other) override;
+	virtual void collide(PolygonBody& other) override;
 	double radius;
 };
 
-struct PolygonBody : public Body {
+class PolygonBody : public Body {
+public:
 	virtual void collide(Body& other) override;
-
+	virtual void collide(CircleBody& other) override;
+	virtual void collide(PolygonBody& other) override;
 	std::vector<Vector2d> vertices;
 };
 
