@@ -8,7 +8,7 @@ void CircleBody::collide(Body& other) {
 void CircleBody::collide(CircleBody& other) {
     CircleBody& a = *this;
     CircleBody& b = other;
-    const Vector2d diff_x = a.position - b.position;
+    const Vector2d diff_x = b.position - a.position;
     const double dist{norm(diff_x)};
     const double overlap{a.radius + b.radius - dist};
 
@@ -34,6 +34,7 @@ void CircleBody::collide(CircleBody& other) {
 
 void CircleBody::collide(PolygonBody& other) {
     // TODO
+    std::cout << "circle x polygon" << std::endl;
 }
 
 void PolygonBody::collide(Body& other) {
@@ -46,4 +47,5 @@ void PolygonBody::collide(CircleBody& other) {
 
 void PolygonBody::collide(PolygonBody& other) {
     // TODO: CJK algorithm
+    std::cout << "polygon x polygon" << std::endl;
 }
