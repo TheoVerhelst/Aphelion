@@ -1,5 +1,8 @@
 #include <Body.hpp>
+#include <algorithm>
+#include <functional>
 #include <iostream>
+#include <stdexcept>
 
 void CircleBody::collide(Body& other) {
     other.collide(*this);
@@ -33,8 +36,18 @@ void CircleBody::collide(CircleBody& other) {
 }
 
 void CircleBody::collide(PolygonBody& other) {
-    // TODO
-    std::cout << "circle x polygon" << std::endl;
+    // TODO GJK as well
+}
+
+std::shared_ptr<sf::Shape> CircleBody::createShape() const {
+    std::shared_ptr<sf::CircleShape> circle{new sf::CircleShape(static_cast<float>(radius))};
+    circle->setOrigin(radius, radius);
+    circle->setFillColor(color);
+    return circle;
+}
+
+Vector2d CircleBody::support(Vector2d direction) const {
+    return position + direction * radius / norm(direction);
 }
 
 void PolygonBody::collide(Body& other) {
@@ -46,6 +59,101 @@ void PolygonBody::collide(CircleBody& other) {
 }
 
 void PolygonBody::collide(PolygonBody& other) {
-    // TODO: CJK algorithm
-    std::cout << "polygon x polygon" << std::endl;
+    // GJK algorithm, see https://blog.winter.dev/2020/gjk-algorithm/
+    Vector2d direction{1, 0};
+    Vector2d a{support(direction) - other.support(-direction)};
+    std::vector<Vector2d> simplex{a};
+    direction = -a;
+    while (true) {
+        a = support(direction) - other.support(-direction);
+        if (dot(a, direction) < 0) {
+            // No collision
+            return;
+        }
+        simplex.push_back(a);
+        if(nearestSimplex(simplex, direction)) {
+            std::cout << "Collision" << std::endl;
+            return;
+        }
+    }
+}
+
+std::shared_ptr<sf::Shape> PolygonBody::createShape() const {
+    std::shared_ptr<sf::ConvexShape> polygon{new sf::ConvexShape(vertices.size())};
+    for(std::size_t i{0}; i < vertices.size(); ++i) {
+        polygon->setPoint(i, static_cast<Vector2f>(vertices[i]));
+    }
+    polygon->setFillColor(color);
+    return polygon;
+}
+
+Vector2d PolygonBody::support(Vector2d direction) const {
+    std::vector<double> products(vertices.size());
+    // Compute all dot products between vertices and direction
+    std::transform(
+        vertices.begin(),
+        vertices.end(),
+        products.begin(),
+        std::bind(dot<double>, std::placeholders::_1, direction)
+    );
+    // Find the largest one
+    auto largest{std::distance(
+        products.begin(),
+        std::max_element(products.begin(), products.end())
+    )};
+    return vertices[largest];
+}
+
+bool PolygonBody::nearestSimplex(std::vector<Vector2d>& simplex, Vector2d& direction) {
+    if (simplex.size() == 2) {
+        return simplexLine(simplex, direction);
+    } else if (simplex.size() == 3) {
+        return simplexTriangle(simplex, direction);
+    } else {
+        throw std::runtime_error("Invalid simplex size");
+    }
+    return false;
+}
+
+bool PolygonBody::simplexLine(std::vector<Vector2d>& simplex, Vector2d& direction) {
+    Vector2d a{simplex[0]}, b{simplex[1]};
+    // Vector going from the new point to the old point in the simplex
+    Vector2d ba{a - b};
+    // If the origin is on the same side as this vector
+    if (dot(ba, -b) > 0) {
+        // New direction is perpendicular to this vector (towards origin)
+        direction = perpendicular(ba, -b);
+    } else {
+        simplex = {b};
+        direction = -b;
+    }
+    return false;
+}
+
+bool PolygonBody::simplexTriangle(std::vector<Vector2d>& simplex, Vector2d& direction) {
+    Vector2d a{simplex[0]}, b{simplex[1]}, c{simplex[2]};
+	Vector2d ca{a - c}, cb{b - c};
+    // Check if we are outside the AC face. We go away from cb to stay outside
+    // the simplex.
+    Vector2d ca_perp{perpendicular(ca, -cb)};
+    // If the origin is on this side
+    if (dot(ca_perp, -c) > 0) {
+        if (dot(ca, -c) > 0) {
+            simplex = {a, c};
+            direction = ca_perp;
+        } else {
+            // Not sure we could arrive here
+            throw std::runtime_error("Not possible ????");
+        }
+        return false;
+    }
+    Vector2d cb_perp{perpendicular(cb, -ca)};
+    if (dot(cb_perp, -c) > 0) {
+        simplex = {b, c};
+        direction = cb_perp;
+        return false;
+    } else {
+        // Must be inside the simplex
+        return true;
+    }
 }

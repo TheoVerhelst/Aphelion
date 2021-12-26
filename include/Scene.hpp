@@ -15,7 +15,7 @@ private:
     const std::size_t _traceLength{1024};
     std::size_t _traceIndex{0};
     const PhysicalModel& _model;
-	std::vector<sf::CircleShape> _circles;
+	std::vector<std::shared_ptr<sf::Shape>> _shapes;
     std::vector<sf::VertexArray> _traces;
 };
 

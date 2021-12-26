@@ -1,6 +1,50 @@
-# mass	R	p_x		p_y		v_x		v_y		r	g	b
-1e18	10	450.54	118.145	50.11	0.989	255	0	0
-1e18	10	661.16	20.5	10.44	0.45	0	255	0
-1e19	10	522.22	345		0.4		60.54	0	0	255
-1e21	20	600		200		-10		0		240	240	0
-1e17	5	600		150		150		0		240	240	240
+{
+    "circles":
+    [
+        {
+            "mass": 1e18,
+            "radius": 10,
+            "position": {"x": 450.54, "y": 118.145},
+            "velocity": {"x": 50.11, "y": 0.989},
+            "color": "#FF0000FF"
+        },
+        {
+            "mass": 1e18,
+            "radius": 10,
+            "position": {"x": 661.16, "y": 20.5},
+            "velocity": {"x": 10.44, "y": 0.45},
+            "color": "#00FF00FF"
+        },
+        {
+            "mass": 1e19,
+            "radius": 10,
+            "position": {"x": 522.22, "y": 345},
+            "velocity": {"x": 0.4, "y": 60.54},
+            "color": "#0000FFFF"
+        },
+        {
+            "mass": 1e21,
+            "radius": 20,
+            "position": {"x": 600, "y": 200},
+            "velocity": {"x": -10, "y": 0},
+            "color": "#F0F000FF"
+        },
+        {
+            "mass": 1e17,
+            "radius": 5,
+            "position": {"x": 600, "y": 150},
+            "velocity": {"x": 150, "y": 0},
+            "color": "#F0F0F0FF"
+        }
+    ],
+    "polygons":
+    [
+        {
+            "mass": 1e17,
+            "vertices": [{"x": 0, "y": 0}, {"x": 10, "y": 0}, {"x": 0, "y": 10}],
+            "position": {"x": 500, "y": 220},
+            "velocity": {"x": 150, "y": 0},
+            "color": "#F0F0F0FF"
+        }
+    ]
+}

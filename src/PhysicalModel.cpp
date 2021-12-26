@@ -3,26 +3,27 @@
 #include <iostream>
 #include <sstream>
 #include <fstream>
+#include <json.hpp>
+
+using nlohmann::json;
 
 PhysicalModel::PhysicalModel(const std::string& setupFile) {
 	std::ifstream file{setupFile};
-	std::string line;
-	while (std::getline(file, line)) {
-		if (line[0] != '#') {
-			unsigned int r, g, b;
-			std::stringstream lineStream{line};
-			std::shared_ptr<CircleBody> body{new CircleBody()};
-			lineStream
-				>> body->mass
-				>> body->radius
-				>> body->position.x
-				>> body->position.y
-				>> body->velocity.x
-				>> body->velocity.y
-				>> r >> g >> b;
-			body->color = sf::Color(r, g, b);
-			_bodies.push_back(body);
-		}
+	json j;
+	try	{
+	    j = json::parse(file);
+	} catch (json::parse_error& ex) {
+	    std::cerr << "parse error in " << setupFile << " at byte " << ex.byte << std::endl;
+	}
+	for (auto value : j.at("circles")) {
+		std::shared_ptr<CircleBody> body{new CircleBody()};
+		value.get_to(*body);
+		_bodies.push_back(body);
+	}
+	for (auto value : j.at("polygons")) {
+		std::shared_ptr<PolygonBody> body{new PolygonBody()};
+		value.get_to(*body);
+		_bodies.push_back(body);
 	}
 }
 
@@ -37,7 +38,7 @@ void PhysicalModel::updateTime(const sf::Time& elapsedTime) {
 
 	// Update until we get back under _timestep
 	// Usually only one update will be needed
-	while(_currentStep >= _timeStep) {
+	while (_currentStep >= _timeStep) {
 		_currentStep -= _timeStep;
 		updateStep(_timeScale < 0);
 	}
