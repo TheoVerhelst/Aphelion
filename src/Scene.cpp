@@ -13,7 +13,7 @@ Scene::Scene(const PhysicalModel& model):
         // undefined traces because of the unitialized vector.
         sf::VertexArray trace(sf::Lines, _traceLength * 2);
         for (std::size_t j{0}; j < _traceLength * 2; ++j) {
-            trace[j] = sf::Vertex(static_cast<Vector2f>(body.lock()->position), body.lock()->color);
+            trace[j] = sf::Vertex(static_cast<Vector2f>(body.lock()->getPosition()), body.lock()->getColor());
         }
         _traces.push_back(trace);
 	}
@@ -34,13 +34,13 @@ void Scene::update() {
     std::size_t nextIndex{(_traceIndex + 1) % _traceLength};
 
 	for (std::size_t i{0}; i < bodies.size(); ++i) {
-		_shapes[i]->setPosition(static_cast<Vector2f>(bodies[i].lock()->position));
+		_shapes[i]->setPosition(static_cast<Vector2f>(bodies[i].lock()->getPosition()));
 
         // The new trace line is from the previous one to the new position
         _traces[i][nextIndex * 2] = _traces[i][(_traceIndex * 2) + 1];
         _traces[i][nextIndex * 2 + 1] = sf::Vertex(
-            static_cast<sf::Vector2f>(bodies[i].lock()->position),
-            bodies[i].lock()->color
+            static_cast<sf::Vector2f>(bodies[i].lock()->getPosition()),
+            bodies[i].lock()->getColor()
         );
         // Adjust the trace transparency to make it fade away
         for (std::size_t j{0}; j < _traceLength; ++j) {

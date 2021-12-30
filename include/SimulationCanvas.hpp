@@ -5,7 +5,7 @@
 #include <TGUI/TGUI.hpp>
 #include <TGUI/Backend/SFML-Graphics.hpp>
 #include <PhysicalModel.hpp>
-#include <helpers.hpp>
+#include <vector.hpp>
 
 class SimulationCanvas : public tgui::CanvasSFML {
 public:

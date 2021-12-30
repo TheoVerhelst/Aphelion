@@ -1,53 +1,108 @@
-#include <Body.hpp>
 #include <algorithm>
 #include <functional>
-#include <iostream>
-#include <stdexcept>
+#include <cmath>
+#include <cstddef>
+#include <Body.hpp>
+#include <collisions.hpp>
+
+
+Body::Body(double mass, const Vector2d& position, const Vector2d& velocity,
+		const sf::Color color, double angularVelocity):
+    _mass{mass},
+    _position{position},
+    _velocity{velocity},
+    _color{color},
+    _angularVelocity{angularVelocity} {
+}
+
+double Body::getMass() const {
+    return _mass;
+}
+
+const Vector2d& Body::getPosition() const {
+    return _position;
+}
+
+const Vector2d& Body::getVelocity() const {
+    return _velocity;
+}
+
+const sf::Color& Body::getColor() const {
+    return _color;
+}
+
+const double& Body::getMomentOfInertia() const {
+    return _momentOfInertia;
+}
+
+const double& Body::getAngularVelocity() const {
+    return _angularVelocity;
+}
+
+void Body::setMass(double mass) {
+    _mass = mass;
+}
+
+void Body::setPosition(const Vector2d& position) {
+    _position = position;
+}
+
+void Body::setVelocity(const Vector2d& velocity) {
+    _velocity = velocity;
+}
+
+void Body::setColor(const sf::Color& color) {
+    _color = color;
+}
+
+void Body::setAngularVelocity(const double& angularVelocity) {
+    _angularVelocity = angularVelocity;
+}
+
+void Body::setMomentOfInertia(double momentOfInertia) {
+	_momentOfInertia = momentOfInertia;
+}
+
+CircleBody::CircleBody(double mass, const Vector2d& position, const Vector2d& velocity,
+        const sf::Color color, double angularVelocity, double radius):
+    Body(mass, position, velocity, color, angularVelocity),
+    _radius{radius} {
+    setMomentOfInertia(_mass * _radius * _radius / 2);
+}
+
 
 void CircleBody::collide(Body& other) {
     other.collide(*this);
 }
 
 void CircleBody::collide(CircleBody& other) {
-    CircleBody& a = *this;
-    CircleBody& b = other;
-    const Vector2d diff_x = b.position - a.position;
-    const double dist{norm(diff_x)};
-    const double overlap{a.radius + b.radius - dist};
-
-    // Collision
-    if (overlap > 0) {
-        // Distance squared
-        const double dist_2{dot(diff_x, diff_x)};
-        const Vector2d v_a = a.velocity;
-        const Vector2d v_b = b.velocity;
-        const double m_a = a.mass;
-        const double m_b = b.mass;
-        // Based on stackoverflow.com/questions/35211114/2d-elastic-ball-collision-physics
-        const Vector2d addedVel = 2 * dot(v_a - v_b, diff_x) * diff_x / ((m_a + m_b) * dist_2);
-        a.velocity = v_a - addedVel * m_b;
-        b.velocity = v_b + addedVel * m_a;
-
-        // Move the bodies so that they just touch and don't overlap.
-        // The displacement is proportional to the mass of the other body.
-        a.position -= m_b * overlap * diff_x / (dist * (m_a + m_b));
-        b.position += m_a * overlap * diff_x / (dist * (m_a + m_b));
-    }
+    collideCircles(*this, other);
 }
 
 void CircleBody::collide(PolygonBody& other) {
-    // TODO GJK as well
+    collideBodies(*this, other);
 }
 
 std::shared_ptr<sf::Shape> CircleBody::createShape() const {
-    std::shared_ptr<sf::CircleShape> circle{new sf::CircleShape(static_cast<float>(radius))};
-    circle->setOrigin(radius, radius);
-    circle->setFillColor(color);
+    std::shared_ptr<sf::CircleShape> circle{new sf::CircleShape(static_cast<float>(_radius))};
+    circle->setOrigin(_radius, _radius);
+    circle->setFillColor(_color);
     return circle;
 }
 
+double CircleBody::getRadius() const {
+	return _radius;
+}
+
 Vector2d CircleBody::support(Vector2d direction) const {
-    return position + direction * radius / norm(direction);
+    return _position + direction * _radius / norm(direction);
+}
+
+PolygonBody::PolygonBody(double mass, const Vector2d& position, const Vector2d& velocity,
+	   const sf::Color color, double angularVelocity, const std::vector<Vector2d>& vertices):
+   Body(mass, position, velocity, color, angularVelocity),
+    _vertices{vertices} {
+    setMomentOfInertia(computeMomentOfInertia());
 }
 
 void PolygonBody::collide(Body& other) {
@@ -59,40 +114,28 @@ void PolygonBody::collide(CircleBody& other) {
 }
 
 void PolygonBody::collide(PolygonBody& other) {
-    // GJK algorithm, see https://blog.winter.dev/2020/gjk-algorithm/
-    Vector2d direction{1, 0};
-    Vector2d a{support(direction) - other.support(-direction)};
-    std::vector<Vector2d> simplex{a};
-    direction = -a;
-    while (true) {
-        a = support(direction) - other.support(-direction);
-        if (dot(a, direction) < 0) {
-            // No collision
-            return;
-        }
-        simplex.push_back(a);
-        if(nearestSimplex(simplex, direction)) {
-            std::cout << "Collision" << std::endl;
-            return;
-        }
-    }
+    collideBodies(*this, other);
 }
 
 std::shared_ptr<sf::Shape> PolygonBody::createShape() const {
-    std::shared_ptr<sf::ConvexShape> polygon{new sf::ConvexShape(vertices.size())};
-    for(std::size_t i{0}; i < vertices.size(); ++i) {
-        polygon->setPoint(i, static_cast<Vector2f>(vertices[i]));
+    std::shared_ptr<sf::ConvexShape> polygon{new sf::ConvexShape(_vertices.size())};
+    for(std::size_t i{0}; i < _vertices.size(); ++i) {
+        polygon->setPoint(i, static_cast<Vector2f>(_vertices[i]));
     }
-    polygon->setFillColor(color);
+    polygon->setFillColor(_color);
     return polygon;
 }
 
+const std::vector<Vector2d>& PolygonBody::getVertices() const {
+	return _vertices;
+}
+
 Vector2d PolygonBody::support(Vector2d direction) const {
-    std::vector<double> products(vertices.size());
+    std::vector<double> products(_vertices.size());
     // Compute all dot products between vertices and direction
     std::transform(
-        vertices.begin(),
-        vertices.end(),
+        _vertices.begin(),
+        _vertices.end(),
         products.begin(),
         std::bind(dot<double>, std::placeholders::_1, direction)
     );
@@ -101,59 +144,31 @@ Vector2d PolygonBody::support(Vector2d direction) const {
         products.begin(),
         std::max_element(products.begin(), products.end())
     )};
-    return vertices[largest];
+    return _vertices[largest] + _position;
 }
 
-bool PolygonBody::nearestSimplex(std::vector<Vector2d>& simplex, Vector2d& direction) {
-    if (simplex.size() == 2) {
-        return simplexLine(simplex, direction);
-    } else if (simplex.size() == 3) {
-        return simplexTriangle(simplex, direction);
-    } else {
-        throw std::runtime_error("Invalid simplex size");
+double PolygonBody::computeMomentOfInertia() const {
+    std::vector<double> areas;
+    std::vector<Vector2d> centersOfMass;
+    for (std::size_t i{1}; i < _vertices.size() - 1; ++i) {
+        Vector2d B{_vertices[i] - _vertices[0]};
+        Vector2d C{_vertices[i+1] - _vertices[0]};
+        areas.push_back(std::abs(cross(B, C))/2);
+        centersOfMass.push_back((B + C) / 3.);
     }
-    return false;
-}
+    double totalArea{std::accumulate(areas.begin(), areas.end(), 0.)};
+    Vector2d totalCenterOfMass{0, 0};
+    double momentOfInertia{0};
+    for (std::size_t i{1}; i < _vertices.size() - 1; ++i) {
+        Vector2d B{_vertices[i] - _vertices[0]};
+        Vector2d C{_vertices[i + 1] - _vertices[0]};
+        double signedArea{cross(B, C)/2.};
+        double area{areas[i - 1]};
+        double mass{_mass * area / totalArea};
+        totalCenterOfMass += centersOfMass[i] * mass;
+        momentOfInertia += mass * (signedArea / area) * (norm2(B) + norm2(C) + dot(B, C));
+    }
+    totalCenterOfMass /= _mass;
 
-bool PolygonBody::simplexLine(std::vector<Vector2d>& simplex, Vector2d& direction) {
-    Vector2d a{simplex[0]}, b{simplex[1]};
-    // Vector going from the new point to the old point in the simplex
-    Vector2d ba{a - b};
-    // If the origin is on the same side as this vector
-    if (dot(ba, -b) > 0) {
-        // New direction is perpendicular to this vector (towards origin)
-        direction = perpendicular(ba, -b);
-    } else {
-        simplex = {b};
-        direction = -b;
-    }
-    return false;
-}
-
-bool PolygonBody::simplexTriangle(std::vector<Vector2d>& simplex, Vector2d& direction) {
-    Vector2d a{simplex[0]}, b{simplex[1]}, c{simplex[2]};
-	Vector2d ca{a - c}, cb{b - c};
-    // Check if we are outside the AC face. We go away from cb to stay outside
-    // the simplex.
-    Vector2d ca_perp{perpendicular(ca, -cb)};
-    // If the origin is on this side
-    if (dot(ca_perp, -c) > 0) {
-        if (dot(ca, -c) > 0) {
-            simplex = {a, c};
-            direction = ca_perp;
-        } else {
-            // Not sure we could arrive here
-            throw std::runtime_error("Not possible ????");
-        }
-        return false;
-    }
-    Vector2d cb_perp{perpendicular(cb, -ca)};
-    if (dot(cb_perp, -c) > 0) {
-        simplex = {b, c};
-        direction = cb_perp;
-        return false;
-    } else {
-        // Must be inside the simplex
-        return true;
-    }
+    return (momentOfInertia / 6) - _mass * norm2(_vertices[0] - totalCenterOfMass);
 }

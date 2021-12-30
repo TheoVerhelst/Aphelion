@@ -6,7 +6,7 @@
 #include <memory>
 #include <SFML/System/Time.hpp>
 #include <Body.hpp>
-#include <helpers.hpp>
+#include <vector.hpp>
 
 class PhysicalModel {
 public:

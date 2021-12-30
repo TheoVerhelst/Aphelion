@@ -17,6 +17,7 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -std=c++2a -fconcepts -Wall -Wextra -
 set(SOURCE_FILES
 	src/Application.cpp
 	src/Body.cpp
+	src/collisions.cpp
 	src/format.cpp
 	src/main.cpp
 	src/PhysicalModel.cpp

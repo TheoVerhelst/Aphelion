@@ -16,13 +16,11 @@ PhysicalModel::PhysicalModel(const std::string& setupFile) {
 	    std::cerr << "parse error in " << setupFile << " at byte " << ex.byte << std::endl;
 	}
 	for (auto value : j.at("circles")) {
-		std::shared_ptr<CircleBody> body{new CircleBody()};
-		value.get_to(*body);
+		std::shared_ptr<CircleBody> body = value.get<std::shared_ptr<CircleBody>>();
 		_bodies.push_back(body);
 	}
 	for (auto value : j.at("polygons")) {
-		std::shared_ptr<PolygonBody> body{new PolygonBody()};
-		value.get_to(*body);
+		std::shared_ptr<PolygonBody> body = value.get<std::shared_ptr<PolygonBody>>();
 		_bodies.push_back(body);
 	}
 }
@@ -71,9 +69,9 @@ Vector2d PhysicalModel::computeAcceleration(Vector2d position, std::size_t bodyI
 	Vector2d res{0., 0.};
 	for (std::size_t i{0}; i < _bodies.size(); ++i) {
 		if (i != bodyIndex) {
-			Vector2d dx{_bodies[i]->position - position};
+			Vector2d dx{_bodies[i]->getPosition() - position};
 			double dist{norm(dx)};
-			res += _bodies[i]->mass * dx / (dist * dist * dist);
+			res += _bodies[i]->getMass() * dx / (dist * dist * dist);
 		}
 	}
 	return res * _gravitationalConstant;
@@ -86,8 +84,8 @@ void PhysicalModel::updateStep(bool backwards) {
 	std::vector<Vector2d> dv(_bodies.size());
 	std::vector<Vector2d> dx(_bodies.size());
 	for (std::size_t i{0}; i < _bodies.size(); ++i) {
-		Vector2d vel{_bodies[i]->velocity};
-		Vector2d pos{_bodies[i]->position};
+		Vector2d vel{_bodies[i]->getVelocity()};
+		Vector2d pos{_bodies[i]->getPosition()};
 		Vector2d l1{dt * computeAcceleration(pos, i)};
 		Vector2d k1{dt * vel};
 		Vector2d l2{dt * computeAcceleration(pos + 0.5 * k1, i)};
@@ -101,8 +99,8 @@ void PhysicalModel::updateStep(bool backwards) {
 	}
 
 	for (std::size_t i{0}; i < _bodies.size(); ++i) {
-		_bodies[i]->position += dx[i];
-		_bodies[i]->velocity += dv[i];
+		_bodies[i]->setPosition(_bodies[i]->getPosition() + dx[i]);
+		_bodies[i]->setVelocity(_bodies[i]->getVelocity() + dv[i]);
 	}
 
 	// Check for collisions

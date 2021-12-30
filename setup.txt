@@ -6,35 +6,40 @@
             "radius": 10,
             "position": {"x": 450.54, "y": 118.145},
             "velocity": {"x": 50.11, "y": 0.989},
-            "color": "#FF0000FF"
+            "color": "#FF0000FF",
+            "angularVelocity": 0
         },
         {
             "mass": 1e18,
             "radius": 10,
             "position": {"x": 661.16, "y": 20.5},
             "velocity": {"x": 10.44, "y": 0.45},
-            "color": "#00FF00FF"
+            "color": "#00FF00FF",
+            "angularVelocity": 0
         },
         {
             "mass": 1e19,
             "radius": 10,
             "position": {"x": 522.22, "y": 345},
             "velocity": {"x": 0.4, "y": 60.54},
-            "color": "#0000FFFF"
+            "color": "#0000FFFF",
+            "angularVelocity": 0
         },
         {
             "mass": 1e21,
             "radius": 20,
             "position": {"x": 600, "y": 200},
             "velocity": {"x": -10, "y": 0},
-            "color": "#F0F000FF"
+            "color": "#F0F000FF",
+            "angularVelocity": 0
         },
         {
             "mass": 1e17,
             "radius": 5,
             "position": {"x": 600, "y": 150},
             "velocity": {"x": 150, "y": 0},
-            "color": "#F0F0F0FF"
+            "color": "#F0F0F0FF",
+            "angularVelocity": 0
         }
     ],
     "polygons":
@@ -44,7 +49,8 @@
             "vertices": [{"x": 0, "y": 0}, {"x": 10, "y": 0}, {"x": 0, "y": 10}],
             "position": {"x": 500, "y": 220},
             "velocity": {"x": 150, "y": 0},
-            "color": "#F0F0F0FF"
+            "color": "#F0F0F0FF",
+            "angularVelocity": 0
         }
     ]
 }
