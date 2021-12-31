@@ -2,16 +2,18 @@
 #include <functional>
 #include <cmath>
 #include <cstddef>
+#include <stdexcept>
 #include <Body.hpp>
 #include <collisions.hpp>
 
 
 Body::Body(double mass, const Vector2d& position, const Vector2d& velocity,
-		const sf::Color color, double angularVelocity):
+		const sf::Color color, double angle, double angularVelocity):
     _mass{mass},
     _position{position},
     _velocity{velocity},
     _color{color},
+    _angle{angle},
     _angularVelocity{angularVelocity} {
 }
 
@@ -31,11 +33,11 @@ const sf::Color& Body::getColor() const {
     return _color;
 }
 
-const double& Body::getMomentOfInertia() const {
-    return _momentOfInertia;
+double Body::getAngle() const {
+    return _angle;
 }
 
-const double& Body::getAngularVelocity() const {
+double Body::getAngularVelocity() const {
     return _angularVelocity;
 }
 
@@ -55,19 +57,18 @@ void Body::setColor(const sf::Color& color) {
     _color = color;
 }
 
-void Body::setAngularVelocity(const double& angularVelocity) {
+void Body::setAngle(double angle) {
+    _angle = angle;
+}
+
+void Body::setAngularVelocity(double angularVelocity) {
     _angularVelocity = angularVelocity;
 }
 
-void Body::setMomentOfInertia(double momentOfInertia) {
-	_momentOfInertia = momentOfInertia;
-}
-
 CircleBody::CircleBody(double mass, const Vector2d& position, const Vector2d& velocity,
-        const sf::Color color, double angularVelocity, double radius):
-    Body(mass, position, velocity, color, angularVelocity),
+        const sf::Color color, double angle, double angularVelocity, double radius):
+    Body(mass, position, velocity, color, angle, angularVelocity),
     _radius{radius} {
-    setMomentOfInertia(_mass * _radius * _radius / 2);
 }
 
 
@@ -90,6 +91,14 @@ std::shared_ptr<sf::Shape> CircleBody::createShape() const {
     return circle;
 }
 
+double CircleBody::getMomentOfInertia() const {
+	return _mass * _radius * _radius / 2;
+}
+
+Vector2d CircleBody::getCenterOfMass() const {
+	return {0, 0};
+}
+
 double CircleBody::getRadius() const {
 	return _radius;
 }
@@ -99,10 +108,12 @@ Vector2d CircleBody::support(Vector2d direction) const {
 }
 
 PolygonBody::PolygonBody(double mass, const Vector2d& position, const Vector2d& velocity,
-	   const sf::Color color, double angularVelocity, const std::vector<Vector2d>& vertices):
-   Body(mass, position, velocity, color, angularVelocity),
-    _vertices{vertices} {
-    setMomentOfInertia(computeMomentOfInertia());
+	   const sf::Color color, double angle, double angularVelocity,
+	   const std::vector<Vector2d>& vertices):
+	Body(mass, position, velocity, color, angle, angularVelocity),
+	_vertices{vertices},
+	_centerOfMass{computeCenterOfMass()},
+	_momentOfInertia{computeMomentOfInertia()} {
 }
 
 void PolygonBody::collide(Body& other) {
@@ -126,6 +137,14 @@ std::shared_ptr<sf::Shape> PolygonBody::createShape() const {
     return polygon;
 }
 
+Vector2d PolygonBody::getCenterOfMass() const {
+	return _centerOfMass;
+}
+
+double PolygonBody::getMomentOfInertia() const {
+	return _momentOfInertia;
+}
+
 const std::vector<Vector2d>& PolygonBody::getVertices() const {
 	return _vertices;
 }
@@ -147,6 +166,24 @@ Vector2d PolygonBody::support(Vector2d direction) const {
     return _vertices[largest] + _position;
 }
 
+Vector2d PolygonBody::computeCenterOfMass() const {
+	if (_vertices.size() < 3) {
+		throw std::runtime_error("Invalid shape");
+	}
+	std::vector<double> triangleAreas;
+	std::vector<Vector2d> triangleCenters;
+	for (std::size_t i{1}; i < _vertices.size() - 1; ++i) {
+		Vector2d B{_vertices[i] - _vertices[0]};
+		Vector2d C{_vertices[i+1] - _vertices[0]};
+		triangleAreas.push_back(std::abs(cross(B, C)) / 2.);
+		triangleCenters.push_back((B + C) / 3.);
+	}
+	double totalArea{std::accumulate(triangleAreas.begin(), triangleAreas.end(), 0.)};
+	Vector2d centerOfMass{std::inner_product(triangleCenters.begin(),
+		triangleCenters.end(), triangleAreas.begin(), Vector2d(0, 0))};
+	return centerOfMass / totalArea;
+}
+
 double PolygonBody::computeMomentOfInertia() const {
     std::vector<double> areas;
     std::vector<Vector2d> centersOfMass;
@@ -157,7 +194,6 @@ double PolygonBody::computeMomentOfInertia() const {
         centersOfMass.push_back((B + C) / 3.);
     }
     double totalArea{std::accumulate(areas.begin(), areas.end(), 0.)};
-    Vector2d totalCenterOfMass{0, 0};
     double momentOfInertia{0};
     for (std::size_t i{1}; i < _vertices.size() - 1; ++i) {
         Vector2d B{_vertices[i] - _vertices[0]};
@@ -165,10 +201,8 @@ double PolygonBody::computeMomentOfInertia() const {
         double signedArea{cross(B, C)/2.};
         double area{areas[i - 1]};
         double mass{_mass * area / totalArea};
-        totalCenterOfMass += centersOfMass[i] * mass;
         momentOfInertia += mass * (signedArea / area) * (norm2(B) + norm2(C) + dot(B, C));
     }
-    totalCenterOfMass /= _mass;
 
-    return (momentOfInertia / 6) - _mass * norm2(_vertices[0] - totalCenterOfMass);
+    return (momentOfInertia / 6) - _mass * norm2(_vertices[0] - getCenterOfMass());
 }

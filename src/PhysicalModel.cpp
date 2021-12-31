@@ -97,10 +97,10 @@ void PhysicalModel::updateStep(bool backwards) {
 		dx[i] = (k1 + 2. * k2 + 2. *  k3 + k4) / 6.;
 		dv[i] = (l1 + 2. * l2 + 2. *  l3 + l4) / 6.;
 	}
-
 	for (std::size_t i{0}; i < _bodies.size(); ++i) {
 		_bodies[i]->setPosition(_bodies[i]->getPosition() + dx[i]);
 		_bodies[i]->setVelocity(_bodies[i]->getVelocity() + dv[i]);
+		_bodies[i]->setAngle(_bodies[i]->getAngle() + _bodies[i]->getAngularVelocity() * dt);
 	}
 
 	// Check for collisions

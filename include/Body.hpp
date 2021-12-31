@@ -16,7 +16,7 @@ class PolygonBody;
 class Body {
 public:
 	Body(double mass, const Vector2d& position, const Vector2d& velocity,
-		const sf::Color color, double angularVelocity);
+		const sf::Color color, double angle, double angularVelocity);
 	virtual ~Body() = default;
 	virtual void collide(Body& other) = 0;
 	virtual void collide(CircleBody& other) = 0;
@@ -27,37 +27,39 @@ public:
 	const Vector2d& getPosition() const;
 	const Vector2d& getVelocity() const;
 	const sf::Color& getColor() const;
-	const double& getMomentOfInertia() const;
-	const double& getAngularVelocity() const;
+	virtual Vector2d getCenterOfMass() const = 0;
+	virtual double getMomentOfInertia() const = 0;
+	double getAngle() const;
+	double getAngularVelocity() const;
 	void setMass(double mass);
 	void setPosition(const Vector2d& position);
 	void setVelocity(const Vector2d& velocity);
 	void setColor(const sf::Color& color);
-	void setAngularVelocity(const double& angularVelocity);
+	void setAngle(double angle);
+	void setAngularVelocity(double angularVelocity);
 
 protected:
 	double _mass;
 	Vector2d _position;
 	Vector2d _velocity;
 	sf::Color _color;
-	double _momentOfInertia;
+	double _angle;
 	double _angularVelocity;
-
-	// This must be called as soon as possible by subclasses
-	void setMomentOfInertia(double momentOfInertia);
 };
 
 
 class CircleBody : public Body {
 public:
 	CircleBody(double mass, const Vector2d& position, const Vector2d& velocity,
-		const sf::Color color, double angularVelocity, double radius);
+		const sf::Color color, double angle, double angularVelocity, double radius);
 	CircleBody(CircleBody&&) = default;
 	virtual void collide(Body& other) override;
 	virtual void collide(CircleBody& other) override;
 	virtual void collide(PolygonBody& other) override;
 	virtual std::shared_ptr<sf::Shape> createShape() const override;
 	virtual Vector2d support(Vector2d direction) const override;
+	virtual Vector2d getCenterOfMass() const override;
+	virtual double getMomentOfInertia() const override;
 	double getRadius() const;
 
 private:
@@ -69,17 +71,24 @@ private:
 class PolygonBody : public Body {
 public:
 	PolygonBody(double mass, const Vector2d& position, const Vector2d& velocity,
-		const sf::Color color, double angularVelocity, const std::vector<Vector2d>& vertices);
+		const sf::Color color, double angle, double angularVelocity,
+		const std::vector<Vector2d>& vertices);
 	virtual void collide(Body& other) override;
 	virtual void collide(CircleBody& other) override;
 	virtual void collide(PolygonBody& other) override;
 	virtual std::shared_ptr<sf::Shape> createShape() const override;
 	virtual Vector2d support(Vector2d direction) const override;
+	virtual Vector2d getCenterOfMass() const override;
+	virtual double getMomentOfInertia() const override;
 	const std::vector<Vector2d>& getVertices() const;
 
 private:
 	double computeMomentOfInertia() const;
+	Vector2d computeCenterOfMass() const;
+
 	std::vector<Vector2d> _vertices;
+	Vector2d _centerOfMass;
+	double _momentOfInertia;
 };
 
 
@@ -108,6 +117,7 @@ namespace nlohmann {
 				j.at("position").get<Vector2d>(),
 				j.at("velocity").get<Vector2d>(),
 				j.at("color").get<sf::Color>(),
+				j.at("angle").get<double>(),
 				j.at("angularVelocity").get<double>(),
 				j.at("radius").get<double>()
 			);
@@ -119,6 +129,7 @@ namespace nlohmann {
 				{"position", body->getPosition()},
 				{"velocity", body->getVelocity()},
 				{"color", body->getColor()},
+				{"angle", body->getAngle()},
 				{"angularVelocity", body->getAngularVelocity()},
 				{"radius", body->getRadius()}
 			};
@@ -133,6 +144,7 @@ namespace nlohmann {
 				j.at("position").get<Vector2d>(),
 				j.at("velocity").get<Vector2d>(),
 				j.at("color").get<sf::Color>(),
+				j.at("angle").get<double>(),
 				j.at("angularVelocity").get<double>(),
 				j.at("vertices").get<std::vector<Vector2d>>()
 			);
@@ -144,6 +156,7 @@ namespace nlohmann {
 				{"position", body->getPosition()},
 				{"velocity", body->getVelocity()},
 				{"color", body->getColor()},
+				{"angle", body->getAngle()},
 				{"angularVelocity", body->getAngularVelocity()},
 				{"vertices", body->getVertices()}
 			};

@@ -1,9 +1,63 @@
 #include <stdexcept>
+#include <iostream>
 #include <collisions.hpp>
 
 void collideBodies(Body& bodyA, Body& bodyB) {
-    if(GJK(bodyA, bodyB)) {
-        // TODO response
+    std::optional<CollisionResponse> collision{GJK(bodyA, bodyB)};
+    if(collision.has_value()) {
+        CollisionResponse response{collision.value()};
+        double distA{norm(response.A_2 - response.A_1)};
+        double distB{norm(response.B_2 - response.B_1)};
+        Body* body_i;
+        Body* body_j;
+        // R is the collision point
+        // n is the vector normal to the surface of contact
+        Vector2d R, n;
+        if (distA > distB) {
+            // B is either one vertex in a polygon, or two really close points
+            // on a circle. We'll give the impulse to bodyB through the
+            // average of B1 and B2.
+            body_i = &bodyA;
+            body_j = &bodyB;
+            R = (response.B_1 + response.B_2) / 2.;
+            n = perpendicular(response.A_2 - response.A_1, bodyA.getCenterOfMass() - response.A_1);
+        } else {
+            body_i = &bodyB;
+            body_j = &bodyA;
+            R = (response.A_1 + response.A_2) / 2.;
+            n = perpendicular(response.B_2 - response.B_1, bodyB.getCenterOfMass() - response.B_1);
+        }
+        n /= norm(n);
+
+        Vector2d R_i{R - body_i->getCenterOfMass() - body_i->getPosition()};
+        Vector2d R_j{R - body_j->getCenterOfMass() - body_j->getPosition()};
+        Vector2d v_i{body_i->getVelocity()};
+        Vector2d v_j{body_j->getVelocity()};
+        double m_i{body_i->getMass()};
+        double m_j{body_j->getMass()};
+        double I_i{body_i->getMomentOfInertia()};
+        double I_j{body_j->getMomentOfInertia()};
+        double w_i{body_i->getAngularVelocity()};
+        double w_j{body_j->getAngularVelocity()};
+        double R_i_n{cross(R_i, n)};
+        double R_j_n{cross(R_j, n)};
+
+        // norm_J is the norm of the resulting impulse vector
+        double norm_J{- 2 *
+            ( m_j * dot(v_i, n)
+            - m_i * dot(v_j, n)
+            + m_i * m_j * w_i * R_i_n
+            - m_i * m_j * w_j * R_j_n) /
+            ( m_i + m_j
+            + m_i * m_j * R_i_n * R_i_n / I_i
+            + m_i * m_j * R_j_n * R_j_n / I_j)
+        };
+        Vector2d J{n * norm_J};
+
+        body_i->setVelocity(v_i + J / m_i);
+        body_j->setVelocity(v_j - J / m_j);
+        body_i->setAngularVelocity(w_i + cross(R_i, J) / I_i);
+        body_j->setAngularVelocity(w_j - cross(R_j, J) / I_j);
     }
 }
 
@@ -29,22 +83,24 @@ std::optional<CollisionResponse> GJK(const Body& bodyA, const Body& bodyB) {
 		simplexPoints.push_back({A, B});
         simplex.push_back(supportPoint);
         if(impl::nearestSimplex(simplex, direction, simplexPoints)) {
-			// The simplex must contain 3 points. We check to which side the
-			// origin is closest to. It must be one of the two sides containing
-			// the last point.
+			// The simplex must contain 3 points. We check to which side of the
+            // simplex the origin is closest to. It must be one of the two sides
+            // containing the last added point.
 			CollisionResponse response;
 			Vector2d S_0{simplex.at(0)}, S_1{simplex.at(1)}, S_2{simplex.at(2)};
             const auto& [A_2, B_2] = simplexPoints.at(2);
-			if (dot(S_1 - S_2, -S_2) > 0) {
+
+            double dist_12{std::abs(cross(S_1, S_2)) / norm(S_2 - S_1)};
+            double dist_02{std::abs(cross(S_0, S_2)) / norm(S_2 - S_0)};
+			if (dist_12 < dist_02) {
 				// We are closest to segment S_1 S_2.
 				const auto& [A_1, B_1] = simplexPoints.at(1);
-                return {{A_1, B_1, B_2, true}};
+                return {{A_1, A_2, B_1, B_2}};
             } else {
 				// We are closest to segment S_0 S_2.
 				const auto& [A_0, B_0] = simplexPoints.at(0);
-                return {{A_0, A_2, B_0, false}};
+                return {{A_0, A_2, B_0, B_2}};
             }
-            return std::optional<CollisionResponse>();
         }
     }
 }

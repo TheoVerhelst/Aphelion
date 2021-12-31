@@ -6,12 +6,10 @@
 #include <vector.hpp>
 #include <Body.hpp>
 
-// Information about the collision between two bodies. It is defined as a point
-// from the body A and a face from the body B (defined by two points). The
-// boolean argument indicates which Body instance is the body A.
+// Information about the collision between two bodies.
 struct CollisionResponse {
-	Vector2d A, B_1, B_2;
-	bool AisThis;
+	Vector2d A_1, A_2;
+	Vector2d B_1, B_2;
 };
 
 // Collision detection and response between arbitrary bodies.
