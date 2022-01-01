@@ -54,9 +54,9 @@
             "vertices": [{"x":-10, "y": -10}, {"x": 10, "y": 0}, {"x": 0, "y": 10}],
             "position": {"x": 0, "y": 100},
             "velocity": {"x": 20, "y": 0},
-            "rotation": 0,
+            "rotation": 1,
             "color": "#F0F0F0FF",
-            "angularVelocity": 0.1
+            "angularVelocity": 0
         }
     ]
 }

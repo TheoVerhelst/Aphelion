@@ -32,22 +32,22 @@ void collideBodies(Body& bodyA, Body& bodyB) {
         double R_A_n{cross(R_A, n)};
         double R_B_n{cross(R_B, n)};
 
-        // norm_B is the norm of the resulting impulse vector
+        // norm_J is the norm of the resulting impulse vector
         double norm_J{- 2 *
-            ( m_B * dot(v_A, n)
-            - m_A * dot(v_B, n)
-            + m_A * m_B * w_A * R_A_n
-            - m_A * m_B * w_B * R_B_n) /
+            ( m_A * dot(v_B, n)
+            - m_B * dot(v_A, n)
+            + m_A * m_B * w_B * R_B_n
+            - m_A * m_B * w_A * R_A_n) /
             ( m_A + m_B
             + m_A * m_B * R_A_n * R_A_n / I_A
             + m_A * m_B * R_B_n * R_B_n / I_B)
         };
         Vector2d J{n * norm_J};
 
-        bodyA.setVelocity(v_A + J / m_A);
-        bodyB.setVelocity(v_B - J / m_B);
-        bodyA.setAngularVelocity(w_A + cross(R_A, J) / I_A);
-        bodyB.setAngularVelocity(w_B - cross(R_B, J) / I_B);
+        bodyA.setVelocity(v_A - J / m_A);
+        bodyB.setVelocity(v_B + J / m_B);
+        bodyA.setAngularVelocity(w_A - cross(R_A, J) / I_A);
+        bodyB.setAngularVelocity(w_B + cross(R_B, J) / I_B);
 
         // Shift the bodies out of collision
         bodyA.setPosition(bodyA.getPosition() - contactInfo.normal * bodyB.getMass() / totalMass);
