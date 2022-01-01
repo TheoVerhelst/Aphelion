@@ -4,46 +4,46 @@
         {
             "mass": 4e18,
             "radius": 10,
-            "position": {"x": 450.54, "y": 118.145},
-            "velocity": {"x": 50.11, "y": 0.989},
+            "position": {"x": -50, "y": 20},
+            "velocity": {"x": 40, "y": 0},
             "color": "#FF0000FF",
-            "angle": 0,
+            "rotation": 0,
             "angularVelocity": 0
         },
         {
             "mass": 1e18,
             "radius": 10,
-            "position": {"x": 661.16, "y": 20.5},
-            "velocity": {"x": 10.44, "y": 0.45},
+            "position": {"x": 150, "y": -80},
+            "velocity": {"x": 10, "y": 0},
             "color": "#00FF00FF",
-            "angle": 0,
+            "rotation": 0,
             "angularVelocity": 0
         },
         {
             "mass": 1e19,
             "radius": 10,
-            "position": {"x": 522.22, "y": 345},
-            "velocity": {"x": 0.4, "y": 60.54},
+            "position": {"x": 20, "y": 245},
+            "velocity": {"x": 0, "y": 60},
             "color": "#0000FFFF",
-            "angle": 0,
+            "rotation": 0,
             "angularVelocity": 0
         },
         {
-            "mass": 1e20,
+            "mass": 1e21,
             "radius": 20,
-            "position": {"x": 600, "y": 200},
+            "position": {"x": 100, "y": 100},
             "velocity": {"x": 0, "y": 0},
             "color": "#F0F000FF",
-            "angle": 0,
+            "rotation": 0,
             "angularVelocity": 0
         },
         {
             "mass": 1e17,
             "radius": 5,
-            "position": {"x": 600, "y": 150},
-            "velocity": {"x": 150, "y": 0},
+            "position": {"x": 100, "y": 50},
+            "velocity": {"x": 50, "y": 0},
             "color": "#F0F0F0FF",
-            "angle": 0,
+            "rotation": 0,
             "angularVelocity": 0
         }
     ],
@@ -52,11 +52,11 @@
         {
             "mass": 1e17,
             "vertices": [{"x":-10, "y": -10}, {"x": 10, "y": 0}, {"x": 0, "y": 10}],
-            "position": {"x": 500, "y": 200},
-            "velocity": {"x": 40, "y": -10},
-            "angle": 0,
+            "position": {"x": 0, "y": 100},
+            "velocity": {"x": 20, "y": 0},
+            "rotation": 0,
             "color": "#F0F0F0FF",
-            "angularVelocity": 1
+            "angularVelocity": 0.1
         }
     ]
 }

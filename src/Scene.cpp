@@ -36,7 +36,7 @@ void Scene::update() {
 
 	for (std::size_t i{0}; i < bodies.size(); ++i) {
 		_shapes[i]->setPosition(static_cast<Vector2f>(bodies[i].lock()->getPosition()));
-		_shapes[i]->setRotation(bodies[i].lock()->getAngle() * 180 / std::acos(-1));
+		_shapes[i]->setRotation(bodies[i].lock()->getRotation() * 180 / std::acos(-1));
 
         // The new trace line is from the previous one to the new position
         _traces[i][nextIndex * 2] = _traces[i][(_traceIndex * 2) + 1];

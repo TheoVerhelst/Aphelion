@@ -16,48 +16,52 @@ class PolygonBody;
 class Body {
 public:
 	Body(double mass, const Vector2d& position, const Vector2d& velocity,
-		const sf::Color color, double angle, double angularVelocity);
+		double rotation, double angularVelocity, const sf::Color color);
 	virtual ~Body() = default;
 	virtual void collide(Body& other) = 0;
 	virtual void collide(CircleBody& other) = 0;
 	virtual void collide(PolygonBody& other) = 0;
 	virtual std::shared_ptr<sf::Shape> createShape() const = 0;
-	virtual Vector2d support(Vector2d direction) const = 0;
+	// In world coordinates
+	virtual Vector2d support(const Vector2d& direction) const = 0;
 	double getMass() const;
+	// In world coordinates
 	const Vector2d& getPosition() const;
 	const Vector2d& getVelocity() const;
-	const sf::Color& getColor() const;
+	double getRotation() const;
+	double getAngularVelocity() const;
+	// In local coordinates
 	virtual Vector2d getCenterOfMass() const = 0;
 	virtual double getMomentOfInertia() const = 0;
-	double getAngle() const;
-	double getAngularVelocity() const;
+	const sf::Color& getColor() const;
 	void setMass(double mass);
+	// In world coordinates
 	void setPosition(const Vector2d& position);
 	void setVelocity(const Vector2d& velocity);
-	void setColor(const sf::Color& color);
-	void setAngle(double angle);
+	void setRotation(double rotation);
 	void setAngularVelocity(double angularVelocity);
+	void setColor(const sf::Color& color);
 
 protected:
 	double _mass;
 	Vector2d _position;
 	Vector2d _velocity;
-	sf::Color _color;
-	double _angle;
+	double _rotation;
 	double _angularVelocity;
+	sf::Color _color;
 };
 
 
 class CircleBody : public Body {
 public:
 	CircleBody(double mass, const Vector2d& position, const Vector2d& velocity,
-		const sf::Color color, double angle, double angularVelocity, double radius);
+		double rotation, double angularVelocity, const sf::Color color, double radius);
 	CircleBody(CircleBody&&) = default;
 	virtual void collide(Body& other) override;
 	virtual void collide(CircleBody& other) override;
 	virtual void collide(PolygonBody& other) override;
 	virtual std::shared_ptr<sf::Shape> createShape() const override;
-	virtual Vector2d support(Vector2d direction) const override;
+	virtual Vector2d support(const Vector2d& direction) const override;
 	virtual Vector2d getCenterOfMass() const override;
 	virtual double getMomentOfInertia() const override;
 	double getRadius() const;
@@ -71,15 +75,16 @@ private:
 class PolygonBody : public Body {
 public:
 	PolygonBody(double mass, const Vector2d& position, const Vector2d& velocity,
-		const sf::Color color, double angle, double angularVelocity,
+		double rotation, double angularVelocity, const sf::Color color,
 		const std::vector<Vector2d>& vertices);
 	virtual void collide(Body& other) override;
 	virtual void collide(CircleBody& other) override;
 	virtual void collide(PolygonBody& other) override;
 	virtual std::shared_ptr<sf::Shape> createShape() const override;
-	virtual Vector2d support(Vector2d direction) const override;
+	virtual Vector2d support(const Vector2d& direction) const override;
 	virtual Vector2d getCenterOfMass() const override;
 	virtual double getMomentOfInertia() const override;
+	// In local coordinates
 	const std::vector<Vector2d>& getVertices() const;
 
 private:
@@ -116,9 +121,9 @@ namespace nlohmann {
 				j.at("mass").get<double>(),
 				j.at("position").get<Vector2d>(),
 				j.at("velocity").get<Vector2d>(),
-				j.at("color").get<sf::Color>(),
-				j.at("angle").get<double>(),
+				j.at("rotation").get<double>(),
 				j.at("angularVelocity").get<double>(),
+				j.at("color").get<sf::Color>(),
 				j.at("radius").get<double>()
 			);
         }
@@ -128,9 +133,9 @@ namespace nlohmann {
 				{"mass", body->getMass()},
 				{"position", body->getPosition()},
 				{"velocity", body->getVelocity()},
-				{"color", body->getColor()},
-				{"angle", body->getAngle()},
+				{"rotation", body->getRotation()},
 				{"angularVelocity", body->getAngularVelocity()},
+				{"color", body->getColor()},
 				{"radius", body->getRadius()}
 			};
         }
@@ -143,9 +148,9 @@ namespace nlohmann {
 				j.at("mass").get<double>(),
 				j.at("position").get<Vector2d>(),
 				j.at("velocity").get<Vector2d>(),
-				j.at("color").get<sf::Color>(),
-				j.at("angle").get<double>(),
+				j.at("rotation").get<double>(),
 				j.at("angularVelocity").get<double>(),
+				j.at("color").get<sf::Color>(),
 				j.at("vertices").get<std::vector<Vector2d>>()
 			);
         }
@@ -155,9 +160,9 @@ namespace nlohmann {
 				{"mass", body->getMass()},
 				{"position", body->getPosition()},
 				{"velocity", body->getVelocity()},
-				{"color", body->getColor()},
-				{"angle", body->getAngle()},
+				{"rotation", body->getRotation()},
 				{"angularVelocity", body->getAngularVelocity()},
+				{"color", body->getColor()},
 				{"vertices", body->getVertices()}
 			};
         }

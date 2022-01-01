@@ -100,7 +100,7 @@ void PhysicalModel::updateStep(bool backwards) {
 	for (std::size_t i{0}; i < _bodies.size(); ++i) {
 		_bodies[i]->setPosition(_bodies[i]->getPosition() + dx[i]);
 		_bodies[i]->setVelocity(_bodies[i]->getVelocity() + dv[i]);
-		_bodies[i]->setAngle(_bodies[i]->getAngle() + _bodies[i]->getAngularVelocity() * dt);
+		_bodies[i]->setRotation(_bodies[i]->getRotation() + _bodies[i]->getAngularVelocity() * dt);
 	}
 
 	// Check for collisions

@@ -38,19 +38,28 @@ T cross(const sf::Vector2<T>& a, const sf::Vector2<T>& b) {
 // with the vector d.
 template <FloatingPoint T>
 sf::Vector2<T> perpendicular(const sf::Vector2<T>& v, const sf::Vector2<T>& d) {
-	// We actually use the formula (v x d) x v, but since we have zero as the
-	// third component in v and d, the result is quite simple.
-	T c{cross(v, d)};
-	return {-v.y * c, v.x * c};
+	// We could use the formula (v x d) x v, but this requires three
+	// multiplications, which is not ideal for small vectors. We have a branch
+	// but no number stability issue here.
+	Vector2d res{v.y, -v.x};
+	if (dot(res, d) < 0) {
+		return -res;
+	} else {
+		return res;
+	}
 }
 
-// Create stream operator for sf::Vector2
+template <FloatingPoint T>
+sf::Vector2<T> rotate(const sf::Vector2<T>& v, T angle) {
+	return {v.x * std::cos(angle) - v.y * std::sin(angle), v.x * std::sin(angle) + v.y * std::cos(angle)};
+}
+
 template <typename T>
 std::ostream& operator<<(std::ostream& os, sf::Vector2<T> v) {
   return os << "(" << v.x << ", " << v.y << ")";
 }
 
-// Create serializers for sf::Vector2
+// Serializers for sf::Vector2
 namespace nlohmann {
     template <typename T>
     struct adl_serializer<sf::Vector2<T>> {

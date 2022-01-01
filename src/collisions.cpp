@@ -3,105 +3,55 @@
 #include <collisions.hpp>
 
 void collideBodies(Body& bodyA, Body& bodyB) {
-    std::optional<CollisionResponse> collision{GJK(bodyA, bodyB)};
+    std::optional<impl::MinkowskyPolygon> collision{impl::GJK(bodyA, bodyB)};
     if(collision.has_value()) {
-        CollisionResponse response{collision.value()};
-        double distA{norm(response.A_2 - response.A_1)};
-        double distB{norm(response.B_2 - response.B_1)};
-        Body* body_i;
-        Body* body_j;
-        // R is the collision point
-        // n is the vector normal to the surface of contact
-        Vector2d R, n;
-        if (distA > distB) {
-            // B is either one vertex in a polygon, or two really close points
-            // on a circle. We'll give the impulse to bodyB through the
-            // average of B1 and B2.
-            body_i = &bodyA;
-            body_j = &bodyB;
-            R = (response.B_1 + response.B_2) / 2.;
-            n = perpendicular(response.A_2 - response.A_1, bodyA.getCenterOfMass() - response.A_1);
-        } else {
-            body_i = &bodyB;
-            body_j = &bodyA;
-            R = (response.A_1 + response.A_2) / 2.;
-            n = perpendicular(response.B_2 - response.B_1, bodyB.getCenterOfMass() - response.B_1);
-        }
-        n /= norm(n);
+        impl::ContactInfo contactInfo{impl::EPA(bodyA, bodyB, collision.value())};
+        double totalMass{bodyA.getMass() + bodyB.getMass()};
+        // n is the normalized vector normal to the surface of contact
+        Vector2d n{contactInfo.normal / norm(contactInfo.normal)};
+        std::cout << "ContactInfo:" << std::endl;
+        std::cout << "Class A: " << typeid(bodyA).name() << std::endl;
+        std::cout << "Class B: " << typeid(bodyB).name() << std::endl;
+        std::cout << "A.position = " << bodyA.getPosition() << std::endl;
+        std::cout << "B.position = " << bodyB.getPosition() << std::endl;
+        std::cout << "C_A = " << contactInfo.C_A << std::endl;
+        std::cout << "C_B = " << contactInfo.C_B << std::endl;
+        std::cout << "n = " << n << std::endl;
+        std::cout << "|normal| = " << norm(contactInfo.normal) << std::endl;
 
-        Vector2d R_i{R - body_i->getCenterOfMass() - body_i->getPosition()};
-        Vector2d R_j{R - body_j->getCenterOfMass() - body_j->getPosition()};
-        Vector2d v_i{body_i->getVelocity()};
-        Vector2d v_j{body_j->getVelocity()};
-        double m_i{body_i->getMass()};
-        double m_j{body_j->getMass()};
-        double I_i{body_i->getMomentOfInertia()};
-        double I_j{body_j->getMomentOfInertia()};
-        double w_i{body_i->getAngularVelocity()};
-        double w_j{body_j->getAngularVelocity()};
-        double R_i_n{cross(R_i, n)};
-        double R_j_n{cross(R_j, n)};
+        Vector2d R_A{contactInfo.C_A - bodyA.getCenterOfMass() - bodyA.getPosition()};
+        Vector2d R_B{contactInfo.C_B - bodyB.getCenterOfMass() - bodyB.getPosition()};
+        Vector2d v_A{bodyA.getVelocity()};
+        Vector2d v_B{bodyB.getVelocity()};
+        double m_A{bodyA.getMass()};
+        double m_B{bodyB.getMass()};
+        double I_A{bodyA.getMomentOfInertia()};
+        double I_B{bodyB.getMomentOfInertia()};
+        double w_A{bodyA.getAngularVelocity()};
+        double w_B{bodyB.getAngularVelocity()};
+        double R_A_n{cross(R_A, n)};
+        double R_B_n{cross(R_B, n)};
 
-        // norm_J is the norm of the resulting impulse vector
+        // norm_B is the norm of the resulting impulse vector
         double norm_J{- 2 *
-            ( m_j * dot(v_i, n)
-            - m_i * dot(v_j, n)
-            + m_i * m_j * w_i * R_i_n
-            - m_i * m_j * w_j * R_j_n) /
-            ( m_i + m_j
-            + m_i * m_j * R_i_n * R_i_n / I_i
-            + m_i * m_j * R_j_n * R_j_n / I_j)
+            ( m_B * dot(v_A, n)
+            - m_A * dot(v_B, n)
+            + m_A * m_B * w_A * R_A_n
+            - m_A * m_B * w_B * R_B_n) /
+            ( m_A + m_B
+            + m_A * m_B * R_A_n * R_A_n / I_A
+            + m_A * m_B * R_B_n * R_B_n / I_B)
         };
         Vector2d J{n * norm_J};
 
-        body_i->setVelocity(v_i + J / m_i);
-        body_j->setVelocity(v_j - J / m_j);
-        body_i->setAngularVelocity(w_i + cross(R_i, J) / I_i);
-        body_j->setAngularVelocity(w_j - cross(R_j, J) / I_j);
-    }
-}
+        bodyA.setVelocity(v_A + J / m_A);
+        bodyB.setVelocity(v_B - J / m_B);
+        bodyA.setAngularVelocity(w_A + cross(R_A, J) / I_A);
+        bodyB.setAngularVelocity(w_B - cross(R_B, J) / I_B);
 
-std::optional<CollisionResponse> GJK(const Body& bodyA, const Body& bodyB) {
-    // GJK algorithm, see https://blog.winter.dev/2020/gjk-algorithm/
-	// Or even better: https://youtu.be/ajv46BSqcK4
-    Vector2d direction{1, 0};
-	Vector2d A{bodyA.support(direction)};
-	Vector2d B{bodyB.support(-direction)};
-    Vector2d supportPoint{A - B};
-    std::vector<std::pair<Vector2d, Vector2d>> simplexPoints{{A, B}};
-    std::vector<Vector2d> simplex{supportPoint};
-
-    direction = -supportPoint;
-    while (true) {
-		A = bodyA.support(direction);
-		B = bodyB.support(-direction);
-        supportPoint = A - B;
-        if (dot(supportPoint, direction) < 0) {
-            // No collision
-            return std::optional<CollisionResponse>();
-        }
-		simplexPoints.push_back({A, B});
-        simplex.push_back(supportPoint);
-        if(impl::nearestSimplex(simplex, direction, simplexPoints)) {
-			// The simplex must contain 3 points. We check to which side of the
-            // simplex the origin is closest to. It must be one of the two sides
-            // containing the last added point.
-			CollisionResponse response;
-			Vector2d S_0{simplex.at(0)}, S_1{simplex.at(1)}, S_2{simplex.at(2)};
-            const auto& [A_2, B_2] = simplexPoints.at(2);
-
-            double dist_12{std::abs(cross(S_1, S_2)) / norm(S_2 - S_1)};
-            double dist_02{std::abs(cross(S_0, S_2)) / norm(S_2 - S_0)};
-			if (dist_12 < dist_02) {
-				// We are closest to segment S_1 S_2.
-				const auto& [A_1, B_1] = simplexPoints.at(1);
-                return {{A_1, A_2, B_1, B_2}};
-            } else {
-				// We are closest to segment S_0 S_2.
-				const auto& [A_0, B_0] = simplexPoints.at(0);
-                return {{A_0, A_2, B_0, B_2}};
-            }
-        }
+        // Shift the bodies out of collision
+        bodyA.setPosition(bodyA.getPosition() - contactInfo.normal * bodyB.getMass() / totalMass);
+        bodyB.setPosition(bodyB.getPosition() + contactInfo.normal * bodyA.getMass() / totalMass);
     }
 }
 
@@ -132,20 +82,135 @@ void collideCircles(CircleBody& bodyA, CircleBody& bodyB) {
 
 namespace impl {
 
-bool nearestSimplex(std::vector<Vector2d>& simplex, Vector2d& direction,
-		std::vector<std::pair<Vector2d, Vector2d>>& simplexPoints) {
+void MinkowskyPolygon::pushBack(const Vector2d& A, const Vector2d& B) {
+    insert(size(), A, B);
+}
+
+void MinkowskyPolygon::insert(std::size_t index, const Vector2d& A, const Vector2d& B) {
+    _pointsA.insert(_pointsA.begin() + index, A);
+    _pointsB.insert(_pointsB.begin() + index, B);
+}
+
+void MinkowskyPolygon::erase(std::size_t index) {
+    _pointsA.erase(_pointsA.begin() + index);
+    _pointsB.erase(_pointsB.begin() + index);
+}
+
+Vector2d MinkowskyPolygon::getDifference(std::size_t index) const {
+    return getPointA(index) - getPointB(index);
+}
+
+Vector2d MinkowskyPolygon::getPointA(std::size_t index) const {
+    return _pointsA.at(index);
+}
+
+Vector2d MinkowskyPolygon::getPointB(std::size_t index) const {
+    return _pointsB.at(index);
+}
+
+std::size_t MinkowskyPolygon::size() const {
+    return _pointsA.size();
+}
+
+std::optional<MinkowskyPolygon> GJK(const Body& bodyA, const Body& bodyB) {
+    // GJK algorithm, see https://blog.winter.dev/2020/gjk-algorithm/
+	// Or even better: https://youtu.be/ajv46BSqcK4
+    Vector2d direction{1, 0};
+    Vector2d supportA{bodyA.support(direction)};
+    Vector2d supportB{bodyB.support(-direction)};
+    Vector2d supportPoint{supportA - supportB};
+    MinkowskyPolygon simplex;
+    simplex.pushBack(supportA, supportB);
+
+    direction = -supportPoint;
+    std::size_t maxIter{50};
+    for (std::size_t i{0}; i < maxIter; ++i) {
+        supportA = bodyA.support(direction);
+        supportB = bodyB.support(-direction);
+        supportPoint = supportA - supportB;
+        if (dot(supportPoint, direction) < 0) {
+            // No collision
+            return std::optional<MinkowskyPolygon>();
+        }
+        simplex.pushBack(supportA, supportB);
+        if(impl::nearestSimplex(simplex, direction)) {
+            return simplex;
+        }
+    }
+    return std::optional<MinkowskyPolygon>();
+}
+
+ContactInfo EPA(const Body& bodyA, const Body& bodyB, MinkowskyPolygon polygon) {
+    double eps{0.001};
+    double collisionGap{0.001};
+    std::size_t maxIter{50};
+
+    double minDistance;
+    Vector2d minNormal;
+    std::size_t minIndex;
+
+    for (std::size_t t{0}; t < maxIter; ++t) {
+        // Find the polygon edge closest to the origin, and the associated
+        // normal vector pointing away from the origin
+        minDistance = std::numeric_limits<double>::max();
+        for (std::size_t i{0}; i < polygon.size(); ++i) {
+            std::size_t j{(i + 1) % polygon.size()};
+            Vector2d A{polygon.getDifference(i)}, B{polygon.getDifference(j)};
+            Vector2d normal{perpendicular(B - A, A)};
+            normal /= norm(normal);
+            double distance{dot(normal, A)};
+            if (distance < minDistance) {
+                minDistance = distance;
+                minNormal = normal;
+                minIndex = i;
+            }
+        }
+        // Find the support point in the direction of the normal, and check
+        // if this point is further
+        Vector2d supportA{bodyA.support(minNormal)};
+        Vector2d supportB{bodyB.support(-minNormal)};
+        double supportDistance{dot(supportA - supportB, minNormal)};
+
+        // If the point is no further, we found the closest edge.
+        // We also stop here if we are at the end of the loop
+        if (std::abs(supportDistance - minDistance) <= eps or t == maxIter - 1) {
+            // Find the four points in A and B which correspond to the current
+            // edge of the the polygon
+            std::size_t j{(minIndex + 1) % polygon.size()};
+            Vector2d A_i{polygon.getPointA(minIndex)}, A_j{polygon.getPointA(j)};
+            Vector2d B_i{polygon.getPointB(minIndex)}, B_j{polygon.getPointB(j)};
+            Vector2d S_i{A_i - B_i}, S_j{A_j - B_j};
+            // Alpha is the barycentric coordinate between S_i and S_j
+            // of the vector projection of the origin onto the line S_i S_J.
+            // So if alpha = 0, then the origin maps to S_i, and if alpha = 1,
+            // it maps to S_j
+            double alpha{dot(S_j - S_i, -S_i) / norm2(S_j - S_i)};
+
+            ContactInfo info;
+            info.normal = minNormal * (minDistance + collisionGap);
+            info.C_A = A_i * (1 - alpha) + A_j * alpha;
+            info.C_B = B_i * (1 - alpha) + B_j * alpha;
+            return info;
+        }
+        // Otherwise, add the point to the polygon
+        polygon.insert((minIndex + 1) % polygon.size(), supportA, supportB);
+    }
+    return ContactInfo();
+}
+
+bool nearestSimplex(MinkowskyPolygon& simplex, Vector2d& direction) {
     if (simplex.size() == 2) {
         return simplexLine(simplex, direction);
     } else if (simplex.size() == 3) {
-        return simplexTriangle(simplex, direction, simplexPoints);
+        return simplexTriangle(simplex, direction);
     } else {
         throw std::runtime_error("Invalid simplex size");
     }
     return false;
 }
 
-bool simplexLine(std::vector<Vector2d>& simplex, Vector2d& direction) {
-    Vector2d A{simplex.at(1)}, B{simplex.at(0)};
+bool simplexLine(MinkowskyPolygon& simplex, Vector2d& direction) {
+    Vector2d A{simplex.getDifference(1)}, B{simplex.getDifference(0)};
     // Vector going from the new point to the old point in the simplex
     Vector2d AB{B - A};
     // New direction is perpendicular to this vector (towards origin)
@@ -153,9 +218,8 @@ bool simplexLine(std::vector<Vector2d>& simplex, Vector2d& direction) {
     return false;
 }
 
-bool simplexTriangle(std::vector<Vector2d>& simplex, Vector2d& direction,
-		std::vector<std::pair<Vector2d, Vector2d>>& simplexPoints) {
-    Vector2d A{simplex.at(2)}, B{simplex.at(1)}, C{simplex.at(0)};
+bool simplexTriangle(MinkowskyPolygon& simplex, Vector2d& direction) {
+    Vector2d A{simplex.getDifference(2)}, B{simplex.getDifference(1)}, C{simplex.getDifference(0)};
 	Vector2d AC{C - A}, AB{B - A};
     // Check if we are outside the AC face. We go away from cb to stay outside
     // the simplex.
@@ -163,16 +227,14 @@ bool simplexTriangle(std::vector<Vector2d>& simplex, Vector2d& direction,
     // If the origin is on this side
     if (dot(AC_perp, -A) > 0) {
 		// Remove B from the simplex
-        simplex = {C, A};
-		simplexPoints = {simplexPoints.at(0), simplexPoints.at(2)};
+        simplex.erase(1);
         direction = AC_perp;
         return false;
     }
     Vector2d AB_perp{perpendicular(AB, -AC)};
     if (dot(AB_perp, -A) > 0) {
 		// Remove C from the simplex
-        simplex = {B, A};
-		simplexPoints = {simplexPoints.at(1), simplexPoints.at(2)};
+        simplex.erase(0);
         direction = AB_perp;
         return false;
     }

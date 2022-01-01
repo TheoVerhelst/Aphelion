@@ -8,13 +8,13 @@
 
 
 Body::Body(double mass, const Vector2d& position, const Vector2d& velocity,
-		const sf::Color color, double angle, double angularVelocity):
+		double rotation, double angularVelocity, const sf::Color color):
     _mass{mass},
     _position{position},
     _velocity{velocity},
-    _color{color},
-    _angle{angle},
-    _angularVelocity{angularVelocity} {
+    _rotation{rotation},
+    _angularVelocity{angularVelocity},
+    _color{color} {
 }
 
 double Body::getMass() const {
@@ -33,8 +33,8 @@ const sf::Color& Body::getColor() const {
     return _color;
 }
 
-double Body::getAngle() const {
-    return _angle;
+double Body::getRotation() const {
+    return _rotation;
 }
 
 double Body::getAngularVelocity() const {
@@ -57,8 +57,8 @@ void Body::setColor(const sf::Color& color) {
     _color = color;
 }
 
-void Body::setAngle(double angle) {
-    _angle = angle;
+void Body::setRotation(double rotation) {
+    _rotation = rotation;
 }
 
 void Body::setAngularVelocity(double angularVelocity) {
@@ -66,8 +66,8 @@ void Body::setAngularVelocity(double angularVelocity) {
 }
 
 CircleBody::CircleBody(double mass, const Vector2d& position, const Vector2d& velocity,
-        const sf::Color color, double angle, double angularVelocity, double radius):
-    Body(mass, position, velocity, color, angle, angularVelocity),
+        double rotation, double angularVelocity, const sf::Color color, double radius):
+    Body(mass, position, velocity, rotation, angularVelocity, color),
     _radius{radius} {
 }
 
@@ -103,14 +103,14 @@ double CircleBody::getRadius() const {
 	return _radius;
 }
 
-Vector2d CircleBody::support(Vector2d direction) const {
+Vector2d CircleBody::support(const Vector2d& direction) const {
     return _position + direction * _radius / norm(direction);
 }
 
 PolygonBody::PolygonBody(double mass, const Vector2d& position, const Vector2d& velocity,
-	   const sf::Color color, double angle, double angularVelocity,
+	   double rotation, double angularVelocity, const sf::Color color,
 	   const std::vector<Vector2d>& vertices):
-	Body(mass, position, velocity, color, angle, angularVelocity),
+	Body(mass, position, velocity, rotation, angularVelocity, color),
 	_vertices{vertices},
 	_centerOfMass{computeCenterOfMass()},
 	_momentOfInertia{computeMomentOfInertia()} {
@@ -149,21 +149,19 @@ const std::vector<Vector2d>& PolygonBody::getVertices() const {
 	return _vertices;
 }
 
-Vector2d PolygonBody::support(Vector2d direction) const {
-    std::vector<double> products(_vertices.size());
-    // Compute all dot products between vertices and direction
-    std::transform(
-        _vertices.begin(),
-        _vertices.end(),
-        products.begin(),
-        std::bind(dot<double>, std::placeholders::_1, direction)
-    );
-    // Find the largest one
-    auto largest{std::distance(
-        products.begin(),
-        std::max_element(products.begin(), products.end())
-    )};
-    return _vertices[largest] + _position;
+Vector2d PolygonBody::support(const Vector2d& direction) const {
+	double largest{-std::numeric_limits<double>::max()};
+	Vector2d furthest;
+	for (Vector2d vertex : _vertices) {
+		// Rotate the point around the center of mass to account for rotation
+		Vector2d rotated{rotate(vertex - getCenterOfMass(), getRotation()) + getCenterOfMass()};
+		double product{dot(direction, rotated)};
+		if (product > largest) {
+			furthest = rotated;
+			largest = product;
+		}
+	}
+    return furthest + getPosition();
 }
 
 Vector2d PolygonBody::computeCenterOfMass() const {
