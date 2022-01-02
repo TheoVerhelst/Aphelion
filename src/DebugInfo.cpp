@@ -2,12 +2,12 @@
 #include <iostream>
 #include <DebugInfo.hpp>
 
-DebugInfo::DebugInfo() {
-    if(not _font.loadFromFile("resources/FreeSans.ttf")) {
-        throw std::runtime_error("Error loading font");
-    }
+DebugInfo::DebugInfo(const std::weak_ptr<sf::Font>& font):
+        _font{font} {
     _position.setOrigin(_position.getRadius(), _position.getRadius());
+    _rotation.setFont(*_font.lock());
     _rotation.setCharacterSize(10);
+    _angularVelocity.setFont(*_font.lock());
     _angularVelocity.setCharacterSize(10);
 }
 

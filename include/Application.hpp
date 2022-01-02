@@ -8,6 +8,7 @@
 #include <PhysicalModel.hpp>
 #include <Scene.hpp>
 #include <SimulationCanvas.hpp>
+#include <ResourceManager.hpp>
 
 class Application {
 public:
@@ -22,6 +23,8 @@ private:
     Scene _scene;
     SimulationCanvas::Ptr _simulationCanvas;
     bool _paused{false};
+    ResourceManager<sf::Font> _fontManager;
+    ResourceManager<sf::Texture> _textureManager;
 
     void buildGui();
     void updateDisplays();

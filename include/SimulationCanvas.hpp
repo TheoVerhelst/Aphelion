@@ -20,6 +20,7 @@ public:
     bool handleEvent(const sf::Event& event);
     // Override display to show the debug info on top
     void display();
+    void setDebugFont(const std::weak_ptr<sf::Font>& font);
 
 protected:
     tgui::Widget::Ptr clone() const override;
@@ -30,6 +31,7 @@ private:
     float _panSpeed{300}; // In meter/second
     float _zoomSpeed{1.5}; // In pixel / meter / second
     bool _debugView{false};
+    std::weak_ptr<sf::Font> _debugFont;
     std::vector<DebugInfo> _debugInfos;
 
     void updateView();

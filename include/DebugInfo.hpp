@@ -1,13 +1,14 @@
 #ifndef DEBUGINFO_HPP
 #define DEBUGINFO_HPP
 
+#include <memory>
 #include <SFML/Graphics.hpp>
 #include <Body.hpp>
 #include <vector.hpp>
 
 class DebugInfo : public sf::Drawable {
 public:
-    DebugInfo();
+    DebugInfo(const std::weak_ptr<sf::Font>& font);
     void update(const Body& body);
 	virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 
@@ -20,14 +21,14 @@ private:
 
     private:
         sf::VertexArray _arrow{sf::Lines, 6};
-        const float _headAngle{0.7};
-        const float _headLength{5};
+        float _headAngle{0.7};
+        float _headLength{5};
     };
 
+    std::weak_ptr<sf::Font> _font;
     sf::CircleShape _position{3}; // Radius of the circle
-    sf::Font _font;
-    sf::Text _rotation{"", _font};
-    sf::Text _angularVelocity{"", _font};
+    sf::Text _rotation;
+    sf::Text _angularVelocity;
     ArrowShape _velocity; // Vector anchored at the center of mass
 };
 

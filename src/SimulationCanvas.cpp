@@ -72,7 +72,7 @@ void SimulationCanvas::update(const sf::Time& elapsedTime, const PhysicalModel& 
     if (_debugView) {
         auto bodies = model.getBodies();
         if (_debugInfos.size() != bodies.size()) {
-            _debugInfos.resize(bodies.size());
+            _debugInfos.resize(bodies.size(), DebugInfo(_debugFont));
         }
 
         for (std::size_t i{0}; i < bodies.size(); ++i) {
@@ -90,6 +90,10 @@ void SimulationCanvas::display() {
         }
     }
     tgui::CanvasSFML::display();
+}
+
+void SimulationCanvas::setDebugFont(const std::weak_ptr<sf::Font>& font) {
+    _debugFont = font;
 }
 
 tgui::Widget::Ptr SimulationCanvas::clone() const {

@@ -2,11 +2,12 @@
 #include <format.hpp>
 
 Application::Application(const std::string& setupFile):
-        _window{sf::VideoMode(1200, 600), "Physics Simulation"},
+        _window{sf::VideoMode(1200, 600), "Perihelion"},
         _gui{_window},
         _model{setupFile},
         _scene{_model} {
     tgui::WidgetFactory::setConstructFunction("SimulationCanvas", std::make_shared<SimulationCanvas>);
+    _fontManager.loadFromFile("resources/FreeSans.ttf", "debugFont");
     buildGui();
 }
 
@@ -49,6 +50,7 @@ void Application::run() {
 void Application::buildGui() {
 	_gui.loadWidgetsFromFile(_guiFile);
     _simulationCanvas = _gui.get<SimulationCanvas>("simulationCanvas");
+    _simulationCanvas->setDebugFont(_fontManager.get("debugFont"));
 
     // Spin controls. Do not work with GUI text file import for some reason.
     auto timeSpeedControl = tgui::SpinControl::create(-100, 100, 1, 2, 0.1);
