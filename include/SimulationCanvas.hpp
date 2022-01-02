@@ -5,6 +5,7 @@
 #include <TGUI/TGUI.hpp>
 #include <TGUI/Backend/SFML-Graphics.hpp>
 #include <PhysicalModel.hpp>
+#include <DebugInfo.hpp>
 #include <vector.hpp>
 
 class SimulationCanvas : public tgui::CanvasSFML {
@@ -15,7 +16,10 @@ public:
     SimulationCanvas(const char* typeName = "SimulationCanvas", bool initRenderer = true);
     static SimulationCanvas::Ptr create(tgui::Layout2d size = {"100%", "100%"});
     static SimulationCanvas::Ptr copy(SimulationCanvas::ConstPtr widget);
-    void update(const sf::Time& elapsedTime);
+    void update(const sf::Time& elapsedTime, const PhysicalModel& model);
+    bool handleEvent(const sf::Event& event);
+    // Override display to show the debug info on top
+    void display();
 
 protected:
     tgui::Widget::Ptr clone() const override;
@@ -25,6 +29,8 @@ private:
     float _zoom{1}; // In pixel / meter
     float _panSpeed{300}; // In meter/second
     float _zoomSpeed{1.5}; // In pixel / meter / second
+    bool _debugView{false};
+    std::vector<DebugInfo> _debugInfos;
 
     void updateView();
 };

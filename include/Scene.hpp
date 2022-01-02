@@ -4,7 +4,6 @@
 #include <vector>
 #include <SFML/Graphics.hpp>
 #include <PhysicalModel.hpp>
-#include <DebugInfo.hpp>
 
 class Scene : public sf::Drawable {
 public:
@@ -18,7 +17,6 @@ private:
     const PhysicalModel& _model;
 	std::vector<std::shared_ptr<sf::Shape>> _shapes;
     std::vector<sf::VertexArray> _traces;
-    std::vector<DebugInfo> _debugInfos;
 };
 
 #endif // SCENE_HPP

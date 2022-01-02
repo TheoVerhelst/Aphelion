@@ -28,13 +28,11 @@ void DebugInfo::update(const Body& body) {
     _angularVelocity.setPosition(pos + Vector2f(10, -20));
 
     Vector2d com{body.getPosition() + body.getCenterOfMass()};
-    // Use the square root of the velocity to avoid huge arrows
-    Vector2d vel{body.getVelocity() / std::sqrt(norm(body.getVelocity()))};
-    _velocity.setPoints(static_cast<Vector2f>(com), static_cast<Vector2f>(com + vel));
+    _velocity.setPoints(static_cast<Vector2f>(com), static_cast<Vector2f>(com + body.getVelocity()));
+    _velocity.setColor(opposite);
 }
 
 void DebugInfo::draw(sf::RenderTarget& target, sf::RenderStates states) const {
-    
     target.draw(_position, states);
     target.draw(_rotation, states);
     target.draw(_angularVelocity, states);
@@ -55,4 +53,10 @@ void DebugInfo::ArrowShape::setPoints(const Vector2f& begin, const Vector2f& end
     _arrow[3] = end + rotate(headUp, arrowAngle) * _headLength;
     _arrow[4] = end;
     _arrow[5] = end + rotate(headDown, arrowAngle) * _headLength;
+}
+
+void DebugInfo::ArrowShape::setColor(const sf::Color& color) {
+    for (std::size_t i{0}; i < _arrow.getVertexCount(); ++i) {
+        _arrow[i].color = color;
+    }
 }

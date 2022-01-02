@@ -16,6 +16,7 @@ private:
     public:
         virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
         void setPoints(const Vector2f& begin, const Vector2f& end);
+        void setColor(const sf::Color& color);
 
     private:
         sf::VertexArray _arrow{sf::Lines, 6};

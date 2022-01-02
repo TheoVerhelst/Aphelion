@@ -18,7 +18,6 @@ Scene::Scene(const PhysicalModel& model):
         }
         _traces.push_back(trace);
 	}
-    _debugInfos.resize(bodies.size());
 }
 
 void Scene::draw(sf::RenderTarget& target, sf::RenderStates states) const {
@@ -29,10 +28,6 @@ void Scene::draw(sf::RenderTarget& target, sf::RenderStates states) const {
 	for (auto& shape : _shapes) {
 		target.draw(*shape, states);
 	}
-
-    for (auto& debugInfo : _debugInfos) {
-        target.draw(debugInfo, states);
-    }
 }
 
 void Scene::update() {
@@ -56,8 +51,6 @@ void Scene::update() {
             _traces[i][index].color.a = static_cast<sf::Uint8>(alpha);
             _traces[i][index + 1].color.a = static_cast<sf::Uint8>(alpha);
         }
-
-        _debugInfos[i].update(*bodies[i].lock());
 	}
     _traceIndex = nextIndex;
 }

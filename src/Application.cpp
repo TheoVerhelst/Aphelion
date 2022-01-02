@@ -12,27 +12,32 @@ Application::Application(const std::string& setupFile):
 
 void Application::run() {
     sf::Clock clock;
-
     while (_window.isOpen()) {
-        // Update
+        // Update physics
         sf::Time elapsedTime{clock.restart()};
         _model.updateTime(elapsedTime);
-        _scene.update();
-        _simulationCanvas->update(elapsedTime);
-        updateDisplays();
+        _simulationCanvas->update(elapsedTime, _model);
 
         // Handle events
         sf::Event event;
         while (_window.pollEvent(event)) {
             _gui.handleEvent(event);
-
             if (event.type == sf::Event::Closed) {
                 _window.close();
             }
+
+            // Dispatch the event in order, for now only the canvas
+            if (_simulationCanvas->handleEvent(event)) {
+                continue;
+            }
         }
 
+        // Update graphics
+        _scene.update();
+        updateDisplays();
+
         // Draw graphics
-        _window.clear(sf::Color::White);
+        _window.clear(sf::Color::Black);
         _simulationCanvas->clear(sf::Color::Black);
         _simulationCanvas->draw(_scene);
         _simulationCanvas->display();

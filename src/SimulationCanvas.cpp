@@ -21,23 +21,32 @@ SimulationCanvas::Ptr SimulationCanvas::copy(SimulationCanvas::ConstPtr widget) 
     }
 }
 
-void SimulationCanvas::update(const sf::Time& elapsedTime) {
+bool SimulationCanvas::handleEvent(const sf::Event& event) {
+    if (event.type == sf::Event::KeyPressed and event.key.code == sf::Keyboard::F3) {
+        _debugView = not _debugView;
+        return true;
+    }
+    return false;
+}
+
+void SimulationCanvas::update(const sf::Time& elapsedTime, const PhysicalModel& model) {
     Vector2f movement{0, 0};
-    if(sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) {
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) {
         movement.x -= _panSpeed;
     }
-    if(sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) {
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) {
         movement.x += _panSpeed;
     }
-    if(sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) {
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) {
         movement.y -= _panSpeed;
     }
-    if(sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) {
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) {
         movement.y += _panSpeed;
     }
+
     // Normalize the speed to _panSpeed, in case of diagonal movement
     float speed{norm(movement)};
-    if(speed > 0) {
+    if (speed > 0) {
         movement = movement * _panSpeed / speed;
     }
 
@@ -59,7 +68,28 @@ void SimulationCanvas::update(const sf::Time& elapsedTime) {
 
     _zoom *= std::pow(zoomFactor, elapsedTime.asSeconds() * multiplier);
     _position += movement * elapsedTime.asSeconds() * multiplier;
+
+    if (_debugView) {
+        auto bodies = model.getBodies();
+        if (_debugInfos.size() != bodies.size()) {
+            _debugInfos.resize(bodies.size());
+        }
+
+        for (std::size_t i{0}; i < bodies.size(); ++i) {
+            _debugInfos[i].update(*bodies[i].lock());
+        }
+    }
+
     updateView();
+}
+
+void SimulationCanvas::display() {
+    if (_debugView) {
+        for (auto& debugInfo : _debugInfos) {
+            draw(debugInfo);
+        }
+    }
+    tgui::CanvasSFML::display();
 }
 
 tgui::Widget::Ptr SimulationCanvas::clone() const {
