@@ -24,6 +24,10 @@ public:
         return _resources.at(id);
     }
 
+    T& getRef(const std::string& id) {
+        return *_resources.at(id);
+    }
+
 private:
     std::unordered_map<std::string, std::shared_ptr<T>> _resources;
 };

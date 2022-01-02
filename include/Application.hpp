@@ -26,6 +26,7 @@ private:
     ResourceManager<sf::Font> _fontManager;
     ResourceManager<sf::Texture> _textureManager;
 
+    void loadResources();
     void buildGui();
     void updateDisplays();
     void pauseTime();

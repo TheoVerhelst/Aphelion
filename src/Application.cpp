@@ -7,7 +7,7 @@ Application::Application(const std::string& setupFile):
         _model{setupFile},
         _scene{_model} {
     tgui::WidgetFactory::setConstructFunction("SimulationCanvas", std::make_shared<SimulationCanvas>);
-    _fontManager.loadFromFile("resources/FreeSans.ttf", "debugFont");
+    loadResources();
     buildGui();
 }
 
@@ -45,6 +45,14 @@ void Application::run() {
         _gui.draw();
         _window.display();
     }
+}
+
+void Application::loadResources() {
+    _fontManager.loadFromFile("resources/FreeSans.ttf", "debugFont");
+    _textureManager.loadFromFile("resources/play.png", "playButton");
+    _textureManager.loadFromFile("resources/play_hover.png", "playHoverButton");
+    _textureManager.loadFromFile("resources/pause.png", "pauseButton");
+    _textureManager.loadFromFile("resources/pause_hover.png", "pauseHoverButton");
 }
 
 void Application::buildGui() {
@@ -89,16 +97,16 @@ void Application::updateDisplays() {
 
 void Application::pauseTime() {
     auto renderer = _gui.get<tgui::Button>("pauseButton")->getRenderer();
-    renderer->setTexture("resources/play.png");
-    renderer->setTextureHover("resources/play_hover.png");
+    renderer->setTexture(_textureManager.getRef("playButton"));
+    renderer->setTextureHover(_textureManager.getRef("playButton"));
     _model.setTimeScale(0);
     _paused = true;
 }
 
 void Application::resumeTime() {
     auto renderer = _gui.get<tgui::Button>("pauseButton")->getRenderer();
-    renderer->setTexture("resources/pause.png");
-    renderer->setTextureHover("resources/pause_hover.png");
+    renderer->setTexture(_textureManager.getRef("pauseButton"));
+    renderer->setTextureHover(_textureManager.getRef("pauseButtonHover"));
     _paused = false;
     _model.setTimeScale(_gui.get<tgui::SpinControl>("timeSpeedControl")->getValue());
 }
