@@ -134,6 +134,7 @@ std::shared_ptr<sf::Shape> PolygonBody::createShape() const {
         polygon->setPoint(i, static_cast<Vector2f>(_vertices[i]));
     }
     polygon->setFillColor(_color);
+	polygon->setOrigin(static_cast<Vector2f>(getCenterOfMass()));
     return polygon;
 }
 
@@ -150,18 +151,19 @@ const std::vector<Vector2d>& PolygonBody::getVertices() const {
 }
 
 Vector2d PolygonBody::support(const Vector2d& direction) const {
-	double largest{-std::numeric_limits<double>::max()};
-	Vector2d furthest;
+	double largestProd{-std::numeric_limits<double>::max()};
+	Vector2d furthestPoint;
 	for (Vector2d vertex : _vertices) {
 		// Rotate the point around the center of mass to account for rotation
-		Vector2d rotated{rotate(vertex - getCenterOfMass(), getRotation()) + getCenterOfMass()};
+		Vector2d rotated{rotate(vertex - getCenterOfMass(), getRotation()) + getCenterOfMass() + getPosition()};
+
 		double product{dot(direction, rotated)};
-		if (product > largest) {
-			furthest = rotated;
-			largest = product;
+		if (product > largestProd) {
+			furthestPoint = rotated;
+			largestProd = product;
 		}
 	}
-    return furthest + getPosition();
+    return furthestPoint;
 }
 
 Vector2d PolygonBody::computeCenterOfMass() const {
@@ -170,9 +172,9 @@ Vector2d PolygonBody::computeCenterOfMass() const {
 	}
 	std::vector<double> triangleAreas;
 	std::vector<Vector2d> triangleCenters;
-	for (std::size_t i{1}; i < _vertices.size() - 1; ++i) {
-		Vector2d B{_vertices[i] - _vertices[0]};
-		Vector2d C{_vertices[i+1] - _vertices[0]};
+	for (std::size_t i{0}; i < _vertices.size(); ++i) {
+		Vector2d B{_vertices[i]};
+		Vector2d C{_vertices[(i+1) % _vertices.size()]};
 		triangleAreas.push_back(std::abs(cross(B, C)) / 2.);
 		triangleCenters.push_back((B + C) / 3.);
 	}
@@ -184,23 +186,20 @@ Vector2d PolygonBody::computeCenterOfMass() const {
 
 double PolygonBody::computeMomentOfInertia() const {
     std::vector<double> areas;
-    std::vector<Vector2d> centersOfMass;
-    for (std::size_t i{1}; i < _vertices.size() - 1; ++i) {
-        Vector2d B{_vertices[i] - _vertices[0]};
-        Vector2d C{_vertices[i+1] - _vertices[0]};
-        areas.push_back(std::abs(cross(B, C))/2);
-        centersOfMass.push_back((B + C) / 3.);
+    for (std::size_t i{0}; i < _vertices.size(); ++i) {
+        Vector2d B{_vertices[i]};
+        Vector2d C{_vertices[(i + 1) % _vertices.size()]};
+        areas.push_back(std::abs(cross(B, C)) / 2.);
     }
     double totalArea{std::accumulate(areas.begin(), areas.end(), 0.)};
     double momentOfInertia{0};
-    for (std::size_t i{1}; i < _vertices.size() - 1; ++i) {
-        Vector2d B{_vertices[i] - _vertices[0]};
-        Vector2d C{_vertices[i + 1] - _vertices[0]};
-        double signedArea{cross(B, C)/2.};
-        double area{areas[i - 1]};
-        double mass{_mass * area / totalArea};
+    for (std::size_t i{0}; i < _vertices.size(); ++i) {
+        Vector2d B{_vertices[i]};
+        Vector2d C{_vertices[(i + 1) % _vertices.size()]};
+        double signedArea{cross(B, C) / 2.};
+        double area{areas[i]};
+        double mass{getMass() * area / totalArea};
         momentOfInertia += mass * (signedArea / area) * (norm2(B) + norm2(C) + dot(B, C));
     }
-
-    return (momentOfInertia / 6) - _mass * norm2(_vertices[0] - getCenterOfMass());
+    return (momentOfInertia / 6.) - getMass() * norm2(getCenterOfMass());
 }

@@ -5,7 +5,7 @@
             "mass": 4e18,
             "radius": 10,
             "position": {"x": -50, "y": 20},
-            "velocity": {"x": 40, "y": 0},
+            "velocity": {"x": 20, "y": 0},
             "color": "#FF0000FF",
             "rotation": 0,
             "angularVelocity": 0
@@ -14,7 +14,7 @@
             "mass": 1e18,
             "radius": 10,
             "position": {"x": 150, "y": -80},
-            "velocity": {"x": 10, "y": 0},
+            "velocity": {"x": 5, "y": 0},
             "color": "#00FF00FF",
             "rotation": 0,
             "angularVelocity": 0
@@ -23,13 +23,13 @@
             "mass": 1e19,
             "radius": 10,
             "position": {"x": 20, "y": 245},
-            "velocity": {"x": 0, "y": 60},
+            "velocity": {"x": 0, "y": -10},
             "color": "#0000FFFF",
             "rotation": 0,
             "angularVelocity": 0
         },
         {
-            "mass": 1e21,
+            "mass": 1e20,
             "radius": 20,
             "position": {"x": 100, "y": 100},
             "velocity": {"x": 0, "y": 0},
@@ -41,7 +41,7 @@
             "mass": 1e17,
             "radius": 5,
             "position": {"x": 100, "y": 50},
-            "velocity": {"x": 50, "y": 0},
+            "velocity": {"x": 20, "y": 0},
             "color": "#F0F0F0FF",
             "rotation": 0,
             "angularVelocity": 0
@@ -53,8 +53,8 @@
             "mass": 1e17,
             "vertices": [{"x":-10, "y": -10}, {"x": 10, "y": 0}, {"x": 0, "y": 10}],
             "position": {"x": 0, "y": 100},
-            "velocity": {"x": 20, "y": 0},
-            "rotation": 1,
+            "velocity": {"x": 10, "y": 0},
+            "rotation": 0,
             "color": "#F0F0F0FF",
             "angularVelocity": 0
         }

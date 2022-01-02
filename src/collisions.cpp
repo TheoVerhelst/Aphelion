@@ -9,15 +9,6 @@ void collideBodies(Body& bodyA, Body& bodyB) {
         double totalMass{bodyA.getMass() + bodyB.getMass()};
         // n is the normalized vector normal to the surface of contact
         Vector2d n{contactInfo.normal / norm(contactInfo.normal)};
-        std::cout << "ContactInfo:" << std::endl;
-        std::cout << "Class A: " << typeid(bodyA).name() << std::endl;
-        std::cout << "Class B: " << typeid(bodyB).name() << std::endl;
-        std::cout << "A.position = " << bodyA.getPosition() << std::endl;
-        std::cout << "B.position = " << bodyB.getPosition() << std::endl;
-        std::cout << "C_A = " << contactInfo.C_A << std::endl;
-        std::cout << "C_B = " << contactInfo.C_B << std::endl;
-        std::cout << "n = " << n << std::endl;
-        std::cout << "|normal| = " << norm(contactInfo.normal) << std::endl;
 
         Vector2d R_A{contactInfo.C_A - bodyA.getCenterOfMass() - bodyA.getPosition()};
         Vector2d R_B{contactInfo.C_B - bodyB.getCenterOfMass() - bodyB.getPosition()};
@@ -33,14 +24,9 @@ void collideBodies(Body& bodyA, Body& bodyB) {
         double R_B_n{cross(R_B, n)};
 
         // norm_J is the norm of the resulting impulse vector
-        double norm_J{- 2 *
-            ( m_A * dot(v_B, n)
-            - m_B * dot(v_A, n)
-            + m_A * m_B * w_B * R_B_n
-            - m_A * m_B * w_A * R_A_n) /
-            ( m_A + m_B
-            + m_A * m_B * R_A_n * R_A_n / I_A
-            + m_A * m_B * R_B_n * R_B_n / I_B)
+        double norm_J{2 *
+            (dot(v_A - v_B, n) + cross(w_A * R_A - w_B * R_B, n)) /
+            (1 / m_A + 1 / m_B + R_A_n * R_A_n / I_A + R_B_n * R_B_n / I_B)
         };
         Vector2d J{n * norm_J};
 
@@ -63,13 +49,13 @@ void collideCircles(CircleBody& bodyA, CircleBody& bodyB) {
     // Collision
     if (overlap > 0) {
         // Distance squared
-        const double dist_2{norm2(diff_x)};
-        const Vector2d v_a = bodyA.getVelocity();
-        const Vector2d v_b = bodyB.getVelocity();
-        const double m_a = bodyA.getMass();
-        const double m_b = bodyB.getMass();
+        const Vector2d v_a{bodyA.getVelocity()};
+        const Vector2d v_b{bodyB.getVelocity()};
+        const double m_a{bodyA.getMass()};
+        const double m_b{bodyB.getMass()};
+        const Vector2d normal{diff_x / dist};
         // Based on stackoverflow.com/questions/35211114/2d-elastic-ball-collision-physics
-        const Vector2d addedVel = 2 * dot(v_a - v_b, diff_x) * diff_x / ((m_a + m_b) * dist_2);
+        const Vector2d addedVel = 2 * dot(v_a - v_b, normal) * normal / (m_a + m_b);
         bodyA.setVelocity(v_a - addedVel * m_b);
         bodyB.setVelocity(v_b + addedVel * m_a);
 
@@ -141,6 +127,10 @@ std::optional<MinkowskyPolygon> GJK(const Body& bodyA, const Body& bodyB) {
 }
 
 ContactInfo EPA(const Body& bodyA, const Body& bodyB, MinkowskyPolygon polygon) {
+    if (polygon.size() != 3) {
+        throw std::runtime_error("Invalid simplex size for EPA");
+    }
+
     double eps{0.001};
     double collisionGap{0.001};
     std::size_t maxIter{50};
@@ -165,6 +155,7 @@ ContactInfo EPA(const Body& bodyA, const Body& bodyB, MinkowskyPolygon polygon) 
                 minIndex = i;
             }
         }
+
         // Find the support point in the direction of the normal, and check
         // if this point is further
         Vector2d supportA{bodyA.support(minNormal)};

@@ -18,6 +18,7 @@ set(SOURCE_FILES
 	src/Application.cpp
 	src/Body.cpp
 	src/collisions.cpp
+	src/DebugInfo.cpp
 	src/format.cpp
 	src/main.cpp
 	src/PhysicalModel.cpp
