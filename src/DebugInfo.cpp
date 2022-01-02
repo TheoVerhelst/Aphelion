@@ -34,6 +34,7 @@ void DebugInfo::update(const Body& body) {
 }
 
 void DebugInfo::draw(sf::RenderTarget& target, sf::RenderStates states) const {
+    
     target.draw(_position, states);
     target.draw(_rotation, states);
     target.draw(_angularVelocity, states);

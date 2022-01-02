@@ -10,7 +10,7 @@ find_package(TGUI 0.10 REQUIRED)
 include_directories("${CMAKE_SOURCE_DIR}/include" ${SFML_INCLUDE_DIR} ${TGUI_INCLUDE_DIR})
 
 # Set compiler flags
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -std=c++2a -fconcepts -Wall -Wextra -pedantic -pedantic-errors -Wnon-virtual-dtor -Wshadow -Winit-self -Wredundant-decls -Wcast-align -Wundef -Wunreachable-code -Wmissing-declarations")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -std=c++2a -Wall -Wextra -pedantic -pedantic-errors -Wnon-virtual-dtor -Wshadow -Winit-self -Wredundant-decls -Wcast-align -Wundef -Wunreachable-code -Wmissing-declarations")
 
 
 # List all source files

@@ -2,6 +2,7 @@
 #define COLLISIONS_HPP
 
 #include <vector>
+#include <optional>
 #include <utility>
 #include <vector.hpp>
 #include <Body.hpp>
