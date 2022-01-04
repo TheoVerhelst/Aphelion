@@ -5,11 +5,12 @@
 #include <SFML/Window.hpp>
 #include <TGUI/TGUI.hpp>
 #include <TGUI/Backend/SFML-Graphics.hpp>
-#include <GravitySystem.hpp>
+#include <PhysicsSystem.hpp>
 #include <RenderSystem.hpp>
 #include <Scene.hpp>
 #include <SimulationCanvas.hpp>
 #include <ResourceManager.hpp>
+#include <DebugOverlay.hpp>
 
 class Application {
 public:
@@ -21,12 +22,13 @@ private:
     sf::RenderWindow _window;
     tgui::Gui _gui;
     Scene _scene;
-    GravitySystem _gravitySystem;
+    PhysicsSystem _physicsSystem;
     RenderSystem _renderSystem;
+    DebugOverlay _debugOverlay;
     SimulationCanvas::Ptr _simulationCanvas;
-    bool _paused{false};
     ResourceManager<sf::Font> _fontManager;
     ResourceManager<sf::Texture> _textureManager;
+    bool _paused{false};
 
     void loadResources();
     void buildGui();

@@ -28,19 +28,19 @@ void RenderSystem::update() {
         sf::Sprite& sprite{_scene.getComponent<sf::Sprite>(id)};
         Body& body{_scene.getComponent<Body>(id)};
         sprite.setPosition(static_cast<Vector2f>(body.position));
-        sprite.setRotation(body.rotation * 180. / std::acos(-1));
+        sprite.setRotation(body.rotation * 180. / pi);
     }
     for (EntityId id : _scene.view<Body, sf::CircleShape>()) {
         sf::CircleShape& shape{_scene.getComponent<sf::CircleShape>(id)};
         Body& body{_scene.getComponent<Body>(id)};
         shape.setPosition(static_cast<Vector2f>(body.position));
-        shape.setRotation(body.rotation * 180. / std::acos(-1));
+        shape.setRotation(body.rotation * 180. / pi);
     }
     for (EntityId id : _scene.view<Body, sf::ConvexShape>()) {
         sf::ConvexShape& shape{_scene.getComponent<sf::ConvexShape>(id)};
         Body& body{_scene.getComponent<Body>(id)};
         shape.setPosition(static_cast<Vector2f>(body.position));
-        shape.setRotation(body.rotation * 180. / std::acos(-1));
+        shape.setRotation(body.rotation * 180. / pi);
     }
     for (EntityId id : _scene.view<Body, Trace>()) {
         Body& body{_scene.getComponent<Body>(id)};

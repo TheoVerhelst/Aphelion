@@ -21,14 +21,6 @@ SimulationCanvas::Ptr SimulationCanvas::copy(SimulationCanvas::ConstPtr widget) 
     }
 }
 
-bool SimulationCanvas::handleEvent(const sf::Event& event) {
-    if (event.type == sf::Event::KeyPressed and event.key.code == sf::Keyboard::F3) {
-        _debugView = not _debugView;
-        return true;
-    }
-    return false;
-}
-
 void SimulationCanvas::update(const sf::Time& elapsedTime) {
     Vector2f movement{0, 0};
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) {
@@ -69,27 +61,7 @@ void SimulationCanvas::update(const sf::Time& elapsedTime) {
     _zoom *= std::pow(zoomFactor, elapsedTime.asSeconds() * multiplier);
     _position += movement * elapsedTime.asSeconds() * multiplier;
 
-    if (_debugView) {
-        for (EntityId id : *_scene) {
-            Body& body{_scene->getComponent<Body>(id)};
-            DebugInfo& debugInfo{_scene->getComponent<DebugInfo>(id)};
-            debugInfo.update(body);
-        }
-    }
     updateView();
-}
-
-void SimulationCanvas::display() {
-    if (_debugView) {
-        for (EntityId id : *_scene) {
-            draw(_scene->getComponent<DebugInfo>(id));
-        }
-    }
-    tgui::CanvasSFML::display();
-}
-
-void SimulationCanvas::setScene(const SceneView<Body, DebugInfo>& scene) {
-    _scene = std::make_shared<SceneView<Body, DebugInfo>>(scene);
 }
 
 tgui::Widget::Ptr SimulationCanvas::clone() const {

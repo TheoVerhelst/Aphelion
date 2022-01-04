@@ -18,10 +18,6 @@ public:
     static SimulationCanvas::Ptr create(tgui::Layout2d size = {"100%", "100%"});
     static SimulationCanvas::Ptr copy(SimulationCanvas::ConstPtr widget);
     void update(const sf::Time& elapsedTime);
-    bool handleEvent(const sf::Event& event);
-    // Override display to show the debug info on top
-    void display();
-    void setScene(const SceneView<Body, DebugInfo>& scene);
 
 protected:
     tgui::Widget::Ptr clone() const override;
@@ -31,8 +27,6 @@ private:
     float _zoom{1}; // In pixel / meter
     float _panSpeed{300}; // In meter/second
     float _zoomSpeed{1.5}; // In pixel / meter / second
-    bool _debugView{false};
-    std::shared_ptr<SceneView<Body, DebugInfo>> _scene;
 
     void updateView();
 };

@@ -8,6 +8,7 @@
 typedef sf::Vector2<double> Vector2d;
 typedef sf::Vector2<float> Vector2f;
 
+constexpr double pi{std::acos(-1)};
 
 template <typename T>
 T dot(const sf::Vector2<T>& a, const sf::Vector2<T>& b) {

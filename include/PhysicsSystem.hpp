@@ -1,5 +1,5 @@
-#ifndef GRAVITYSYSTEM_HPP
-#define GRAVITYSYSTEM_HPP
+#ifndef PHYSICSSYSTEM_HPP
+#define PHYSICSSYSTEM_HPP
 
 #include <cstddef>
 #include <SFML/System/Time.hpp>
@@ -8,9 +8,9 @@
 #include <components.hpp>
 #include <vector.hpp>
 
-class GravitySystem {
+class PhysicsSystem {
 public:
-	GravitySystem(Scene& scene);
+	PhysicsSystem(Scene& scene);
 	void updateTime(const sf::Time& elapsedTime);
 	void updateSteps(int steps);
 	void setTimeScale(float timeScale);
@@ -33,4 +33,4 @@ private:
 	void updateStep(bool backwards);
 };
 
-#endif // GRAVITYSYSTEM_HPP
+#endif // PHYSICSSYSTEM_HPP

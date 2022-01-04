@@ -1,15 +1,15 @@
-#include <GravitySystem.hpp>
+#include <PhysicsSystem.hpp>
 #include <cmath>
 #include <iostream>
 #include <sstream>
 #include <fstream>
 
-GravitySystem::GravitySystem(Scene& scene):
+PhysicsSystem::PhysicsSystem(Scene& scene):
     _scene{scene},
     _collisionSystem{_scene} {
 }
 
-void GravitySystem::updateTime(const sf::Time& elapsedTime) {
+void PhysicsSystem::updateTime(const sf::Time& elapsedTime) {
 	// Skip physics update until we waited for enough time (which is _timeStep)
 	// We take into account the time scale here. If it is negative, we proceed
 	// as if it was positive but we specify to the update function to go backwards.
@@ -26,26 +26,26 @@ void GravitySystem::updateTime(const sf::Time& elapsedTime) {
 	}
 }
 
-void GravitySystem::updateSteps(int steps) {
+void PhysicsSystem::updateSteps(int steps) {
 	bool backwards{steps < 0};
 	for (int i{0}; i < std::abs(steps); ++i) {
 		updateStep(backwards);
 	}
 }
 
-void GravitySystem::setTimeScale(float timeScale) {
+void PhysicsSystem::setTimeScale(float timeScale) {
 	_timeScale = timeScale;
 }
 
-long long int GravitySystem::getStepCounter() const {
+long long int PhysicsSystem::getStepCounter() const {
 	return _stepCounter;
 }
 
-sf::Time GravitySystem::getElapsedTime() const {
+sf::Time PhysicsSystem::getElapsedTime() const {
 	return _timeStep * _stepCounter;
 }
 
-Vector2d GravitySystem::computeAcceleration(const Vector2d& position, EntityId id) const {
+Vector2d PhysicsSystem::computeAcceleration(const Vector2d& position, EntityId id) const {
 	Vector2d res{0., 0.};
 	for(EntityId otherId : _scene.view<Body>()) {
 		if (otherId != id) {
@@ -58,7 +58,7 @@ Vector2d GravitySystem::computeAcceleration(const Vector2d& position, EntityId i
 	return res * _gravitationalConstant;
 }
 
-void GravitySystem::updateStep(bool backwards) {
+void PhysicsSystem::updateStep(bool backwards) {
 	_stepCounter += backwards ? -1 : 1;
 
 	double dt{_timeStep.asSeconds() * (backwards ? -1 : 1)};
@@ -85,7 +85,8 @@ void GravitySystem::updateStep(bool backwards) {
 		body.position += dx[id];
 		body.velocity += dv[id];
 		body.rotation += body.angularVelocity * dt;
+        body.rotation = std::remainder(body.rotation, 2. * pi);
 	}
-    
+
     _collisionSystem.update();
 }

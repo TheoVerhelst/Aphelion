@@ -19,9 +19,10 @@ set(SOURCE_FILES
 	src/CollisionSystem.cpp
 	src/components.cpp
 	src/DebugInfo.cpp
+	src/DebugOverlay.cpp
 	src/format.cpp
-	src/GravitySystem.cpp
 	src/main.cpp
+	src/PhysicsSystem.cpp
 	src/RenderSystem.cpp
 	src/Scene.cpp
 	src/SceneLoader.cpp
