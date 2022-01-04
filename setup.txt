@@ -1,68 +1,85 @@
 {
     "entities": [
         {
-            "circle": {"radius": 10},
+            "circle": {"radius": 24},
+            "sprite": {
+                "texture": "asteroid",
+                "textureRect": {"top": 0, "left": 0, "width": 48, "height": 48}
+            },
             "body": {
                 "mass": 4e18,
                 "position": {"x": -50, "y": 20},
                 "velocity": {"x": 20, "y": 0},
-                "color": "#FF0000FF",
                 "rotation": 0,
+                "restitution": 0.9,
                 "angularVelocity": 0
             }
         },
         {
-            "circle": {"radius": 10},
+            "circle": {"radius": 24},
+            "sprite": {
+                "texture": "asteroid",
+                "textureRect": {"top": 0, "left": 0, "width": 48, "height": 48}
+            },
             "body": {
                 "mass": 1e18,
                 "position": {"x": 150, "y": -80},
                 "velocity": {"x": 5, "y": 0},
-                "color": "#00FF00FF",
                 "rotation": 0,
+                "restitution": 0.9,
                 "angularVelocity": 0
             }
         },
         {
-            "circle": {"radius": 10},
+            "circle": {"radius": 24},
+            "sprite": {
+                "texture": "asteroid",
+                "textureRect": {"top": 0, "left": 0, "width": 48, "height": 48}
+            },
             "body": {
                 "mass": 1e19,
                 "position": {"x": 20, "y": 245},
                 "velocity": {"x": 0, "y": -10},
-                "color": "#0000FFFF",
                 "rotation": 0,
+                "restitution": 0.9,
                 "angularVelocity": 0
             }
         },
         {
-            "circle": {"radius": 20},
+            "circle": {"radius": 48},
+            "sprite": {
+                "texture": "sun",
+                "textureRect": {"top": 0, "left": 0, "width": 96, "height": 96}
+            },
             "body": {
                 "mass": 1e21,
                 "position": {"x": 100, "y": 100},
                 "velocity": {"x": 0, "y": 0},
-                "color": "#F0F000FF",
                 "rotation": 0,
+                "restitution": 0.9,
                 "angularVelocity": 0
             }
         },
         {
-            "circle": {"radius": 5},
-            "body": {
-                "mass": 1e17,
-                "position": {"x": 100, "y": 50},
-                "velocity": {"x": 0, "y": 30},
-                "color": "#F0F0F0FF",
-                "rotation": 0,
-                "angularVelocity": 0
-            }
-        },
-        {
-            "convex": {"vertices": [{"x":-10, "y": -10}, {"x": 10, "y": 0}, {"x": 0, "y": 10}]},
+            "convex": {
+                "vertices": [
+                    {"x": 3, "y": 7},
+                    {"x": 10, "y": 0},
+                    {"x": 14, "y": 0},
+                    {"x": 20, "y": 7},
+                    {"x": 20, "y": 34},
+                    {"x": 3, "y": 34}
+            ]},
+            "sprite": {
+                "texture": "ship",
+                "textureRect": {"top": 0, "left": 0, "width": 24, "height": 48}
+            },
             "body": {
                 "mass": 1e17,
                 "position": {"x": 0, "y": 100},
                 "velocity": {"x": 10, "y": 0},
                 "rotation": 0,
-                "color": "#F0F0F0FF",
+                "restitution": 0.9,
                 "angularVelocity": 0
             }
         }

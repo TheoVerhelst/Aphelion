@@ -5,12 +5,15 @@
 #include <stdexcept>
 #include <SFML/Graphics.hpp>
 #include <json.hpp>
+#include <serializers.hpp>
 #include <DebugInfo.hpp>
 #include <SceneLoader.hpp>
 
 using nlohmann::json;
 
-void loadScene(Scene& scene, const std::string& setupFile, const ResourceManager<sf::Font>& fontManager) {
+void loadScene(Scene& scene, const std::string& setupFile,
+        const ResourceManager<sf::Font>& fontManager,
+        const ResourceManager<sf::Texture>& textureManager) {
     std::ifstream file{setupFile};
 	json j;
 	try	{
@@ -20,42 +23,40 @@ void loadScene(Scene& scene, const std::string& setupFile, const ResourceManager
 	}
 	for (json& components : j.at("entities")) {
         EntityId id{scene.createEntity()};
-        bool hasBody{false}, isCircle{false}, isConvex{false};
+
+        bool hasBody{false};
         for (auto& [key, value] : components.items()) {
             if (key == "body") {
                 Body& body{scene.assignComponent<Body>(id)};
                 value.get_to(body);
                 hasBody = true;
                 scene.assignComponent<DebugInfo>(id, fontManager.get("debugFont"));
+            }
+        }
 
-                Trace& trace{scene.assignComponent<Trace>(id)};
-                // Fill the trace with points at the body position, to avoid
-                // undefined traces because of the unitialized vector.
-                trace.trace = sf::VertexArray(sf::Lines, trace.traceLength * 2);
-                for (std::size_t i{0}; i < trace.traceLength * 2; ++i) {
-                    trace.trace[i] = sf::Vertex(static_cast<Vector2f>(body.position), sf::Color::White);
-                }
-            } else if (key == "circle") {
+        for (auto& [key, value] : components.items()) {
+            if (key == "circle") {
                 CircleBody& circle{scene.assignComponent<CircleBody>(id)};
                 value.get_to(circle);
-                isCircle = true;
+                if (hasBody) {
+                    setupCircle(scene, id);
+                }
             } else if (key == "convex") {
                 ConvexBody& convex{scene.assignComponent<ConvexBody>(id)};
                 value.get_to(convex);
-                isConvex = true;
+                if (hasBody) {
+                    setupConvex(scene, id);
+                }
+            } else if (key == "sprite") {
+                sf::Sprite& sprite{scene.assignComponent<sf::Sprite>(id)};
+                std::string texture{value.at("texture").get<std::string>()};
+                sf::IntRect textureRect{value.at("textureRect").get<sf::IntRect>()};
+                sprite.setTexture(textureManager.getRef(texture));
+                sprite.setTextureRect(textureRect);
+                if (hasBody) {
+                    sprite.setOrigin(static_cast<Vector2f>(scene.getComponent<Body>(id).centerOfMass));
+                }
             }
-        }
-        if (isCircle) {
-            if (not hasBody or isConvex) {
-                throw std::runtime_error("circle need a body and cannot be a convex shape");
-            }
-            setupCircle(scene, id);
-        }
-        if (isConvex) {
-            if (not hasBody or isCircle) {
-                throw std::runtime_error("convex shape need a body and cannot be a circle shape");
-            }
-            setupConvex(scene, id);
         }
     }
 }
@@ -64,17 +65,17 @@ void setupCircle(Scene& scene, EntityId id) {
     CircleBody& circle{scene.getComponent<CircleBody>(id)};
     Body& body{scene.getComponent<Body>(id)};
 
-    // Physical constants
-    Vector2d centerOfMass{circle.radius, circle.radius};
-    body.momentOfInertia =  body.mass * circle.radius * circle.radius / 2.;
+    Trace& trace{scene.assignComponent<Trace>(id)};
+    // Fill the trace with points at the body position, to avoid
+    // undefined traces because of the unitialized vector.
+    trace.trace = sf::VertexArray(sf::Lines, trace.traceLength * 2);
+    for (std::size_t i{0}; i < trace.traceLength * 2; ++i) {
+        trace.trace[i] = sf::Vertex(static_cast<Vector2f>(body.position), sf::Color::White);
+    }
 
-    // Drawable shape
-    sf::CircleShape& shape{scene.assignComponent<sf::CircleShape>(id)};
-    shape.setRadius(circle.radius);
-    shape.setFillColor(sf::Color::Blue);
-    // Shapes are centered around the COM so that we can easily rotate them
-    // Without shifting the shape first
-    shape.setOrigin(static_cast<Vector2f>(centerOfMass));
+    // Physical constants
+    body.centerOfMass = {circle.radius, circle.radius};
+    body.momentOfInertia =  body.mass * circle.radius * circle.radius / 2.;
 
     // Collider
     Collider& collider{scene.assignComponent<Collider>(id)};
@@ -88,23 +89,13 @@ void setupConvex(Scene& scene, EntityId id) {
     ConvexBody& convex{scene.getComponent<ConvexBody>(id)};
 
     // Physical constants
-    Vector2d centerOfMass{computeCenterOfMass(convex.vertices)};
-    body.momentOfInertia =  computeMomentOfInertia(body.mass, centerOfMass, convex.vertices);
+    body.centerOfMass = computeCenterOfMass(convex.vertices);
     // Shift the vertices so they represent correct local coordinates around the
     // center of mass
     for (auto& vertex : convex.vertices) {
-        vertex -= centerOfMass;
+        vertex -= body.centerOfMass;
     }
-
-    // Drawable shape
-    sf::ConvexShape& shape{scene.assignComponent<sf::ConvexShape>(id)};
-    shape.setPointCount(convex.vertices.size());
-    for(std::size_t i{0}; i < convex.vertices.size(); ++i) {
-        shape.setPoint(i, static_cast<Vector2f>(convex.vertices[i]));
-    }
-    shape.setFillColor(sf::Color::Green);
-    // No need to set the origin of the shape, since the vertices are already
-    // in correct local coordinates
+    body.momentOfInertia =  computeMomentOfInertia(body.mass, {0., 0.}, convex.vertices);
 
     // Collider
     Collider& collider{scene.assignComponent<Collider>(id)};
@@ -135,7 +126,7 @@ Vector2d computeCenterOfMass(const std::vector<Vector2d>& vertices) {
 	std::vector<Vector2d> triangleCenters;
 	for (std::size_t i{0}; i < vertices.size(); ++i) {
 		Vector2d B{vertices[i]};
-		Vector2d C{vertices[(i+1) % vertices.size()]};
+		Vector2d C{vertices[(i + 1) % vertices.size()]};
 		triangleAreas.push_back(std::abs(cross(B, C)) / 2.);
 		triangleCenters.push_back((B + C) / 3.);
 	}

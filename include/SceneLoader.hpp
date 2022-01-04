@@ -9,7 +9,9 @@
 #include <Scene.hpp>
 #include <ResourceManager.hpp>
 
-void loadScene(Scene& scene, const std::string& setupFile, const ResourceManager<sf::Font>& fontManager);
+void loadScene(Scene& scene, const std::string& setupFile,
+        const ResourceManager<sf::Font>& fontManager,
+        const ResourceManager<sf::Texture>& textureManager);
 
 void setupCircle(Scene& scene, EntityId id);
 
@@ -22,5 +24,6 @@ Vector2d localToWorld(const Body& body, const Vector2d& point);
 Vector2d computeCenterOfMass(const std::vector<Vector2d>& vertices);
 
 double computeMomentOfInertia(double mass, const Vector2d& centerOfMass, const std::vector<Vector2d>& vertices);
+
 
 #endif // SCENELOADER_HPP

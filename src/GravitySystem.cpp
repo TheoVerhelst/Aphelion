@@ -86,5 +86,6 @@ void GravitySystem::updateStep(bool backwards) {
 		body.velocity += dv[id];
 		body.rotation += body.angularVelocity * dt;
 	}
+    
     _collisionSystem.update();
 }

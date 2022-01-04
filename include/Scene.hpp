@@ -93,7 +93,6 @@ private:
     friend class SceneIterator;
 };
 
-
 template <typename... Types>
 class SceneIterator {
 public:

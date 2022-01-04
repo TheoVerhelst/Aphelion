@@ -4,7 +4,6 @@
 #include <cmath>
 #include <iostream>
 #include <SFML/System/Vector2.hpp>
-#include <json.hpp>
 
 typedef sf::Vector2<double> Vector2d;
 typedef sf::Vector2<float> Vector2f;
@@ -55,21 +54,6 @@ sf::Vector2<T> rotate(const sf::Vector2<T>& v, T angle) {
 template <typename T>
 std::ostream& operator<<(std::ostream& os, sf::Vector2<T> v) {
   return os << "(" << v.x << ", " << v.y << ")";
-}
-
-// Serializers for sf::Vector2
-namespace nlohmann {
-    template <typename T>
-    struct adl_serializer<sf::Vector2<T>> {
-        static void to_json(json& j, const sf::Vector2<T>& v) {
-            j = {{"x", v.x}, {"y", v.y}};
-        }
-
-        static void from_json(const json& j, sf::Vector2<T>& v) {
-            j.at("x").get_to(v.x);
-            j.at("y").get_to(v.y);
-        }
-    };
 }
 
 #endif // VECTOR_HPP

@@ -4,8 +4,10 @@
 #include <vector>
 #include <cstddef>
 #include <functional>
-#include <vector.hpp>
 #include <SFML/Graphics/VertexArray.hpp>
+#include <json.hpp>
+#include <serializers.hpp>
+#include <vector.hpp>
 
 struct Body {
 	double mass;
@@ -13,13 +15,16 @@ struct Body {
 	Vector2d velocity;
 	double rotation;
 	double angularVelocity;
-    //Vector2d centerOfMass;
+	double restitution;
+	// The center of mass is used here only in relationship with drawable shapes.
+	// The position vector is otherwise already pointing to the center of mass.
+    Vector2d centerOfMass;
     double momentOfInertia;
 
 	Vector2d localToWorld(const Vector2d& point) const;
 	Vector2d worldToLocal(const Vector2d& point) const;
 };
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(Body, mass, position, velocity, rotation, angularVelocity)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(Body, mass, position, velocity, rotation, angularVelocity, restitution)
 
 struct CircleBody {
     double radius;

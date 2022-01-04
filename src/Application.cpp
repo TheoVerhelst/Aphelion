@@ -11,7 +11,7 @@ Application::Application(const std::string& setupFile):
     tgui::WidgetFactory::setConstructFunction("SimulationCanvas", std::make_shared<SimulationCanvas>);
     loadResources();
     buildGui();
-    loadScene(_scene, setupFile, _fontManager);
+    loadScene(_scene, setupFile, _fontManager, _textureManager);
 }
 
 void Application::run() {
@@ -56,6 +56,9 @@ void Application::loadResources() {
     _textureManager.loadFromFile("resources/play_hover.png", "playHoverButton");
     _textureManager.loadFromFile("resources/pause.png", "pauseButton");
     _textureManager.loadFromFile("resources/pause_hover.png", "pauseHoverButton");
+    _textureManager.loadFromFile("resources/ship.png", "ship");
+    _textureManager.loadFromFile("resources/sun.png", "sun");
+    _textureManager.loadFromFile("resources/asteroid.png", "asteroid");
 }
 
 void Application::buildGui() {
