@@ -4,8 +4,9 @@
 #include <memory>
 #include <TGUI/TGUI.hpp>
 #include <TGUI/Backend/SFML-Graphics.hpp>
-#include <PhysicalModel.hpp>
 #include <DebugInfo.hpp>
+#include <Scene.hpp>
+#include <components.hpp>
 #include <vector.hpp>
 
 class SimulationCanvas : public tgui::CanvasSFML {
@@ -16,11 +17,11 @@ public:
     SimulationCanvas(const char* typeName = "SimulationCanvas", bool initRenderer = true);
     static SimulationCanvas::Ptr create(tgui::Layout2d size = {"100%", "100%"});
     static SimulationCanvas::Ptr copy(SimulationCanvas::ConstPtr widget);
-    void update(const sf::Time& elapsedTime, const PhysicalModel& model);
+    void update(const sf::Time& elapsedTime);
     bool handleEvent(const sf::Event& event);
     // Override display to show the debug info on top
     void display();
-    void setDebugFont(const std::weak_ptr<sf::Font>& font);
+    void setScene(const SceneView<Body, DebugInfo>& scene);
 
 protected:
     tgui::Widget::Ptr clone() const override;
@@ -31,8 +32,7 @@ private:
     float _panSpeed{300}; // In meter/second
     float _zoomSpeed{1.5}; // In pixel / meter / second
     bool _debugView{false};
-    std::weak_ptr<sf::Font> _debugFont;
-    std::vector<DebugInfo> _debugInfos;
+    std::shared_ptr<SceneView<Body, DebugInfo>> _scene;
 
     void updateView();
 };

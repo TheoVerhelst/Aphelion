@@ -24,7 +24,15 @@ public:
         return _resources.at(id);
     }
 
+    std::weak_ptr<const T> get(const std::string& id) const {
+        return _resources.at(id);
+    }
+
     T& getRef(const std::string& id) {
+        return *_resources.at(id);
+    }
+
+    const T& getRef(const std::string& id) const {
         return *_resources.at(id);
     }
 

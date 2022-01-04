@@ -2,8 +2,8 @@
 #include <iostream>
 #include <DebugInfo.hpp>
 
-DebugInfo::DebugInfo(const std::weak_ptr<sf::Font>& font):
-        _font{font} {
+DebugInfo::DebugInfo(const std::weak_ptr<const sf::Font>& font):
+    _font{font} {
     _position.setOrigin(_position.getRadius(), _position.getRadius());
     _rotation.setFont(*_font.lock());
     _rotation.setCharacterSize(10);
@@ -12,23 +12,22 @@ DebugInfo::DebugInfo(const std::weak_ptr<sf::Font>& font):
 }
 
 void DebugInfo::update(const Body& body) {
-    Vector2f pos{static_cast<Vector2f>(body.getPosition())};
+    Vector2f pos{static_cast<Vector2f>(body.position)};
     _position.setPosition(pos);
-    sf::Color color{body.getColor()};
+    sf::Color color{sf::Color::Red};
     // Parenthesis initializer to allow implicit conversion to sf::Uint8
     sf::Color opposite(127 - color.r, 127 - color.g, 127 - color.b, color.a);
     _position.setFillColor(opposite);
 
     std::stringstream rotationStr, angularVelocityStr;
-    rotationStr        << "r = " << std::fixed << std::setprecision(2) << body.getRotation() << " rad";
-    angularVelocityStr << "w = " << std::fixed << std::setprecision(2) << body.getAngularVelocity() << " rad/s";
+    rotationStr        << "r = " << std::fixed << std::setprecision(2) << body.rotation << " rad";
+    angularVelocityStr << "w = " << std::fixed << std::setprecision(2) << body.angularVelocity << " rad/s";
     _rotation.setString(rotationStr.str());
     _angularVelocity.setString(angularVelocityStr.str());
     _rotation.setPosition(pos + Vector2f(10, -31));
     _angularVelocity.setPosition(pos + Vector2f(10, -20));
 
-    Vector2d com{body.getPosition() + body.getCenterOfMass()};
-    _velocity.setPoints(static_cast<Vector2f>(com), static_cast<Vector2f>(com + body.getVelocity()));
+    _velocity.setPoints(static_cast<Vector2f>(body.position), static_cast<Vector2f>(body.position + body.velocity));
     _velocity.setColor(opposite);
 }
 

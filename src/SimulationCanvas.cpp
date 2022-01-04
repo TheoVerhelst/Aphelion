@@ -3,7 +3,7 @@
 #include <SFML/Window.hpp>
 
 SimulationCanvas::SimulationCanvas(const char* typeName, bool initRenderer):
-        tgui::CanvasSFML(typeName, initRenderer) {
+    tgui::CanvasSFML(typeName, initRenderer) {
     onSizeChange(&SimulationCanvas::updateView, this);
 }
 
@@ -29,7 +29,7 @@ bool SimulationCanvas::handleEvent(const sf::Event& event) {
     return false;
 }
 
-void SimulationCanvas::update(const sf::Time& elapsedTime, const PhysicalModel& model) {
+void SimulationCanvas::update(const sf::Time& elapsedTime) {
     Vector2f movement{0, 0};
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) {
         movement.x -= _panSpeed;
@@ -70,30 +70,26 @@ void SimulationCanvas::update(const sf::Time& elapsedTime, const PhysicalModel& 
     _position += movement * elapsedTime.asSeconds() * multiplier;
 
     if (_debugView) {
-        auto bodies = model.getBodies();
-        if (_debugInfos.size() != bodies.size()) {
-            _debugInfos.resize(bodies.size(), DebugInfo(_debugFont));
-        }
-
-        for (std::size_t i{0}; i < bodies.size(); ++i) {
-            _debugInfos[i].update(*bodies[i].lock());
+        for (EntityId id : *_scene) {
+            Body& body{_scene->getComponent<Body>(id)};
+            DebugInfo& debugInfo{_scene->getComponent<DebugInfo>(id)};
+            debugInfo.update(body);
         }
     }
-
     updateView();
 }
 
 void SimulationCanvas::display() {
     if (_debugView) {
-        for (auto& debugInfo : _debugInfos) {
-            draw(debugInfo);
+        for (EntityId id : *_scene) {
+            draw(_scene->getComponent<DebugInfo>(id));
         }
     }
     tgui::CanvasSFML::display();
 }
 
-void SimulationCanvas::setDebugFont(const std::weak_ptr<sf::Font>& font) {
-    _debugFont = font;
+void SimulationCanvas::setScene(const SceneView<Body, DebugInfo>& scene) {
+    _scene = std::make_shared<SceneView<Body, DebugInfo>>(scene);
 }
 
 tgui::Widget::Ptr SimulationCanvas::clone() const {

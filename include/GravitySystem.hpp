@@ -1,36 +1,36 @@
-#ifndef PHYSICAL_MODEL_HPP
-#define PHYSICAL_MODEL_HPP
+#ifndef GRAVITYSYSTEM_HPP
+#define GRAVITYSYSTEM_HPP
 
-#include <string>
-#include <vector>
-#include <memory>
+#include <cstddef>
 #include <SFML/System/Time.hpp>
-#include <Body.hpp>
+#include <Scene.hpp>
+#include <CollisionSystem.hpp>
+#include <components.hpp>
 #include <vector.hpp>
 
-class PhysicalModel {
+class GravitySystem {
 public:
-	PhysicalModel(const std::string& setupFile);
+	GravitySystem(Scene& scene);
 	void updateTime(const sf::Time& elapsedTime);
 	void updateSteps(int steps);
 	void setTimeScale(float timeScale);
 	long long int getStepCounter() const;
 	sf::Time getElapsedTime() const;
-	std::vector<std::weak_ptr<const Body>> getBodies() const;
 
 private:
+	Scene& _scene;
+	CollisionSystem _collisionSystem;
 	float _timeScale{1};
 	sf::Time _timeStep{sf::seconds(0.02)};
 	sf::Time _currentStep{sf::seconds(0)};
 	// Might go back in time, so step counter is signed, and at least 64 bits.
 	long long int _stepCounter{0};
 	const double _gravitationalConstant{6.67408e-16};
-	std::vector<std::shared_ptr<Body>> _bodies;
 
 	/// Computes the acceleration field at a point given the other bodies.
-	/// The body with given bodyIndex is ignored from the computation
-	Vector2d computeAcceleration(const Vector2d position, std::size_t bodyIndex) const;
+	/// The body with given id is ignored from the computation
+	Vector2d computeAcceleration(const Vector2d& position, EntityId id) const;
 	void updateStep(bool backwards);
 };
 
-#endif // PHYSICAL_MODEL_HPP
+#endif // GRAVITYSYSTEM_HPP

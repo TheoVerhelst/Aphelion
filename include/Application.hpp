@@ -5,7 +5,8 @@
 #include <SFML/Window.hpp>
 #include <TGUI/TGUI.hpp>
 #include <TGUI/Backend/SFML-Graphics.hpp>
-#include <PhysicalModel.hpp>
+#include <GravitySystem.hpp>
+#include <RenderSystem.hpp>
 #include <Scene.hpp>
 #include <SimulationCanvas.hpp>
 #include <ResourceManager.hpp>
@@ -19,8 +20,9 @@ private:
     const std::string _guiFile{"gui.txt"};
     sf::RenderWindow _window;
     tgui::Gui _gui;
-    PhysicalModel _model;
     Scene _scene;
+    GravitySystem _gravitySystem;
+    RenderSystem _renderSystem;
     SimulationCanvas::Ptr _simulationCanvas;
     bool _paused{false};
     ResourceManager<sf::Font> _fontManager;
