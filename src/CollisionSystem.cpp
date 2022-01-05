@@ -75,10 +75,11 @@ void CollisionSystem::collideCircles(const CircleBody& circleA, const CircleBody
         const double m_a{bodyA.mass};
         const double m_b{bodyB.mass};
         const Vector2d normal{diff_x / dist};
+        const double restitution{bodyA.restitution * bodyB.restitution};
         // Based on stackoverflow.com/questions/35211114/2d-elastic-ball-collision-physics
-        const Vector2d addedVel = 2 * dot(v_a - v_b, normal) * normal / (m_a + m_b);
-        bodyA.velocity -= addedVel * m_b;
-        bodyB.velocity += addedVel * m_a;
+        const Vector2d addedVel = dot(v_a - v_b, normal) * normal / (m_a + m_b);
+        bodyA.velocity -= addedVel * (m_b + restitution * m_b);
+        bodyB.velocity += addedVel * (m_a + restitution * m_a);
 
         // Move the bodies so that they just touch and don't overlap.
         // The displacement is proportional to the mass of the other body.
@@ -89,28 +90,30 @@ void CollisionSystem::collideCircles(const CircleBody& circleA, const CircleBody
 
 void CollisionSystem::collisionResponse(Body& bodyA, Body& bodyB, const ContactInfo& contactInfo) {
     // Vector going from the center of mass to the contact point
-    Vector2d R_A{contactInfo.C_A - bodyA.position};
-    Vector2d R_B{contactInfo.C_B - bodyB.position};
-    Vector2d v_A{bodyA.velocity};
-    Vector2d v_B{bodyB.velocity};
-    double m_A{bodyA.mass};
-    double m_B{bodyB.mass};
-    double I_A{bodyA.momentOfInertia};
-    double I_B{bodyB.momentOfInertia};
-    double w_A{bodyA.angularVelocity};
-    double w_B{bodyB.angularVelocity};
+    const Vector2d R_A{contactInfo.C_A - bodyA.position};
+    const Vector2d R_B{contactInfo.C_B - bodyB.position};
+    const Vector2d v_A{bodyA.velocity};
+    const Vector2d v_B{bodyB.velocity};
+    const double m_A{bodyA.mass};
+    const double m_B{bodyB.mass};
+    const double I_A{bodyA.momentOfInertia};
+    const double I_B{bodyB.momentOfInertia};
+    const double w_A{bodyA.angularVelocity};
+    const double w_B{bodyB.angularVelocity};
     // n is the normalized vector normal to the surface of contact
-    Vector2d n{contactInfo.normal / norm(contactInfo.normal)};
-    double R_A_n{cross(R_A, n)};
-    double R_B_n{cross(R_B, n)};
+    const Vector2d n{contactInfo.normal / norm(contactInfo.normal)};
+    const double R_A_n{cross(R_A, n)};
+    const double R_B_n{cross(R_B, n)};
+    const double restitution{bodyA.restitution * bodyB.restitution};
 
 
     // norm_J is the norm of the resulting impulse vector
-    double norm_J{2 *
+    const double norm_J_elastic{2 *
         (dot(v_A - v_B, n) + cross(w_A * R_A - w_B * R_B, n)) /
         (1 / m_A + 1 / m_B + R_A_n * R_A_n / I_A + R_B_n * R_B_n / I_B)
     };
-    Vector2d J{n * norm_J};
+    const double norm_J_inelastic{m_A * m_B * dot(v_A - v_B, n) / (m_A + m_B)};
+    const Vector2d J{n * (restitution * norm_J_elastic + (1 - restitution) * norm_J_inelastic)};
 
     bodyA.velocity -= J / m_A;
     bodyB.velocity += J / m_B;

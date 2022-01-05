@@ -9,7 +9,7 @@
             "body": {
                 "mass": 4e18,
                 "position": {"x": -50, "y": 20},
-                "velocity": {"x": 20, "y": 0},
+                "velocity": {"x": 20, "y": -60},
                 "rotation": 0,
                 "restitution": 0.9,
                 "angularVelocity": 0
@@ -24,7 +24,7 @@
             "body": {
                 "mass": 1e18,
                 "position": {"x": 150, "y": -80},
-                "velocity": {"x": 5, "y": 0},
+                "velocity": {"x": 60, "y": 20},
                 "rotation": 0,
                 "restitution": 0.9,
                 "angularVelocity": 0
@@ -39,7 +39,7 @@
             "body": {
                 "mass": 1e19,
                 "position": {"x": 20, "y": 245},
-                "velocity": {"x": 0, "y": -10},
+                "velocity": {"x": 50, "y": 30},
                 "rotation": 0,
                 "restitution": 0.9,
                 "angularVelocity": 0

@@ -47,7 +47,7 @@ void GameplaySystem::handleActions(const sf::Time& dt, const std::set<Action>& a
         if (_renderTarget != nullptr) {
             sf::View playerView{_renderTarget->getView()};
             playerView.setCenter(static_cast<Vector2f>(body.position));
-            playerView.setRotation(body.rotation * 180. / pi);
+            //playerView.setRotation(body.rotation * 180. / pi);
             _renderTarget->setView(playerView);
         }
         break;
