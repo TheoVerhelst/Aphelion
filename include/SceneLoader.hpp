@@ -8,6 +8,7 @@
 #include <components.hpp>
 #include <Scene.hpp>
 #include <ResourceManager.hpp>
+#include <json.hpp>
 
 void loadScene(Scene& scene, const std::string& setupFile,
         const ResourceManager<sf::Font>& fontManager,
@@ -16,6 +17,8 @@ void loadScene(Scene& scene, const std::string& setupFile,
 void setupCircle(Scene& scene, EntityId id);
 
 void setupConvex(Scene& scene, EntityId id);
+
+void setupAnimations(Scene& scene, EntityId id, nlohmann::json animationJson, const ResourceManager<sf::Texture>& textureManager, bool hasBody);
 
 Vector2d convexSupportFunction(const Body& body, const ConvexBody& convex, const Vector2d& direction);
 

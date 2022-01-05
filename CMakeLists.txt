@@ -15,6 +15,7 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -std=c++2a -Wall -Wextra -pedantic -p
 
 # List all source files
 set(SOURCE_FILES
+	src/Animation.cpp
 	src/Application.cpp
 	src/CollisionSystem.cpp
 	src/components.cpp

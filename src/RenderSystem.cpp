@@ -3,6 +3,7 @@
 #include <SFML/Graphics.hpp>
 #include <RenderSystem.hpp>
 #include <components.hpp>
+#include <Animation.hpp>
 
 RenderSystem::RenderSystem(Scene& scene):
     _scene{scene} {
@@ -21,9 +22,14 @@ void RenderSystem::draw(sf::RenderTarget& target, sf::RenderStates states) const
     for (EntityId id : _scene.view<sf::ConvexShape>()) {
         target.draw(_scene.getComponent<sf::ConvexShape>(id), states);
     }
+    for (EntityId id : _scene.view<AnimationComponent>()) {
+        for (auto& pair : _scene.getComponent<AnimationComponent>(id)) {
+            target.draw(pair.second, states);
+        }
+    }
 }
 
-void RenderSystem::update() {
+void RenderSystem::update(const sf::Time& dt) {
     for (EntityId id : _scene.view<Body, sf::Sprite>()) {
         sf::Sprite& sprite{_scene.getComponent<sf::Sprite>(id)};
         Body& body{_scene.getComponent<Body>(id)};
@@ -61,5 +67,16 @@ void RenderSystem::update() {
             trace.trace[index + 1].color.a = static_cast<sf::Uint8>(alpha);
         }
         trace.traceIndex = nextIndex;
+    }
+    for (EntityId id : _scene.view<Body, AnimationComponent>()) {
+        AnimationComponent& animations{_scene.getComponent<AnimationComponent>(id)};
+        for (auto& [action, animation] : animations) {
+            Body& body{_scene.getComponent<Body>(id)};
+            animation.getSprite().setPosition(static_cast<Vector2f>(body.position));
+            animation.getSprite().setRotation(body.rotation * 180. / pi);
+            if (not animation.isStopped()) {
+                animation.update(dt);
+            }
+        }
     }
 }

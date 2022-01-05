@@ -11,12 +11,13 @@
 
 class GameplaySystem {
 public:
-    GameplaySystem(const SceneView<Body, Player>& scene);
-    void handleActions(const sf::Time& dt, const std::set<Action>& actions);
+    GameplaySystem(Scene& scene);
+    void handleTriggerActions(const std::map<Action, bool>& actions);
+    void handleContinuousActions(const sf::Time& dt, const std::set<Action>& actions);
     void setRenderTarget(sf::RenderTarget& renderTarget);
 
 private:
-    SceneView<Body, Player> _scene;
+    Scene& _scene;
     sf::RenderTarget* _renderTarget{nullptr};
 };
 

@@ -2,10 +2,11 @@
 #include <algorithm>
 #include <functional>
 #include <cmath>
+#include <iostream>
 #include <stdexcept>
 #include <SFML/Graphics.hpp>
-#include <json.hpp>
 #include <serializers.hpp>
+#include <Animation.hpp>
 #include <DebugInfo.hpp>
 #include <SceneLoader.hpp>
 
@@ -50,14 +51,27 @@ void loadScene(Scene& scene, const std::string& setupFile,
             } else if (key == "sprite") {
                 sf::Sprite& sprite{scene.assignComponent<sf::Sprite>(id)};
                 std::string texture{value.at("texture").get<std::string>()};
-                sf::IntRect textureRect{value.at("textureRect").get<sf::IntRect>()};
                 sprite.setTexture(textureManager.getRef(texture));
-                sprite.setTextureRect(textureRect);
+                if (value.contains("rect")) {
+                    sprite.setTextureRect(value.at("rect").get<sf::IntRect>());
+                }
                 if (hasBody) {
                     sprite.setOrigin(static_cast<Vector2f>(scene.getComponent<Body>(id).centerOfMass));
                 }
             } else if (key == "player") {
                 scene.assignComponent<Player>(id);
+            }
+        }
+        for (auto& [key, value] : components.items()) {
+             if (key == "animations") {
+                setupAnimations(scene, id, value, textureManager, hasBody);
+            } else if (key == "circleShape") {
+                sf::CircleShape& shape{scene.assignComponent<sf::CircleShape>(id)};
+                CircleBody& circle{scene.getComponent<CircleBody>(id)};
+                shape.setRadius(circle.radius);
+                shape.setFillColor(value.at("color").get<sf::Color>());
+                shape.setOrigin(circle.radius, circle.radius);
+                shape.setPointCount(circle.radius);
             }
         }
     }
@@ -104,6 +118,34 @@ void setupConvex(Scene& scene, EntityId id) {
     collider.supportFunction = std::bind(convexSupportFunction, std::ref(body), std::ref(convex), std::placeholders::_1);
 }
 
+void setupAnimations(Scene& scene, EntityId id, json animationJson, const ResourceManager<sf::Texture>& textureManager, bool hasBody) {
+    AnimationComponent& animations{scene.assignComponent<AnimationComponent>(id)};
+    std::map<std::string, Action> nameToAction{
+        {"engine", Action::Engine},
+        {"rcsUp", Action::RcsUp},
+        {"rcsDown", Action::RcsDown},
+        {"rcsLeft", Action::RcsLeft},
+        {"rcsRight", Action::RcsRight},
+        {"rcsClockwise", Action::RcsClockwise},
+        {"rcsCounterClockwise", Action::RcsCounterClockwise}
+    };
+    for (auto& [name, value] : animationJson.items()) {
+        std::string textureName{value.at("texture").get<std::string>()};
+        std::vector<AnimationFrame> frames;
+        value.at("frames").get_to(frames);
+        Animation animation{textureManager.get(textureName), frames};
+        Vector2f spriteOrigin{0, 0};
+        if (hasBody) {
+            spriteOrigin += static_cast<Vector2f>(scene.getComponent<Body>(id).centerOfMass);
+        }
+        if (value.contains("offset")) {
+            spriteOrigin -= value.at("offset").get<Vector2f>();
+        }
+        animation.getSprite().setOrigin(spriteOrigin);
+        animations.emplace(nameToAction.at(name), animation);
+    }
+}
+
 Vector2d convexSupportFunction(const Body& body, const ConvexBody& convex, const Vector2d& direction) {
 	double largestProd{-std::numeric_limits<double>::max()};
 	Vector2d furthestPoint;
@@ -126,11 +168,12 @@ Vector2d computeCenterOfMass(const std::vector<Vector2d>& vertices) {
 	}
 	std::vector<double> triangleAreas;
 	std::vector<Vector2d> triangleCenters;
-	for (std::size_t i{0}; i < vertices.size(); ++i) {
+    const Vector2d A{vertices[0]};
+	for (std::size_t i{1}; i < vertices.size() - 1; ++i) {
 		Vector2d B{vertices[i]};
-		Vector2d C{vertices[(i + 1) % vertices.size()]};
-		triangleAreas.push_back(std::abs(cross(B, C)) / 2.);
-		triangleCenters.push_back((B + C) / 3.);
+		Vector2d C{vertices[i + 1]};
+		triangleAreas.push_back(std::abs(cross(B - A, C - A)) / 2.);
+		triangleCenters.push_back((A + B + C) / 3.);
 	}
 	double totalArea{std::accumulate(triangleAreas.begin(), triangleAreas.end(), 0.)};
 	Vector2d centerOfMass{std::inner_product(triangleCenters.begin(),

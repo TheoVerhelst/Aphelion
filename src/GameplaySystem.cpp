@@ -1,18 +1,40 @@
+#include <stdexcept>
+#include <cmath>
 #include <GameplaySystem.hpp>
+#include <Animation.hpp>
+#include <components.hpp>
 #include <vector.hpp>
-#include <iostream>
 
-GameplaySystem::GameplaySystem(const SceneView<Body, Player>& scene):
+GameplaySystem::GameplaySystem(Scene& scene):
     _scene{scene} {
 }
 
-void GameplaySystem::handleActions(const sf::Time& dt, const std::set<Action>& actions) {
-    for(EntityId id : _scene) {
+void GameplaySystem::handleTriggerActions(const std::map<Action, bool>& actions) {
+    for(EntityId id : _scene.view<AnimationComponent, Player>()) {
+        AnimationComponent& animations{_scene.getComponent<AnimationComponent>(id)};
+        for (auto& [action, start] : actions) {
+            auto animationIt = animations.find(action);
+            if (animationIt != animations.end()) {
+                if (start) {
+                    animationIt->second.start();
+                } else {
+                    animationIt->second.stop();
+                }
+            }
+        }
+        break;
+    }
+}
+
+void GameplaySystem::handleContinuousActions(const sf::Time& dt, const std::set<Action>& actions) {
+    for(EntityId id : _scene.view<Body, Player>()) {
         Vector2d dv{0, 0};
         double dw{0};
-        const double engineAccel{500};
+        float zoom{1.f};
+        const double engineAccel{200};
         const double rcsLinearAccel{50};
-        const double rcsCircularAccel{50};
+        const double rcsCircularAccel{10};
+        const float zoomSpeed{1.5};
 
         for (auto action : actions) {
             switch (action) {
@@ -37,6 +59,12 @@ void GameplaySystem::handleActions(const sf::Time& dt, const std::set<Action>& a
                 case Action::RcsCounterClockwise:
                     dw -= rcsCircularAccel;
                     break;
+                case Action::ZoomIn:
+                    zoom *= std::pow(zoomSpeed, dt.asSeconds());
+                    break;
+                case Action::ZoomOut:
+                    zoom /= std::pow(zoomSpeed, dt.asSeconds());
+                    break;
             }
         }
 
@@ -47,7 +75,7 @@ void GameplaySystem::handleActions(const sf::Time& dt, const std::set<Action>& a
         if (_renderTarget != nullptr) {
             sf::View playerView{_renderTarget->getView()};
             playerView.setCenter(static_cast<Vector2f>(body.position));
-            //playerView.setRotation(body.rotation * 180. / pi);
+            playerView.setSize(playerView.getSize() * zoom);
             _renderTarget->setView(playerView);
         }
         break;

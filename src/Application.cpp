@@ -6,7 +6,7 @@ Application::Application(const std::string& setupFile):
     _gui{_window},
     _physicsSystem{_scene},
     _renderSystem{_scene},
-    _gameplaySystem{_scene.view<Body, Player>()},
+    _gameplaySystem{_scene},
     _debugOverlay{_gui, _physicsSystem, _scene.view<Body, DebugInfo>(), _textureManager} {
     loadResources();
 
@@ -27,18 +27,26 @@ void Application::run() {
         sf::Event event;
         while (_window.pollEvent(event)) {
             // Dispatch the event in order
+            _gui.handleEvent(event);
+
             if (event.type == sf::Event::Closed) {
                 _window.close();
             } else if (event.type == sf::Event::Resized) {
-                // update the view to the new size of the window and keep the center
-                sf::View view{_sceneCanvas->getRenderTexture().getView()};
-                view.setSize(static_cast<float>(event.size.width), static_cast<float>(event.size.height));
-                _sceneCanvas->getRenderTexture().setView(view);
+                Vector2f newSize{static_cast<float>(event.size.width), static_cast<float>(event.size.height)};
+                sf::View canvasView{_sceneCanvas->getView()};
+                sf::View windowView{_window.getView()};
+                const float zoomFactor{2.f};
+                canvasView.setSize(newSize / zoomFactor);
+                windowView.setSize(newSize);
+                windowView.setCenter(newSize / 2.f);
+                _sceneCanvas->setView(canvasView);
+                _window.setView(windowView);
             }
             // TGUI needs to handle closed and resized events as well, so no "else if"
-            if (_gui.handleEvent(event)) {
+
+            if (_debugOverlay.handleEvent(event)) {
                 continue;
-            } else if (_debugOverlay.handleEvent(event)) {
+            } else if (_inputManager.handleEvent(event)) {
                 continue;
             }
         }
@@ -46,9 +54,10 @@ void Application::run() {
         // Update various systems
         sf::Time elapsedTime{clock.restart()};
         _physicsSystem.updateTime(elapsedTime);
-        _renderSystem.update();
+        _renderSystem.update(elapsedTime);
         _debugOverlay.update();
-        _gameplaySystem.handleActions(elapsedTime, _inputManager.getActiveActions());
+        _gameplaySystem.handleTriggerActions(_inputManager.getTriggerActions());
+        _gameplaySystem.handleContinuousActions(elapsedTime, _inputManager.getContinuousActions());
 
         // Draw graphics
         _sceneCanvas->clear(sf::Color::Black);
@@ -70,12 +79,13 @@ void Application::loadResources() {
     _textureManager.loadFromFile("resources/ship.png", "ship");
     _textureManager.loadFromFile("resources/sun.png", "sun");
     _textureManager.loadFromFile("resources/asteroid.png", "asteroid");
+    _textureManager.loadFromFile("resources/rcs.png", "rcs");
 }
 
 void Application::setFullscreen() {
     const std::vector<sf::VideoMode>& modes{sf::VideoMode::getFullscreenModes()};
     if (modes.size() > 0) {
         // Mode 0 is always the highest resolution
-        _window.create(modes[0], "Perihelion", sf::Style::Fullscreen);
+        _window.create(sf::VideoMode::getDesktopMode(), "Perihelion");//, sf::Style::Fullscreen);
     }
 }

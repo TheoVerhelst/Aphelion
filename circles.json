@@ -1,0 +1,129 @@
+{
+    "entities": [
+        {
+            "circle": {"radius": 1000},
+            "circleShape": {"color": "#fff87dFF"},
+            "body": {
+                "mass": 6e23,
+                "position": {"x": -52, "y": 20},
+                "velocity": {"x": -0.02, "y": -0.06},
+                "rotation": 0,
+                "restitution": 0.9,
+                "angularVelocity": 0
+            }
+        },
+        {
+            "circle": {"radius": 229},
+            "circleShape": {"color": "#b1b0a7FF"},
+            "body": {
+                "mass": 3.3e20,
+                "position": {"x": 1969, "y": 484},
+                "velocity": {"x": -17, "y": 412},
+                "rotation": 0,
+                "restitution": 0.9,
+                "angularVelocity": 1.24e-6
+            }
+        },
+        {
+            "circle": {"radius": 569},
+            "circleShape": {"color": "#ff9600FF"},
+            "body": {
+                "mass": 4.87e20,
+                "position": {"x": -955, "y": 4312},
+                "velocity": {"x": -320, "y": -212},
+                "rotation": 0,
+                "restitution": 0.9,
+                "angularVelocity": -0.1
+            }
+        },
+        {
+            "circle": {"radius": 600},
+            "circleShape": {"color": "#5b6ee1FF"},
+            "body": {
+                "mass": 1e22,
+                "position": {"x": -1535, "y": 5834},
+                "velocity": {"x": -225, "y": -32},
+                "rotation": 0,
+                "restitution": 0.9,
+                "angularVelocity": 0.001
+            }
+        },
+        {
+            "circle": {"radius": 319},
+            "circleShape": {"color": "#ac3232FF"},
+            "body": {
+                "mass": 6.42e19,
+                "position": {"x": -5042, "y": -7880},
+                "velocity": {"x": 191, "y": -46.66},
+                "rotation": 0,
+                "restitution": 0.9,
+                "angularVelocity": 0.01
+            }
+        },
+        {
+            "convex": {
+                "vertices": [
+                    {"x": 3, "y": 7},
+                    {"x": 10, "y": 0},
+                    {"x": 13, "y": 0},
+                    {"x": 20, "y": 7},
+                    {"x": 20, "y": 34},
+                    {"x": 3, "y": 34}
+            ]},
+            "sprite": {
+                "texture": "ship",
+                "rect": {"top": 0, "left": 96, "width": 24, "height": 48}
+            },
+            "animations": {
+                "engine": {
+                    "texture": "ship",
+                    "frames": [
+                        {"duration": 0.1, "rect": {"top": 0, "left": 0, "width": 24, "height": 48}},
+                        {"duration": 0.1, "rect": {"top": 0, "left": 24, "width": 24, "height": 48}},
+                        {"duration": 0.1, "rect": {"top": 0, "left": 48, "width": 24, "height": 48}},
+                        {"duration": 0.1, "rect": {"top": 0, "left": 72, "width": 24, "height": 48}}
+                    ]
+                },
+                "rcsDown": {
+                    "texture": "rcs",
+                    "offset": {"x": -6, "y": 0},
+                    "frames": [{"duration": 1, "rect": {"top": 0, "left": 0, "width": 36, "height": 48}}]
+                },
+                "rcsUp": {
+                    "texture": "rcs",
+                    "offset": {"x": -6, "y": 0},
+                    "frames": [{"duration": 1, "rect": {"top": 0, "left": 36, "width": 36, "height": 48}}]
+                },
+                "rcsRight": {
+                    "texture": "rcs",
+                    "offset": {"x": -6, "y": 0},
+                    "frames": [{"duration": 1, "rect": {"top": 0, "left": 72, "width": 36, "height": 48}}]
+                },
+                "rcsClockwise": {
+                    "texture": "rcs",
+                    "offset": {"x": -6, "y": 0},
+                    "frames": [{"duration": 1, "rect": {"top": 0, "left": 108, "width": 36, "height": 48}}]
+                },
+                "rcsCounterClockwise": {
+                    "texture": "rcs",
+                    "offset": {"x": -6, "y": 0},
+                    "frames": [{"duration": 1, "rect": {"top": 0, "left": 144, "width": 36, "height": 48}}]
+                },
+                "rcsLeft": {
+                    "texture": "rcs",
+                    "offset": {"x": -6, "y": 0},
+                    "frames": [{"duration": 1, "rect": {"top": 0, "left": 180, "width": 36, "height": 48}}]
+                }
+            },
+            "body": {
+                "mass": 10000,
+                "position": {"x": -1535, "y": 5134},
+                "velocity": {"x": -225, "y": -32},
+                "rotation": 0,
+                "restitution": 0.3,
+                "angularVelocity": 0
+            },
+            "player": true
+        }
+    ]
+}
