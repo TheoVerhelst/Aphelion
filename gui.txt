@@ -7,7 +7,7 @@ Renderer.valueDisplayRenderer {
     TextStyle = Bold;
 }
 
-SimulationCanvas.simulationCanvas {
+CanvasSFML.sceneCanvas {
     Position = (0, 0);
     Size = (100%, 100%);
 }

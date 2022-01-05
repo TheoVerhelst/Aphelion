@@ -26,7 +26,6 @@ set(SOURCE_FILES
 	src/RenderSystem.cpp
 	src/Scene.cpp
 	src/SceneLoader.cpp
-	src/SimulationCanvas.cpp
 )
 
 # Create the main executable

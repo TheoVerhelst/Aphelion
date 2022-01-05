@@ -1,8 +1,12 @@
 #include <DebugOverlay.hpp>
+#include <format.hpp>
 
-DebugOverlay::DebugOverlay(PhysicsSystem& physicsSystem, const SceneView<Body, DebugInfo>& scene):
+DebugOverlay::DebugOverlay(tgui::Gui& gui, PhysicsSystem& physicsSystem,
+    const SceneView<Body, DebugInfo>& scene, ResourceManager<sf::Texture>& textureManager):
+    _gui{gui},
     _physicsSystem{physicsSystem},
-    _scene{scene} {
+    _scene{scene},
+    _textureManager{textureManager} {
 }
 
 void DebugOverlay::update() {
@@ -12,6 +16,8 @@ void DebugOverlay::update() {
             DebugInfo& debugInfo{_scene.getComponent<DebugInfo>(id)};
             debugInfo.update(body);
         }
+        _gui.get<tgui::Label>("timeSecondsDisplay")->setText(formatTime(_physicsSystem.getElapsedTime()));
+        _gui.get<tgui::Label>("timeStepsDisplay")->setText(std::to_string(_physicsSystem.getStepCounter()));
     }
 }
 
@@ -26,7 +32,57 @@ void DebugOverlay::draw(sf::RenderTarget& target, sf::RenderStates states) const
 bool DebugOverlay::handleEvent(const sf::Event& event) {
     if (event.type == sf::Event::KeyPressed and event.key.code == sf::Keyboard::F3) {
         _debugView = not _debugView;
+        _gui.get<tgui::ChildWindow>("controlsPanel")->setVisible(_debugView);
         return true;
     }
     return false;
+}
+
+void DebugOverlay::buildGui() {
+    _gui.get<tgui::ChildWindow>("controlsPanel")->setVisible(_debugView);
+
+    // Spin controls. Do not work with GUI text file import for some reason.
+    auto timeSpeedControl = tgui::SpinControl::create(-100, 100, 1, 2, 0.1);
+    timeSpeedControl->setPosition("timeSpeedLabel.right", "timeSpeedLabel.top");
+    timeSpeedControl->setSize(124, 16);
+    timeSpeedControl->onValueChange([this] (float value) {
+        if(not _paused) {
+            _physicsSystem.setTimeScale(value);
+        }
+    });
+    _gui.get<tgui::ChildWindow>("controlsPanel")->add(timeSpeedControl, "timeSpeedControl");
+
+    // Other bindings
+    _gui.get<tgui::Button>("stepBackButton")->onPress([this] () {
+        pauseTime();
+        _physicsSystem.updateSteps(-1);
+    });
+    _gui.get<tgui::Button>("stepForwardButton")->onPress([this] () {
+        pauseTime();
+        _physicsSystem.updateSteps(1);
+    });
+    auto pauseButton = _gui.get<tgui::Button>("pauseButton");
+    _gui.get<tgui::Button>("pauseButton")->onPress([this] () {
+        if (_paused) {
+            resumeTime();
+        } else {
+            pauseTime();
+        }
+    });
+}
+
+void DebugOverlay::pauseTime() {
+    auto renderer = _gui.get<tgui::Button>("pauseButton")->getRenderer();
+    renderer->setTexture(_textureManager.getRef("playButton"));
+    renderer->setTextureHover(_textureManager.getRef("playHoverButton"));
+    _physicsSystem.setTimeScale(0);
+    _paused = true;
+}
+
+void DebugOverlay::resumeTime() {
+    auto renderer = _gui.get<tgui::Button>("pauseButton")->getRenderer();
+    renderer->setTexture(_textureManager.getRef("pauseButton"));
+    renderer->setTextureHover(_textureManager.getRef("pauseHoverButton"));
+    _paused = false;
+    _physicsSystem.setTimeScale(_gui.get<tgui::SpinControl>("timeSpeedControl")->getValue());
 }

@@ -8,7 +8,6 @@
 #include <PhysicsSystem.hpp>
 #include <RenderSystem.hpp>
 #include <Scene.hpp>
-#include <SimulationCanvas.hpp>
 #include <ResourceManager.hpp>
 #include <DebugOverlay.hpp>
 
@@ -25,16 +24,11 @@ private:
     PhysicsSystem _physicsSystem;
     RenderSystem _renderSystem;
     DebugOverlay _debugOverlay;
-    SimulationCanvas::Ptr _simulationCanvas;
+    tgui::CanvasSFML::Ptr _sceneCanvas;
     ResourceManager<sf::Font> _fontManager;
     ResourceManager<sf::Texture> _textureManager;
-    bool _paused{false};
 
     void loadResources();
-    void buildGui();
-    void updateDisplays();
-    void pauseTime();
-    void resumeTime();
 };
 
 #endif // APPLICATION_HPP
