@@ -8,6 +8,8 @@
 #include <PhysicsSystem.hpp>
 #include <RenderSystem.hpp>
 #include <Scene.hpp>
+#include <GameplaySystem.hpp>
+#include <InputManager.hpp>
 #include <ResourceManager.hpp>
 #include <DebugOverlay.hpp>
 
@@ -23,7 +25,9 @@ private:
     Scene _scene;
     PhysicsSystem _physicsSystem;
     RenderSystem _renderSystem;
+    GameplaySystem _gameplaySystem;
     DebugOverlay _debugOverlay;
+    InputManager _inputManager;
     tgui::CanvasSFML::Ptr _sceneCanvas;
     ResourceManager<sf::Font> _fontManager;
     ResourceManager<sf::Texture> _textureManager;

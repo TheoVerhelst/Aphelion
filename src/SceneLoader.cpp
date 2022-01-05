@@ -56,6 +56,8 @@ void loadScene(Scene& scene, const std::string& setupFile,
                 if (hasBody) {
                     sprite.setOrigin(static_cast<Vector2f>(scene.getComponent<Body>(id).centerOfMass));
                 }
+            } else if (key == "player") {
+                scene.assignComponent<Player>(id);
             }
         }
     }

@@ -46,4 +46,7 @@ struct Collider {
 	std::function<Vector2d(const Vector2d&)> supportFunction;
 };
 
+struct Player {
+};
+
 #endif // COMPONENTS_HPP

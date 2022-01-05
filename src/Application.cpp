@@ -7,6 +7,7 @@ Application::Application(const std::string& setupFile):
     _gui{_window},
     _physicsSystem{_scene},
     _renderSystem{_scene},
+    _gameplaySystem{_scene.view<Body, Player>()},
     _debugOverlay{_gui, _physicsSystem, _scene.view<Body, DebugInfo>(), _textureManager} {
     loadResources();
 
@@ -22,10 +23,6 @@ Application::Application(const std::string& setupFile):
 void Application::run() {
     sf::Clock clock;
     while (_window.isOpen()) {
-        // Update physics
-        sf::Time elapsedTime{clock.restart()};
-        _physicsSystem.updateTime(elapsedTime);
-
         // Handle events
         sf::Event event;
         while (_window.pollEvent(event)) {
@@ -40,9 +37,12 @@ void Application::run() {
             }
         }
 
-        // Update graphics
+        // Update various systems
+        sf::Time elapsedTime{clock.restart()};
+        _physicsSystem.updateTime(elapsedTime);
         _renderSystem.update();
         _debugOverlay.update();
+        _gameplaySystem.handleActions(elapsedTime, _inputManager.getActiveActions());
 
         // Draw graphics
         _sceneCanvas->clear(sf::Color::Black);

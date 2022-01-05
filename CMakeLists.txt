@@ -21,6 +21,8 @@ set(SOURCE_FILES
 	src/DebugInfo.cpp
 	src/DebugOverlay.cpp
 	src/format.cpp
+	src/GameplaySystem.cpp
+	src/InputManager.cpp
 	src/main.cpp
 	src/PhysicsSystem.cpp
 	src/RenderSystem.cpp
