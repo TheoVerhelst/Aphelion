@@ -1,5 +1,6 @@
 #include <GameplaySystem.hpp>
 #include <vector.hpp>
+#include <iostream>
 
 GameplaySystem::GameplaySystem(const SceneView<Body, Player>& scene):
     _scene{scene} {
@@ -42,6 +43,17 @@ void GameplaySystem::handleActions(const sf::Time& dt, const std::set<Action>& a
         Body& body{_scene.getComponent<Body>(id)};
         body.velocity += rotate(dv, body.rotation) * static_cast<double>(dt.asSeconds());
         body.angularVelocity += dw * dt.asSeconds();
+
+        if (_renderTarget != nullptr) {
+            sf::View playerView{_renderTarget->getView()};
+            playerView.setCenter(static_cast<Vector2f>(body.position));
+            playerView.setRotation(body.rotation * 180. / pi);
+            _renderTarget->setView(playerView);
+        }
         break;
     }
+}
+
+void GameplaySystem::setRenderTarget(sf::RenderTarget& renderTarget) {
+    _renderTarget = &renderTarget;
 }

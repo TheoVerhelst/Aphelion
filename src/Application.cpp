@@ -3,7 +3,6 @@
 #include <SceneLoader.hpp>
 
 Application::Application(const std::string& setupFile):
-    _window{sf::VideoMode(1200, 600), "Perihelion"},
     _gui{_window},
     _physicsSystem{_scene},
     _renderSystem{_scene},
@@ -16,8 +15,9 @@ Application::Application(const std::string& setupFile):
     _sceneCanvas = _gui.get<tgui::CanvasSFML>("sceneCanvas");
     _sceneCanvas->moveToBack();
     _debugOverlay.buildGui();
-
+    _gameplaySystem.setRenderTarget(_sceneCanvas->getRenderTexture());
     loadScene(_scene, setupFile, _fontManager, _textureManager);
+    setFullscreen();
 }
 
 void Application::run() {
@@ -26,10 +26,16 @@ void Application::run() {
         // Handle events
         sf::Event event;
         while (_window.pollEvent(event)) {
+            // Dispatch the event in order
             if (event.type == sf::Event::Closed) {
                 _window.close();
+            } else if (event.type == sf::Event::Resized) {
+                // update the view to the new size of the window and keep the center
+                sf::View view{_sceneCanvas->getRenderTexture().getView()};
+                view.setSize(static_cast<float>(event.size.width), static_cast<float>(event.size.height));
+                _sceneCanvas->getRenderTexture().setView(view);
             }
-            // Dispatch the event in order
+            // TGUI needs to handle closed and resized events as well, so no "else if"
             if (_gui.handleEvent(event)) {
                 continue;
             } else if (_debugOverlay.handleEvent(event)) {
@@ -64,4 +70,12 @@ void Application::loadResources() {
     _textureManager.loadFromFile("resources/ship.png", "ship");
     _textureManager.loadFromFile("resources/sun.png", "sun");
     _textureManager.loadFromFile("resources/asteroid.png", "asteroid");
+}
+
+void Application::setFullscreen() {
+    const std::vector<sf::VideoMode>& modes{sf::VideoMode::getFullscreenModes()};
+    if (modes.size() > 0) {
+        // Mode 0 is always the highest resolution
+        _window.create(modes[0], "Perihelion", sf::Style::Fullscreen);
+    }
 }

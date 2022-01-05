@@ -33,6 +33,7 @@ private:
     ResourceManager<sf::Texture> _textureManager;
 
     void loadResources();
+    void setFullscreen();
 };
 
 #endif // APPLICATION_HPP
