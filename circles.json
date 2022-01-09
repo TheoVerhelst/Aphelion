@@ -4,7 +4,7 @@
             "circle": {"radius": 1000},
             "circleShape": {"color": "#fff87dFF"},
             "body": {
-                "mass": 6e23,
+                "mass": 5e18,
                 "position": {"x": -52, "y": 20},
                 "velocity": {"x": -0.02, "y": -0.06},
                 "rotation": 0,
@@ -16,7 +16,7 @@
             "circle": {"radius": 229},
             "circleShape": {"color": "#b1b0a7FF"},
             "body": {
-                "mass": 3.3e20,
+                "mass": 5e15,
                 "position": {"x": 1969, "y": 484},
                 "velocity": {"x": -17, "y": 412},
                 "rotation": 0,
@@ -25,12 +25,12 @@
             }
         },
         {
-            "circle": {"radius": 569},
+            "circle": {"radius": 269},
             "circleShape": {"color": "#ff9600FF"},
             "body": {
-                "mass": 4.87e20,
+                "mass": 7.5e15,
                 "position": {"x": -955, "y": 4312},
-                "velocity": {"x": -320, "y": -212},
+                "velocity": {"x": -250, "y": -112},
                 "rotation": 0,
                 "restitution": 0.9,
                 "angularVelocity": -0.1
@@ -40,7 +40,7 @@
             "circle": {"radius": 600},
             "circleShape": {"color": "#5b6ee1FF"},
             "body": {
-                "mass": 1e22,
+                "mass": 1.5e17,
                 "position": {"x": -1535, "y": 5834},
                 "velocity": {"x": -225, "y": -32},
                 "rotation": 0,
@@ -52,9 +52,9 @@
             "circle": {"radius": 319},
             "circleShape": {"color": "#ac3232FF"},
             "body": {
-                "mass": 6.42e19,
+                "mass": 1e15,
                 "position": {"x": -5042, "y": -7880},
-                "velocity": {"x": 191, "y": -46.66},
+                "velocity": {"x": 171, "y": -86.66},
                 "rotation": 0,
                 "restitution": 0.9,
                 "angularVelocity": 0.01

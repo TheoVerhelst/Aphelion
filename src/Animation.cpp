@@ -1,8 +1,9 @@
+#include <SFML/Graphics/RenderTarget.hpp>
 #include <Animation.hpp>
 
-Animation::Animation(const std::weak_ptr<const sf::Texture>& texture, const std::vector<AnimationFrame>& frames):
+Animation::Animation(const sf::Texture& texture, const std::vector<AnimationFrame>& frames):
     _frames{frames},
-    _sprite{*texture.lock(), frames.at(0).rect} {
+    _sprite{texture, frames.at(0).rect} {
     for (auto& frame : _frames) {
         _totalDuration += frame.duration;
     }

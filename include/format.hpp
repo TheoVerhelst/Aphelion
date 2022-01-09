@@ -2,7 +2,7 @@
 #define FORMAT_HPP
 
 #include <string>
-#include <SFML/System.hpp>
+#include <SFML/System/Time.hpp>
 
 std::string formatTime(double seconds);
 std::string formatTime(const sf::Time& time);

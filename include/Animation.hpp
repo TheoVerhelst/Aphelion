@@ -1,7 +1,11 @@
 #ifndef ANIMATION_HPP
 #define ANIMATION_HPP
 
-#include <SFML/Graphics.hpp>
+#include <vector>
+#include <map>
+#include <SFML/Graphics/Sprite.hpp>
+#include <SFML/Graphics/Texture.hpp>
+#include <SFML/Graphics/Drawable.hpp>
 #include <SFML/System/Time.hpp>
 #include <json.hpp>
 #include <serializers.hpp>
@@ -15,7 +19,7 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(AnimationFrame, duration, rect)
 
 class Animation : public sf::Drawable {
 public:
-    Animation(const std::weak_ptr<const sf::Texture>& texture, const std::vector<AnimationFrame>& frames);
+    Animation(const sf::Texture& texture, const std::vector<AnimationFrame>& frames);
     void start();
     void stop();
     bool isStopped() const;

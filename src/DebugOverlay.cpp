@@ -73,16 +73,16 @@ void DebugOverlay::buildGui() {
 
 void DebugOverlay::pauseTime() {
     auto renderer = _gui.get<tgui::Button>("pauseButton")->getRenderer();
-    renderer->setTexture(_textureManager.getRef("playButton"));
-    renderer->setTextureHover(_textureManager.getRef("playHoverButton"));
+    renderer->setTexture(_textureManager.get("playButton"));
+    renderer->setTextureHover(_textureManager.get("playHoverButton"));
     _physicsSystem.setTimeScale(0);
     _paused = true;
 }
 
 void DebugOverlay::resumeTime() {
     auto renderer = _gui.get<tgui::Button>("pauseButton")->getRenderer();
-    renderer->setTexture(_textureManager.getRef("pauseButton"));
-    renderer->setTextureHover(_textureManager.getRef("pauseHoverButton"));
+    renderer->setTexture(_textureManager.get("pauseButton"));
+    renderer->setTextureHover(_textureManager.get("pauseHoverButton"));
     _paused = false;
     _physicsSystem.setTimeScale(_gui.get<tgui::SpinControl>("timeSpeedControl")->getValue());
 }

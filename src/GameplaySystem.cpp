@@ -3,7 +3,6 @@
 #include <GameplaySystem.hpp>
 #include <Animation.hpp>
 #include <components.hpp>
-#include <vector.hpp>
 
 GameplaySystem::GameplaySystem(Scene& scene):
     _scene{scene} {
@@ -34,7 +33,7 @@ void GameplaySystem::handleContinuousActions(const sf::Time& dt, const std::set<
         const double engineAccel{200};
         const double rcsLinearAccel{50};
         const double rcsCircularAccel{10};
-        const float zoomSpeed{1.5};
+        const float zoomSpeed{15};
 
         for (auto action : actions) {
             switch (action) {

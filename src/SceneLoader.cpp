@@ -50,8 +50,8 @@ void loadScene(Scene& scene, const std::string& setupFile,
                 }
             } else if (key == "sprite") {
                 sf::Sprite& sprite{scene.assignComponent<sf::Sprite>(id)};
-                std::string texture{value.at("texture").get<std::string>()};
-                sprite.setTexture(textureManager.getRef(texture));
+                std::string textureName{value.at("texture").get<std::string>()};
+                sprite.setTexture(textureManager.get(textureName));
                 if (value.contains("rect")) {
                     sprite.setTextureRect(value.at("rect").get<sf::IntRect>());
                 }

@@ -2,12 +2,12 @@
 #include <iostream>
 #include <DebugInfo.hpp>
 
-DebugInfo::DebugInfo(const std::weak_ptr<const sf::Font>& font):
+DebugInfo::DebugInfo(const sf::Font& font):
     _font{font} {
     _position.setOrigin(_position.getRadius(), _position.getRadius());
-    _rotation.setFont(*_font.lock());
+    _rotation.setFont(_font);
     _rotation.setCharacterSize(10);
-    _angularVelocity.setFont(*_font.lock());
+    _angularVelocity.setFont(_font);
     _angularVelocity.setCharacterSize(10);
 }
 

@@ -1,5 +1,4 @@
 #include <stdexcept>
-#include <iostream>
 #include <CollisionSystem.hpp>
 
 CollisionSystem::CollisionSystem(Scene& scene):

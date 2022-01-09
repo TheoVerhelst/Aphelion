@@ -2,42 +2,30 @@
 #define RESOURCEMANAGER_HPP
 
 #include <string>
-#include <memory>
 #include <unordered_map>
-#include <SFML/Graphics.hpp>
 
 template <typename T>
 class ResourceManager {
 public:
-    std::weak_ptr<T> loadFromFile(const std::string& filename, const std::string& id) {
-        if (not _resources.contains(id)) {
-            std::shared_ptr<T> resource{new T()};
-            if(not resource->loadFromFile(filename)) {
-                throw std::runtime_error("Error loading resource from " + filename);
-            }
-            _resources[id] = resource;
+    void loadFromFile(const std::string& filename, const std::string& id) {
+        if (_resources.contains(id)) {
+            throw std::runtime_error("Resource " + id + " already loaded, not loading from " + filename);
         }
-        return _resources[id];
+        if(not _resources[id].loadFromFile(filename)) {
+            throw std::runtime_error("Error while loading resource " + id + " from " + filename);
+        }
     }
 
-    std::weak_ptr<T> get(const std::string& id) {
+    T& get(const std::string& id) {
         return _resources.at(id);
     }
 
-    std::weak_ptr<const T> get(const std::string& id) const {
+    const T& get(const std::string& id) const {
         return _resources.at(id);
-    }
-
-    T& getRef(const std::string& id) {
-        return *_resources.at(id);
-    }
-
-    const T& getRef(const std::string& id) const {
-        return *_resources.at(id);
     }
 
 private:
-    std::unordered_map<std::string, std::shared_ptr<T>> _resources;
+    std::unordered_map<std::string, T> _resources;
 };
 
 #endif // RESOURCEMANAGER_HPP

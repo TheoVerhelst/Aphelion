@@ -2,12 +2,11 @@
 #define GAMEPLAYSYSTEM_HPP
 
 #include <set>
-#include <memory>
+#include <map>
 #include <SFML/System/Time.hpp>
 #include <SFML/Graphics/RenderTarget.hpp>
 #include <Action.hpp>
 #include <Scene.hpp>
-#include <components.hpp>
 
 class GameplaySystem {
 public:

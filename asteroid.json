@@ -6,7 +6,7 @@
                 "texture": "asteroid"
             },
             "body": {
-                "mass": 4e18,
+                "mass": 1e10,
                 "position": {"x": -50, "y": 20},
                 "velocity": {"x": 20, "y": -60},
                 "rotation": 0,
@@ -20,7 +20,7 @@
                 "texture": "asteroid"
             },
             "body": {
-                "mass": 1e18,
+                "mass": 1e10,
                 "position": {"x": 150, "y": -80},
                 "velocity": {"x": 60, "y": 20},
                 "rotation": 0,
@@ -34,7 +34,7 @@
                 "texture": "asteroid"
             },
             "body": {
-                "mass": 1e19,
+                "mass": 1e10,
                 "position": {"x": 20, "y": 245},
                 "velocity": {"x": 50, "y": 30},
                 "rotation": 0,
@@ -48,7 +48,7 @@
                 "texture": "sun"
             },
             "body": {
-                "mass": 1e21,
+                "mass": 1e16,
                 "position": {"x": 100, "y": 100},
                 "velocity": {"x": 0, "y": 0},
                 "rotation": 0,
@@ -57,6 +57,15 @@
             }
         },
         {
+            "body": {
+                "mass": 3e9,
+                "position": {"x": 0, "y": 100},
+                "velocity": {"x": 10, "y": 0},
+                "rotation": 0,
+                "restitution": 0.3,
+                "angularVelocity": 0
+            },
+            "player": true,
             "convex": {
                 "vertices": [
                     {"x": 3, "y": 7},
@@ -110,16 +119,7 @@
                     "offset": {"x": -6, "y": 0},
                     "frames": [{"duration": 1, "rect": {"top": 0, "left": 180, "width": 36, "height": 48}}]
                 }
-            },
-            "body": {
-                "mass": 1e17,
-                "position": {"x": 0, "y": 100},
-                "velocity": {"x": 10, "y": 0},
-                "rotation": 0,
-                "restitution": 0.3,
-                "angularVelocity": 0
-            },
-            "player": true
+            }
         }
     ]
 }
