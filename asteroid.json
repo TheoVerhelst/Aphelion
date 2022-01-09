@@ -1,7 +1,7 @@
 {
     "entities": [
         {
-            "circle": {"radius": 24},
+            "circleBody": {"radius": 24},
             "sprite": {
                 "texture": "asteroid"
             },
@@ -15,7 +15,7 @@
             }
         },
         {
-            "circle": {"radius": 24},
+            "circleBody": {"radius": 24},
             "sprite": {
                 "texture": "asteroid"
             },
@@ -29,7 +29,7 @@
             }
         },
         {
-            "circle": {"radius": 24},
+            "circleBody": {"radius": 24},
             "sprite": {
                 "texture": "asteroid"
             },
@@ -43,7 +43,7 @@
             }
         },
         {
-            "circle": {"radius": 48},
+            "circleBody": {"radius": 48},
             "sprite": {
                 "texture": "sun"
             },
@@ -66,7 +66,7 @@
                 "angularVelocity": 0
             },
             "player": true,
-            "convex": {
+            "convexBody": {
                 "vertices": [
                     {"x": 3, "y": 7},
                     {"x": 10, "y": 0},

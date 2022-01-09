@@ -15,19 +15,13 @@ void loadScene(Scene& scene, const std::string& setupFile,
         const ResourceManager<sf::Font>& fontManager,
         const ResourceManager<sf::Texture>& textureManager);
 
-void setupCircle(Scene& scene, EntityId id);
-
-void setupConvex(Scene& scene, EntityId id);
-
-void setupAnimations(Scene& scene, EntityId id, nlohmann::json animationJson, const ResourceManager<sf::Texture>& textureManager, bool hasBody);
-
-Vector2d convexSupportFunction(const Body& body, const ConvexBody& convex, const Vector2d& direction);
-
-Vector2d localToWorld(const Body& body, const Vector2d& point);
-
-Vector2d computeCenterOfMass(const std::vector<Vector2d>& vertices);
-
-double computeMomentOfInertia(double mass, const Vector2d& centerOfMass, const std::vector<Vector2d>& vertices);
+void setupBody(Scene& scene, const nlohmann::json& value, EntityId id, const ResourceManager<sf::Font>& fontManager);
+void setupCircleBody(Scene& scene, const nlohmann::json& value, EntityId id);
+void setupConvexBody(Scene& scene, const nlohmann::json& value, EntityId id);
+void setupSprite(Scene& scene, const nlohmann::json& value, EntityId id, const ResourceManager<sf::Texture>& textureManager);
+void setupAnimations(Scene& scene, const nlohmann::json& value, EntityId id, const ResourceManager<sf::Texture>& textureManager);
+void setupCircleShape(Scene& scene, const nlohmann::json& value, EntityId id);
+void setupPlayer(Scene& scene, const nlohmann::json& value, EntityId id);
 
 
 #endif // SCENELOADER_HPP

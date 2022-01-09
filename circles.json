@@ -1,7 +1,7 @@
 {
     "entities": [
         {
-            "circle": {"radius": 1000},
+            "circleBody": {"radius": 1000},
             "circleShape": {"color": "#fff87dFF"},
             "body": {
                 "mass": 5e18,
@@ -13,7 +13,7 @@
             }
         },
         {
-            "circle": {"radius": 229},
+            "circleBody": {"radius": 229},
             "circleShape": {"color": "#b1b0a7FF"},
             "body": {
                 "mass": 5e15,
@@ -25,7 +25,7 @@
             }
         },
         {
-            "circle": {"radius": 269},
+            "circleBody": {"radius": 269},
             "circleShape": {"color": "#ff9600FF"},
             "body": {
                 "mass": 7.5e15,
@@ -37,7 +37,7 @@
             }
         },
         {
-            "circle": {"radius": 600},
+            "circleBody": {"radius": 600},
             "circleShape": {"color": "#5b6ee1FF"},
             "body": {
                 "mass": 1.5e17,
@@ -49,7 +49,7 @@
             }
         },
         {
-            "circle": {"radius": 319},
+            "circleBody": {"radius": 319},
             "circleShape": {"color": "#ac3232FF"},
             "body": {
                 "mass": 1e15,
@@ -61,7 +61,7 @@
             }
         },
         {
-            "convex": {
+            "convexBody": {
                 "vertices": [
                     {"x": 3, "y": 7},
                     {"x": 10, "y": 0},
