@@ -15,18 +15,18 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -std=c++2a -Wall -Wextra -pedantic -p
 
 # List all source files
 set(SOURCE_FILES
+	src/systems/CollisionSystem.cpp
+	src/systems/GameplaySystem.cpp
+	src/systems/PhysicsSystem.cpp
+	src/systems/RenderSystem.cpp
 	src/Animation.cpp
 	src/Application.cpp
-	src/CollisionSystem.cpp
 	src/components.cpp
 	src/DebugInfo.cpp
 	src/DebugOverlay.cpp
 	src/format.cpp
-	src/GameplaySystem.cpp
 	src/InputManager.cpp
 	src/main.cpp
-	src/PhysicsSystem.cpp
-	src/RenderSystem.cpp
 	src/Scene.cpp
 	src/SceneLoader.cpp
 )

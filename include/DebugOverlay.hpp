@@ -4,7 +4,7 @@
 #include <SFML/Graphics/Drawable.hpp>
 #include <TGUI/TGUI.hpp>
 #include <TGUI/Backend/SFML-Graphics.hpp>
-#include <PhysicsSystem.hpp>
+#include <systems/PhysicsSystem.hpp>
 #include <Scene.hpp>
 #include <ResourceManager.hpp>
 #include <DebugInfo.hpp>

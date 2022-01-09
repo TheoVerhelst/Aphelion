@@ -4,7 +4,7 @@
 #include <cstddef>
 #include <SFML/System/Time.hpp>
 #include <Scene.hpp>
-#include <CollisionSystem.hpp>
+#include <systems/CollisionSystem.hpp>
 #include <components.hpp>
 #include <vector.hpp>
 

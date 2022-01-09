@@ -1,7 +1,7 @@
 #include <memory>
 #include <cmath>
 #include <SFML/Graphics.hpp>
-#include <RenderSystem.hpp>
+#include <systems/RenderSystem.hpp>
 #include <components.hpp>
 #include <Animation.hpp>
 

@@ -1,6 +1,6 @@
 #include <stdexcept>
 #include <cmath>
-#include <GameplaySystem.hpp>
+#include <systems/GameplaySystem.hpp>
 #include <Animation.hpp>
 #include <components.hpp>
 

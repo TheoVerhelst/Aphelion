@@ -6,9 +6,9 @@
 #include <TGUI/TGUI.hpp>
 #include <TGUI/Backend/SFML-Graphics.hpp>
 #include <Scene.hpp>
-#include <PhysicsSystem.hpp>
-#include <RenderSystem.hpp>
-#include <GameplaySystem.hpp>
+#include <systems/PhysicsSystem.hpp>
+#include <systems/RenderSystem.hpp>
+#include <systems/GameplaySystem.hpp>
 #include <DebugOverlay.hpp>
 #include <InputManager.hpp>
 #include <ResourceManager.hpp>
