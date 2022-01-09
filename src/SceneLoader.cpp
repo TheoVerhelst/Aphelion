@@ -142,7 +142,7 @@ void setupAnimations(Scene& scene, EntityId id, json animationJson, const Resour
             spriteOrigin -= value.at("offset").get<Vector2f>();
         }
         animation.getSprite().setOrigin(spriteOrigin);
-        animations.emplace(nameToAction.at(name), animation);
+        animations.animations.emplace(nameToAction.at(name), animation);
     }
 }
 

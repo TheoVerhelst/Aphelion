@@ -4,11 +4,12 @@
 #include <string>
 #include <vector>
 #include <SFML/Graphics/Font.hpp>
+#include <SFML/Graphics/Texture.hpp>
+#include <json.hpp>
 #include <vector.hpp>
 #include <components.hpp>
 #include <Scene.hpp>
 #include <ResourceManager.hpp>
-#include <json.hpp>
 
 void loadScene(Scene& scene, const std::string& setupFile,
         const ResourceManager<sf::Font>& fontManager,

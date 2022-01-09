@@ -10,43 +10,31 @@ RenderSystem::RenderSystem(Scene& scene):
 }
 
 void RenderSystem::draw(sf::RenderTarget& target, sf::RenderStates states) const {
-    for (EntityId id : _scene.view<Trace>()) {
-        target.draw(_scene.getComponent<Trace>(id).trace, states);
-    }
-    for (EntityId id : _scene.view<sf::Sprite>()) {
-        target.draw(_scene.getComponent<sf::Sprite>(id), states);
-    }
-    for (EntityId id : _scene.view<sf::CircleShape>()) {
-        target.draw(_scene.getComponent<sf::CircleShape>(id), states);
-    }
-    for (EntityId id : _scene.view<sf::ConvexShape>()) {
-        target.draw(_scene.getComponent<sf::ConvexShape>(id), states);
-    }
-    for (EntityId id : _scene.view<AnimationComponent>()) {
-        for (auto& pair : _scene.getComponent<AnimationComponent>(id)) {
-            target.draw(pair.second, states);
-        }
-    }
+    drawComponent<Trace>(target, states);
+    drawComponent<sf::CircleShape>(target, states);
+    drawComponent<sf::ConvexShape>(target, states);
+    drawComponent<sf::Sprite>(target, states);
+    drawComponent<AnimationComponent>(target, states);
 }
 
 void RenderSystem::update(const sf::Time& dt) {
     for (EntityId id : _scene.view<Body, sf::Sprite>()) {
-        sf::Sprite& sprite{_scene.getComponent<sf::Sprite>(id)};
-        Body& body{_scene.getComponent<Body>(id)};
-        sprite.setPosition(static_cast<Vector2f>(body.position));
-        sprite.setRotation(body.rotation * 180. / pi);
+        updateTransformable(_scene.getComponent<sf::Sprite>(id), id);
     }
     for (EntityId id : _scene.view<Body, sf::CircleShape>()) {
-        sf::CircleShape& shape{_scene.getComponent<sf::CircleShape>(id)};
-        Body& body{_scene.getComponent<Body>(id)};
-        shape.setPosition(static_cast<Vector2f>(body.position));
-        shape.setRotation(body.rotation * 180. / pi);
+        updateTransformable(_scene.getComponent<sf::CircleShape>(id), id);
     }
     for (EntityId id : _scene.view<Body, sf::ConvexShape>()) {
-        sf::ConvexShape& shape{_scene.getComponent<sf::ConvexShape>(id)};
-        Body& body{_scene.getComponent<Body>(id)};
-        shape.setPosition(static_cast<Vector2f>(body.position));
-        shape.setRotation(body.rotation * 180. / pi);
+        updateTransformable(_scene.getComponent<sf::ConvexShape>(id), id);
+    }
+    for (EntityId id : _scene.view<Body, AnimationComponent>()) {
+        auto& animations{_scene.getComponent<AnimationComponent>(id).animations};
+        for (auto& [action, animation] : animations) {
+            updateTransformable(animation.getSprite(), id);
+            if (not animation.isStopped()) {
+                animation.update(dt);
+            }
+        }
     }
     for (EntityId id : _scene.view<Body, Trace>()) {
         Body& body{_scene.getComponent<Body>(id)};
@@ -68,15 +56,10 @@ void RenderSystem::update(const sf::Time& dt) {
         }
         trace.traceIndex = nextIndex;
     }
-    for (EntityId id : _scene.view<Body, AnimationComponent>()) {
-        AnimationComponent& animations{_scene.getComponent<AnimationComponent>(id)};
-        for (auto& [action, animation] : animations) {
-            Body& body{_scene.getComponent<Body>(id)};
-            animation.getSprite().setPosition(static_cast<Vector2f>(body.position));
-            animation.getSprite().setRotation(body.rotation * 180. / pi);
-            if (not animation.isStopped()) {
-                animation.update(dt);
-            }
-        }
-    }
+}
+
+void RenderSystem::updateTransformable(sf::Transformable& transformable, EntityId id) const {
+    Body& body{_scene.getComponent<Body>(id)};
+    transformable.setPosition(static_cast<Vector2f>(body.position));
+    transformable.setRotation(body.rotation * 180. / pi);
 }

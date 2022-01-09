@@ -31,9 +31,11 @@ private:
     tgui::CanvasSFML::Ptr _sceneCanvas;
     ResourceManager<sf::Font> _fontManager;
     ResourceManager<sf::Texture> _textureManager;
+    const float _baseZoomFactor{2.f};
 
     void loadResources();
     void setFullscreen();
+    void handleResizeEvent(const sf::Event& event);
 };
 
 #endif // APPLICATION_HPP

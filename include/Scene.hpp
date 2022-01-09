@@ -2,8 +2,6 @@
 #define SCENE_HPP
 
 #include <cstddef>
-#include <cstdint>
-#include <stdexcept>
 #include <vector>
 #include <list>
 #include <map>

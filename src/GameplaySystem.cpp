@@ -10,7 +10,8 @@ GameplaySystem::GameplaySystem(Scene& scene):
 
 void GameplaySystem::handleTriggerActions(const std::map<Action, bool>& actions) {
     for(EntityId id : _scene.view<AnimationComponent, Player>()) {
-        AnimationComponent& animations{_scene.getComponent<AnimationComponent>(id)};
+        auto& animations{_scene.getComponent<AnimationComponent>(id).animations};
+
         for (auto& [action, start] : actions) {
             auto animationIt = animations.find(action);
             if (animationIt != animations.end()) {

@@ -26,24 +26,17 @@ void Application::run() {
         // Handle events
         sf::Event event;
         while (_window.pollEvent(event)) {
-            // Dispatch the event in order
+            // TGUI needs to handle the events first inn order for resizing
+            // the window to work properly
             _gui.handleEvent(event);
 
             if (event.type == sf::Event::Closed) {
                 _window.close();
             } else if (event.type == sf::Event::Resized) {
-                Vector2f newSize{static_cast<float>(event.size.width), static_cast<float>(event.size.height)};
-                sf::View canvasView{_sceneCanvas->getView()};
-                sf::View windowView{_window.getView()};
-                const float zoomFactor{2.f};
-                canvasView.setSize(newSize / zoomFactor);
-                windowView.setSize(newSize);
-                windowView.setCenter(newSize / 2.f);
-                _sceneCanvas->setView(canvasView);
-                _window.setView(windowView);
+                handleResizeEvent(event);
             }
-            // TGUI needs to handle closed and resized events as well, so no "else if"
 
+            // Dispatch remaining events to various in-game UI
             if (_debugOverlay.handleEvent(event)) {
                 continue;
             } else if (_inputManager.handleEvent(event)) {
@@ -86,6 +79,17 @@ void Application::setFullscreen() {
     const std::vector<sf::VideoMode>& modes{sf::VideoMode::getFullscreenModes()};
     if (modes.size() > 0) {
         // Mode 0 is always the highest resolution
-        _window.create(sf::VideoMode::getDesktopMode(), "Perihelion");//, sf::Style::Fullscreen);
+        _window.create(modes[0], "Perihelion");//, sf::Style::Fullscreen);
     }
+}
+
+void Application::handleResizeEvent(const sf::Event& event) {
+    Vector2f newSize{static_cast<float>(event.size.width), static_cast<float>(event.size.height)};
+    sf::View canvasView{_sceneCanvas->getView()};
+    sf::View windowView{_window.getView()};
+    canvasView.setSize(newSize / _baseZoomFactor);
+    windowView.setSize(newSize);
+    windowView.setCenter(newSize / 2.f);
+    _sceneCanvas->setView(canvasView);
+    _window.setView(windowView);
 }

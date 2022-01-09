@@ -5,8 +5,11 @@
 #include <cstddef>
 #include <functional>
 #include <SFML/Graphics/VertexArray.hpp>
+#include <SFML/Graphics/Drawable.hpp>
 #include <json.hpp>
 #include <serializers.hpp>
+#include <Animation.hpp>
+#include <Action.hpp>
 #include <vector.hpp>
 
 struct Body {
@@ -36,16 +39,23 @@ struct ConvexBody {
 };
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(ConvexBody, vertices)
 
-struct Trace {
+struct Trace : public sf::Drawable {
     sf::VertexArray trace;
     static constexpr std::size_t traceLength{1024};
     std::size_t traceIndex{0};
+	virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 };
 
 struct Collider {
 	std::function<Vector2d(const Vector2d&)> supportFunction;
 };
 
+struct AnimationComponent : public sf::Drawable  {
+	std::map<Action, Animation> animations;
+	virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
+};
+
+// Tag component, it has no data but it used to find which entity is the player
 struct Player {
 };
 

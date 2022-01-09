@@ -43,6 +43,7 @@ void Animation::update(const sf::Time& dt) {
                 _sprite.setTextureRect(frame.rect);
                 break;
             }
+            frameTime += frame.duration;
         }
     }
 }

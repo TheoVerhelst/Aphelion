@@ -9,7 +9,6 @@
 #include <SFML/System/Time.hpp>
 #include <json.hpp>
 #include <serializers.hpp>
-#include <Action.hpp>
 
 struct AnimationFrame {
     sf::Time duration;
@@ -34,7 +33,5 @@ private:
     sf::Time _totalDuration;
     bool _stopped{true};
 };
-
-typedef std::map<Action, Animation> AnimationComponent;
 
 #endif // ANIMATION_HPP
