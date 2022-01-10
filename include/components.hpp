@@ -66,6 +66,10 @@ struct AnimationComponent : public sf::Drawable  {
 	virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 };
 
+struct LightComponent {
+	double brightness;
+};
+
 // Tag component, it has no data but it used to find which entity is the player
 struct Player {
 };

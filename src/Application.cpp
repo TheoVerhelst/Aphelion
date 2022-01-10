@@ -5,7 +5,7 @@
 Application::Application(const std::string& setupFile):
     _gui{_window},
     _physicsSystem{_scene},
-    _renderSystem{_scene},
+    _renderSystem{_scene, _shaderManager},
     _gameplaySystem{_scene},
     _debugOverlay{_gui, _physicsSystem, _scene.view<Body, DebugInfo>(), _textureManager} {
     loadResources();
@@ -53,8 +53,11 @@ void Application::run() {
         _gameplaySystem.handleContinuousActions(elapsedTime, _inputManager.getContinuousActions());
 
         // Draw graphics
-        _sceneCanvas->clear(sf::Color::Black);
-        _sceneCanvas->draw(_renderSystem);
+        _sceneCanvas->clear(sf::Color::Black);//(226, 217, 200));
+        _shaderManager.get("light").setUniform("texture", sf::Shader::CurrentTexture);
+        sf::RenderStates states;
+        states.shader = &_shaderManager.get("light");
+        _sceneCanvas->draw(_renderSystem, states);
         _sceneCanvas->draw(_debugOverlay);
         _sceneCanvas->display();
         _window.clear(sf::Color::Black);
@@ -71,8 +74,13 @@ void Application::loadResources() {
     _textureManager.loadFromFile("resources/pause_hover.png", "pauseHoverButton");
     _textureManager.loadFromFile("resources/ship.png", "ship");
     _textureManager.loadFromFile("resources/sun.png", "sun");
+    _textureManager.loadFromFile("resources/mercury.png", "mercury");
+    _textureManager.loadFromFile("resources/venus.png", "venus");
+    _textureManager.loadFromFile("resources/earth.png", "earth");
+    _textureManager.loadFromFile("resources/mars.png", "mars");
     _textureManager.loadFromFile("resources/asteroid.png", "asteroid");
     _textureManager.loadFromFile("resources/rcs.png", "rcs");
+    _shaderManager.loadFromFile("resources/light.frag", "light", sf::Shader::Fragment);
 }
 
 void Application::setFullscreen() {

@@ -1,65 +1,115 @@
 {
     "entities": [
-        {
-            "circleBody": {"radius": 1000},
-            "circleShape": {"color": "#fff87dFF"},
-            "body": {
-                "mass": 5e18,
-                "position": {"x": -52, "y": 20},
-                "velocity": {"x": -0.02, "y": -0.06},
-                "rotation": 0,
-                "restitution": 0.9,
-                "angularVelocity": 0
-            }
+    {
+        "circleBody": {
+            "radius": 1024
         },
-        {
-            "circleBody": {"radius": 229},
-            "circleShape": {"color": "#b1b0a7FF"},
-            "body": {
-                "mass": 5e15,
-                "position": {"x": 1969, "y": 484},
-                "velocity": {"x": -17, "y": 412},
-                "rotation": 0,
-                "restitution": 0.9,
-                "angularVelocity": 1.24e-6
-            }
+        "sprite": {
+            "texture": "sun"
         },
-        {
-            "circleBody": {"radius": 269},
-            "circleShape": {"color": "#ff9600FF"},
-            "body": {
-                "mass": 7.5e15,
-                "position": {"x": -955, "y": 4312},
-                "velocity": {"x": -250, "y": -112},
-                "rotation": 0,
-                "restitution": 0.9,
-                "angularVelocity": -0.1
-            }
+        "body": {
+            "mass": 3803400000000000.0,
+            "position": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "velocity": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "rotation": 0.0,
+            "restitution": 0.9,
+            "angularVelocity": 0.0
+        }
+    },
+    {
+        "circleBody": {
+            "radius": 229.791
         },
-        {
-            "circleBody": {"radius": 600},
-            "circleShape": {"color": "#5b6ee1FF"},
-            "body": {
-                "mass": 1.5e17,
-                "position": {"x": -1535, "y": 5834},
-                "velocity": {"x": -225, "y": -32},
-                "rotation": 0,
-                "restitution": 0.9,
-                "angularVelocity": 0.001
-            }
+        "sprite": {
+            "texture": "mercury"
         },
-        {
-            "circleBody": {"radius": 319},
-            "circleShape": {"color": "#ac3232FF"},
-            "body": {
-                "mass": 1e15,
-                "position": {"x": -5042, "y": -7880},
-                "velocity": {"x": 171, "y": -86.66},
-                "rotation": 0,
-                "restitution": 0.9,
-                "angularVelocity": 0.01
-            }
+        "body": {
+            "mass": 299620000000.0,
+            "position": {
+                "x": 9793.542,
+                "y": -2410.171
+            },
+            "velocity": {
+                "x": -410.655,
+                "y": -1002.817
+            },
+            "rotation": 0.0,
+            "restitution": 0.9,
+            "angularVelocity": 0.0
+        }
+    },
+    {
+        "circleBody": {
+            "radius": 569.863
         },
+        "sprite": {
+            "texture": "venus"
+        },
+        "body": {
+            "mass": 4417700000000.0,
+            "position": {
+                "x": -4753.994,
+                "y": -21444.586
+            },
+            "velocity": {
+                "x": -717.83,
+                "y": 154.639
+            },
+            "rotation": 0.0,
+            "restitution": 0.9,
+            "angularVelocity": -0.1
+        }
+    },
+    {
+        "circleBody": {
+            "radius": 600.0
+        },
+        "sprite": {
+            "texture": "earth"
+        },
+        "body": {
+            "mass": 5419100000000.0,
+            "position": {
+                "x": -7635.07,
+                "y": -29012.165
+            },
+            "velocity": {
+                "x": -608.849,
+                "y": 155.197
+            },
+            "rotation": 0.0,
+            "restitution": 0.9,
+            "angularVelocity": 0.01
+        }
+    },
+    {
+        "circleBody": {
+            "radius": 319.251
+        },
+        "sprite": {
+            "texture": "mars"
+        },
+        "body": {
+            "mass": 582290000000.0,
+            "position": {
+                "x": -25078.099,
+                "y": 39186.316
+            },
+            "velocity": {
+                "x": 449.878,
+                "y": 228.423
+            },
+            "rotation": 0.0,
+            "restitution": 0.9,
+            "angularVelocity": 0.01
+        }
+    },
         {
             "convexBody": {
                 "vertices": [
@@ -117,8 +167,14 @@
             },
             "body": {
                 "mass": 10000,
-                "position": {"x": -1535, "y": 5134},
-                "velocity": {"x": -225, "y": -32},
+                "position": {
+                    "x": -7635.07,
+                    "y": -29762.165
+                },
+                "velocity": {
+                    "x": -608.849,
+                    "y": 155.197
+                },
                 "rotation": 0,
                 "restitution": 0.3,
                 "angularVelocity": 0

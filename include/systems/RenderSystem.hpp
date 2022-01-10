@@ -3,16 +3,19 @@
 
 #include <SFML/Graphics/Drawable.hpp>
 #include <SFML/System/Time.hpp>
+#include <SFML/Graphics/Shader.hpp>
+#include <ResourceManager.hpp>
 #include <Scene.hpp>
 
 class RenderSystem : public sf::Drawable {
 public:
-    RenderSystem(Scene& scene);
+    RenderSystem(Scene& scene, ResourceManager<sf::Shader>& shaderManager);
     void update(const sf::Time& dt);
 	virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 
 private:
     Scene& _scene;
+    ResourceManager<sf::Shader>& _shaderManager;
 
     template <typename T>
     void drawComponent(sf::RenderTarget& target, sf::RenderStates states) const {

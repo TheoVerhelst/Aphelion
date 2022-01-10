@@ -5,8 +5,9 @@
 #include <components.hpp>
 #include <Animation.hpp>
 
-RenderSystem::RenderSystem(Scene& scene):
-    _scene{scene} {
+RenderSystem::RenderSystem(Scene& scene, ResourceManager<sf::Shader>& shaderManager):
+    _scene{scene},
+    _shaderManager{shaderManager} {
 }
 
 void RenderSystem::draw(sf::RenderTarget& target, sf::RenderStates states) const {

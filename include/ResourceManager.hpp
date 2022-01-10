@@ -7,11 +7,12 @@
 template <typename T>
 class ResourceManager {
 public:
-    void loadFromFile(const std::string& filename, const std::string& id) {
+    template <typename... Args>
+    void loadFromFile(const std::string& filename, const std::string& id, const Args&... args) {
         if (_resources.contains(id)) {
             throw std::runtime_error("Resource " + id + " already loaded, not loading from " + filename);
         }
-        if(not _resources[id].loadFromFile(filename)) {
+        if(not _resources[id].loadFromFile(filename, args...)) {
             throw std::runtime_error("Error while loading resource " + id + " from " + filename);
         }
     }
@@ -27,5 +28,6 @@ public:
 private:
     std::unordered_map<std::string, T> _resources;
 };
+
 
 #endif // RESOURCEMANAGER_HPP

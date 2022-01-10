@@ -25,7 +25,8 @@ private:
 	sf::Time _currentStep{sf::seconds(0)};
 	// Might go back in time, so step counter is signed, and at least 64 bits.
 	long long int _stepCounter{0};
-	const double _gravitationalConstant{6.67430e-11};
+	// Convert G from meters^3 kg/s^2 to px^3 kg/s^2
+	const double _gravitationalConstant{6.67430e-11 * 36 * 36 * 36};
 
 	/// Computes the acceleration field at a point given the other bodies.
 	/// The body with given id is ignored from the computation
