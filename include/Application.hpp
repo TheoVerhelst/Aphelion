@@ -9,6 +9,7 @@
 #include <systems/PhysicsSystem.hpp>
 #include <systems/RenderSystem.hpp>
 #include <systems/GameplaySystem.hpp>
+#include <systems/LightSystem.hpp>
 #include <DebugOverlay.hpp>
 #include <InputManager.hpp>
 #include <ResourceManager.hpp>
@@ -26,6 +27,7 @@ private:
     PhysicsSystem _physicsSystem;
     RenderSystem _renderSystem;
     GameplaySystem _gameplaySystem;
+    LightSystem _lightSystem;
     DebugOverlay _debugOverlay;
     InputManager _inputManager;
     tgui::CanvasSFML::Ptr _sceneCanvas;

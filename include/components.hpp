@@ -36,6 +36,7 @@ struct CircleBody {
 	Vector2d computeCenterOfMass() const;
 	double computeMomentOfInertia(double mass) const;
 	Vector2d supportFunction(const Body& body, const Vector2d& direction) const;
+	std::pair<Vector2d, Vector2d> shadowFunction(const Body& body, const Vector2d& lightSource) const;
 };
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(CircleBody, radius)
 
@@ -45,6 +46,7 @@ struct ConvexBody {
 	Vector2d computeCenterOfMass() const;
 	double computeMomentOfInertia(double mass, const Vector2d& centerOfMass) const;
 	Vector2d supportFunction(const Body& body, const Vector2d& direction) const;
+	std::pair<Vector2d, Vector2d> shadowFunction(const Body& body, const Vector2d& lightSource) const;
 };
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(ConvexBody, vertices)
 
@@ -66,8 +68,17 @@ struct AnimationComponent : public sf::Drawable  {
 	virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 };
 
-struct LightComponent {
+// A light source is supposed to emit light from the COM of the body.
+// This might change in the future. Shadows are computre with CircleBody and
+// ConvexBody. Any colliding body casts shadows.
+struct LightSource {
 	double brightness;
+};
+
+// The shadow function returns two points that indicate the start of the shadow
+// cast by the body, located onto the body.
+struct Shadow {
+	std::function<std::pair<Vector2d, Vector2d>(const Vector2d&)> shadowFunction;
 };
 
 // Tag component, it has no data but it used to find which entity is the player

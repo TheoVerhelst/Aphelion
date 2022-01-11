@@ -31,7 +31,8 @@ void loadScene(Scene& scene, const std::string& setupFile,
         {"sprite", std::bind(setupSprite, _1, _2, _3, std::cref(textureManager))},
         {"animations", std::bind(setupAnimations, _1, _2, _3, std::cref(textureManager))},
         {"circleShape", setupCircleShape},
-        {"player", setupPlayer}
+        {"player", setupPlayer},
+        {"lightSource", setupLightSource}
     };
 
 	for (json& components : j.at("entities")) {
@@ -69,7 +70,11 @@ void setupCircleBody(Scene& scene, const json& value, EntityId id) {
 
     // Collider
     Collider& collider{scene.assignComponent<Collider>(id)};
-    collider.supportFunction = std::bind(&CircleBody::supportFunction, &circle, std::ref(body), ::_1);
+    collider.supportFunction = std::bind(&CircleBody::supportFunction, &circle, std::ref(body), _1);
+
+    // Shadow
+    Shadow& shadow{scene.assignComponent<Shadow>(id)};
+    shadow.shadowFunction = std::bind(&CircleBody::shadowFunction, &circle, std::ref(body), _1);
 }
 
 void setupConvexBody(Scene& scene, const json& value, EntityId id) {
@@ -88,7 +93,11 @@ void setupConvexBody(Scene& scene, const json& value, EntityId id) {
 
     // Collider
     Collider& collider{scene.assignComponent<Collider>(id)};
-    collider.supportFunction = std::bind(&ConvexBody::supportFunction, &convex, std::ref(body), std::placeholders::_1);
+    collider.supportFunction = std::bind(&ConvexBody::supportFunction, &convex, std::ref(body), _1);
+
+    // Shadow
+    Shadow& shadow{scene.assignComponent<Shadow>(id)};
+    shadow.shadowFunction = std::bind(&ConvexBody::shadowFunction, &convex, std::ref(body), _1);
 }
 
 void setupSprite(Scene& scene, const json& value, EntityId id, const ResourceManager<sf::Texture>& textureManager) {
@@ -138,4 +147,9 @@ void setupCircleShape(Scene& scene, const json& value, EntityId id) {
 
 void setupPlayer(Scene& scene, const json&, EntityId id) {
     scene.assignComponent<Player>(id);
+}
+
+void setupLightSource(Scene& scene, const json& value, EntityId id) {
+    LightSource& lightSource{scene.assignComponent<LightSource>(id)};
+    value.at("brightness").get_to(lightSource.brightness);
 }

@@ -7,13 +7,15 @@ Application::Application(const std::string& setupFile):
     _physicsSystem{_scene},
     _renderSystem{_scene, _shaderManager},
     _gameplaySystem{_scene},
+    _lightSystem{_scene},
     _debugOverlay{_gui, _physicsSystem, _scene.view<Body, DebugInfo>(), _textureManager} {
     loadResources();
-
     tgui::WidgetFactory::setConstructFunction("CanvasSFML", std::make_shared<tgui::CanvasSFML>);
 	_gui.loadWidgetsFromFile(_guiFile);
     _sceneCanvas = _gui.get<tgui::CanvasSFML>("sceneCanvas");
     _sceneCanvas->moveToBack();
+    _lightSystem.setRenderTarget(_sceneCanvas->getRenderTexture());
+    _lightSystem.setShader(_shaderManager.get("light"));
     _debugOverlay.buildGui();
     _gameplaySystem.setRenderTarget(_sceneCanvas->getRenderTexture());
     loadScene(_scene, setupFile, _fontManager, _textureManager);
@@ -51,13 +53,12 @@ void Application::run() {
         _debugOverlay.update();
         _gameplaySystem.handleTriggerActions(_inputManager.getTriggerActions());
         _gameplaySystem.handleContinuousActions(elapsedTime, _inputManager.getContinuousActions());
+        const sf::Vector2i canvasSize{_sceneCanvas->getViewport().getSize()};
+        _lightSystem.update();
 
         // Draw graphics
-        _sceneCanvas->clear(sf::Color::Black);//(226, 217, 200));
-        _shaderManager.get("light").setUniform("texture", sf::Shader::CurrentTexture);
-        sf::RenderStates states;
-        states.shader = &_shaderManager.get("light");
-        _sceneCanvas->draw(_renderSystem, states);
+        _sceneCanvas->clear(sf::Color::Black);
+        _sceneCanvas->draw(_renderSystem, &_shaderManager.get("light"));
         _sceneCanvas->draw(_debugOverlay);
         _sceneCanvas->display();
         _window.clear(sf::Color::Black);
@@ -87,7 +88,7 @@ void Application::setFullscreen() {
     const std::vector<sf::VideoMode>& modes{sf::VideoMode::getFullscreenModes()};
     if (modes.size() > 0) {
         // Mode 0 is always the highest resolution
-        _window.create(modes[0], "Perihelion");//, sf::Style::Fullscreen);
+        _window.create(modes[0], "Perihelion", sf::Style::Fullscreen);
     }
 }
 

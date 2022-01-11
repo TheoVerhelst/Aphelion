@@ -22,6 +22,6 @@ void setupSprite(Scene& scene, const nlohmann::json& value, EntityId id, const R
 void setupAnimations(Scene& scene, const nlohmann::json& value, EntityId id, const ResourceManager<sf::Texture>& textureManager);
 void setupCircleShape(Scene& scene, const nlohmann::json& value, EntityId id);
 void setupPlayer(Scene& scene, const nlohmann::json& value, EntityId id);
-
+void setupLightSource(Scene& scene, const nlohmann::json& value, EntityId id);
 
 #endif // SCENELOADER_HPP

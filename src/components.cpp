@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <SFML/Graphics/RenderTarget.hpp>
 #include <components.hpp>
 
@@ -20,6 +21,13 @@ double CircleBody::computeMomentOfInertia(double mass) const {
 
 Vector2d CircleBody::supportFunction(const Body& body, const Vector2d& direction) const {
     return body.localToWorld(direction * radius / norm(direction));
+}
+
+std::pair<Vector2d, Vector2d> CircleBody::shadowFunction(const Body& body, const Vector2d& lightSource) const {
+    // Get the left-side orthogonal vector
+    Vector2d orthogonal{perpendicular(body.position - lightSource, true)};
+    orthogonal /= norm(orthogonal);
+    return {body.position + orthogonal * radius, body.position - orthogonal * radius};
 }
 
 Vector2d ConvexBody::computeCenterOfMass() const {
@@ -78,6 +86,23 @@ Vector2d ConvexBody::supportFunction(const Body& body, const Vector2d& direction
 		}
 	}
     return furthestPoint;
+}
+
+std::pair<Vector2d, Vector2d> ConvexBody::shadowFunction(const Body& body, const Vector2d& lightSource) const {
+    std::vector<double> angles(vertices.size());
+    std::vector<Vector2d> worldV;
+    std::transform(vertices.begin(), vertices.end(), std::back_inserter(worldV),
+        std::bind(&Body::localToWorld, &body, std::placeholders::_1));
+    angles[0] = 0;
+    const double angle0{angle(worldV[0] - lightSource)};
+    for (std::size_t i{1}; i < worldV.size(); ++i) {
+        angles[i] = angle(worldV[i] - lightSource) - angle0;
+    }
+    // Find which vertices have the greatest and smallest angles. Greater angle
+    // means the leftmost respective to the light source.
+    auto pair = std::minmax_element(angles.begin(), angles.end());
+    return {*(worldV.begin() + std::distance(angles.begin(), pair.second)),
+            *(worldV.begin() + std::distance(angles.begin(), pair.first))};
 }
 
 void Trace::draw(sf::RenderTarget& target, sf::RenderStates states) const {

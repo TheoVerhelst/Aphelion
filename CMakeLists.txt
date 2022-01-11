@@ -17,6 +17,7 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -std=c++2a -Wall -Wextra -pedantic -p
 set(SOURCE_FILES
 	src/systems/CollisionSystem.cpp
 	src/systems/GameplaySystem.cpp
+	src/systems/LightSystem.cpp
 	src/systems/PhysicsSystem.cpp
 	src/systems/RenderSystem.cpp
 	src/Animation.cpp

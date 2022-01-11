@@ -7,6 +7,9 @@
         "sprite": {
             "texture": "sun"
         },
+        "lightSource": {
+            "brightness": 400000000
+        },
         "body": {
             "mass": 3803400000000000.0,
             "position": {
