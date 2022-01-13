@@ -264,7 +264,9 @@ CollisionSystem::ContactInfo CollisionSystem::EPA(const SupportFunction& functio
     std::size_t maxIter{100};
     for (std::size_t t{0}; t < maxIter; ++t) {
         // Find the polygon edge closest to the origin, and the associated
-        // normal vector pointing away from the origin
+        // normal vector pointing away from the origin.
+        // TODO we could cache the results of previous iteration, since at most
+        // two edges are added to the polygon each iteration.
         double minDistance{std::numeric_limits<double>::max()};
         Vector2d minNormal;
         std::size_t minIndex;

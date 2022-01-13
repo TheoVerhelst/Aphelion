@@ -96,7 +96,7 @@ void Application::handleResizeEvent(const sf::Event& event) {
     Vector2f newSize{static_cast<float>(event.size.width), static_cast<float>(event.size.height)};
     sf::View canvasView{_sceneCanvas->getView()};
     sf::View windowView{_window.getView()};
-    canvasView.setSize(newSize / _baseZoomFactor);
+    canvasView.setSize(newSize);
     windowView.setSize(newSize);
     windowView.setCenter(newSize / 2.f);
     _sceneCanvas->setView(canvasView);

@@ -42,8 +42,8 @@ void LightSystem::update() {
     _shader->setUniformArray("lightPositions", _lightPositions.data(), _maxLightSources);
     _shader->setUniformArray("lightBrightnesses", _lightBrightnesses.data(), _maxLightSources);
     _shader->setUniform("numberLightSources", _numberLightSources);
+    _shader->setUniform("viewMatrix", sf::Glsl::Mat3(view.getInverseTransform()));
     _shader->setUniform("screenSize", _screenSize);
-    _shader->setUniform("distanceRatio", _distanceRatio);
 }
 
 void LightSystem::updateLightSources() {
@@ -51,8 +51,7 @@ void LightSystem::updateLightSources() {
     for (EntityId lightId : _scene.view<Body, LightSource>()) {
         Body& body{_scene.getComponent<Body>(lightId)};
         LightSource& lightSource{_scene.getComponent<LightSource>(lightId)};
-        Vector2i screenCoord{_target->mapCoordsToPixel(static_cast<Vector2f>(body.position))};
-        _lightPositions[i] = static_cast<Vector2f>(screenCoord);
+        _lightPositions[i] = static_cast<Vector2f>(body.position);
         _lightBrightnesses[i] = lightSource.brightness;
         ++i;
     }

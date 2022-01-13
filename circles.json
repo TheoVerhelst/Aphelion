@@ -8,7 +8,7 @@
             "texture": "sun"
         },
         "lightSource": {
-            "brightness": 400000000
+            "brightness": 800000000
         },
         "body": {
             "mass": 3803400000000000.0,
