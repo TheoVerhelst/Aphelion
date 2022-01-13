@@ -3,6 +3,7 @@
 
 #include <cmath>
 #include <iostream>
+#include <array>
 #include <SFML/System/Vector2.hpp>
 
 typedef sf::Vector2<double> Vector2d;
@@ -96,6 +97,22 @@ sf::Vector2<T> closestPoint(const sf::Vector2<T>& A, const sf::Vector2<T>& B,
 	} else {
 		return A + c * AB;
 	}
+}
+
+// Checks if a rectangular box contains the point P. The box may not be aligned
+// with the axes. The corner order in the array is (up left) - (up right) -
+// (down right) (down left).
+template <std::floating_point T>
+bool boxContains(const std::array<sf::Vector2<T>, 4>& box, const sf::Vector2<T>& P) {
+	//  A -------- B
+	//  |   P      |
+	//  D -------- C
+	const sf::Vector2<T> AB{box[1] - box[0]};
+	const sf::Vector2<T> AP{P      - box[0]};
+	const sf::Vector2<T> BP{P      - box[1]};
+	const sf::Vector2<T> AD{box[3] - box[0]};
+	const sf::Vector2<T> DP{P      - box[3]};
+	return dot(AB, AP) > 0 and dot(AB, BP) < 0 and dot(AD, AP) > 0 and dot(AD, DP) < 0;
 }
 
 template <typename T>

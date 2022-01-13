@@ -59,10 +59,12 @@ void LightSystem::updateLightSources() {
 }
 
 std::vector<sf::ConvexShape> LightSystem::computeShadowShapes() {
-    const sf::View& view{_target->getView()};
-    const Vector2d UL{static_cast<Vector2d>(view.getCenter() - view.getSize() / 2.f)};
-    const Vector2d BR{static_cast<Vector2d>(view.getCenter() + view.getSize() / 2.f)};
-    std::array<Vector2d, 4> viewArray{UL, {BR.x, UL.y}, BR, {UL.x, BR.y}};
+    int w(_target->getSize().x), h(_target->getSize().y);
+    std::vector<Vector2i> corners{{0, 0}, {w, 0}, {w, h}, {0, h}};
+    std::array<Vector2d, 4> viewArray;
+    for (std::size_t i{0}; i < corners.size(); ++i) {
+        viewArray[i] = static_cast<Vector2d>(_target->mapPixelToCoords(corners[i]));
+    }
 
     // Fetch the list of shadow entities in advance to avoid repeating the call
     // in the loop
@@ -109,10 +111,8 @@ std::vector<Vector2d> LightSystem::computeShadowGeometry(const Vector2d& A,
     //         B------+
 
     // Check if A and B are in the view.
-    bool containsA{view[0].x < A.x and A.x < view[1].x and
-                   view[0].y < A.y and A.y < view[3].y};
-    bool containsB{view[0].x < B.x and B.x < view[1].x and
-                   view[0].y < B.y and B.y < view[3].y};
+    bool containsA{boxContains(view, A)};
+    bool containsB{boxContains(view, B)};
 
     // Compute intersection between the shadow edges and the view
     std::vector<Vector2d> shadow;

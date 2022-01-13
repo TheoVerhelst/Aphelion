@@ -76,7 +76,7 @@ void GameplaySystem::handleContinuousActions(const sf::Time& dt, const std::set<
             sf::View playerView{_renderTarget->getView()};
             playerView.setCenter(static_cast<Vector2f>(body.position));
             playerView.setSize(playerView.getSize() * zoom);
-            //playerView.setRotation(body.rotation * 180 / pi);
+            playerView.setRotation(body.rotation * 180 / pi);
             _renderTarget->setView(playerView);
         }
         break;
