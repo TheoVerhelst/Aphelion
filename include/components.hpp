@@ -58,8 +58,9 @@ struct Trace : public sf::Drawable {
 	virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 };
 
+typedef std::function<Vector2d(const Vector2d&)> SupportFunction;
 struct Collider {
-	std::function<Vector2d(const Vector2d&)> supportFunction;
+	SupportFunction supportFunction;
 };
 
 struct AnimationComponent : public sf::Drawable  {

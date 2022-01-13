@@ -75,6 +75,7 @@ double ConvexBody::computeMomentOfInertia(double mass, const Vector2d& centerOfM
 Vector2d ConvexBody::supportFunction(const Body& body, const Vector2d& direction) const {
 	double largestProd{-std::numeric_limits<double>::max()};
 	Vector2d furthestPoint;
+    bool found{false};
 	for (Vector2d vertex : vertices) {
 		// Rotate the point around the center of mass to account for rotation
 		Vector2d worldPoint{body.localToWorld(vertex)};
@@ -83,8 +84,10 @@ Vector2d ConvexBody::supportFunction(const Body& body, const Vector2d& direction
 		if (product > largestProd) {
 			furthestPoint = worldPoint;
 			largestProd = product;
+            found = true;
 		}
 	}
+    assert(found); // This will fail if we have NaN as direction
     return furthestPoint;
 }
 

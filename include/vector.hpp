@@ -82,6 +82,22 @@ constexpr std::pair<T, T> intersection(const sf::Vector2<T>& A, const sf::Vector
 	return {cross(CA, R) / RxS, cross(CA, S) / RxS};
 }
 
+
+// Closest point to P on the segment AB.
+template <std::floating_point T>
+sf::Vector2<T> closestPoint(const sf::Vector2<T>& A, const sf::Vector2<T>& B,
+		const sf::Vector2<T>& P) {
+	const Vector2d AB{B - A};
+	const T c{dot(AB, P - A) / norm2(AB)};
+	if (c < 0) {
+		return A;
+	} else if (c > 1) {
+		return B;
+	} else {
+		return A + c * AB;
+	}
+}
+
 template <typename T>
 std::ostream& operator<<(std::ostream& os, sf::Vector2<T> v) {
   return os << "(" << v.x << ", " << v.y << ")";

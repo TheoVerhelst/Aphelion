@@ -68,10 +68,6 @@ void setupCircleBody(Scene& scene, const json& value, EntityId id) {
     body.centerOfMass = circle.computeCenterOfMass();
     body.momentOfInertia =  circle.computeMomentOfInertia(body.mass);
 
-    // Collider
-    Collider& collider{scene.assignComponent<Collider>(id)};
-    collider.supportFunction = std::bind(&CircleBody::supportFunction, &circle, std::ref(body), _1);
-
     // Shadow
     Shadow& shadow{scene.assignComponent<Shadow>(id)};
     shadow.shadowFunction = std::bind(&CircleBody::shadowFunction, &circle, std::ref(body), _1);
