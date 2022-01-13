@@ -89,33 +89,29 @@ void CollisionSystem::collideCircleAndBody(const CircleBody& circleA, const Coll
     // If the center of A is not in B
     if (not collision.first) {
         // Find the distance between B and the center of A
-        DistanceInfo distanceInfo{distanceGJK(supportFunctionA, colliderB.supportFunction, collision.second)};
+        ContactInfo distanceInfo{distanceGJK(supportFunctionA, colliderB.supportFunction, collision.second)};
         // If the distance is greater than the radius, we are fine. Otherwise,
         // we need to solve the collision by translating the distance info to
         // a contact info between the circle A and the body B.
         if (distanceInfo.distance < circleA.radius) {
-            // Vector from the closest point on B to the center of A
-            Vector2d normal{distanceInfo.C_B - distanceInfo.C_A};
-            normal /= norm(normal);
+            // Normalized vector from the closest point on B to the center of A
+            Vector2d normal{distanceInfo.normal / norm(distanceInfo.normal)};
 
-            ContactInfo contactInfo;
-            contactInfo.C_B = distanceInfo.C_B;
-            contactInfo.C_A = centerA + normal * circleA.radius;
-            contactInfo.normal = normal * (circleA.radius - distanceInfo.distance);
+            ContactInfo contactInfo{distanceInfo.C_B, centerA + normal * circleA.radius};
             collisionResponse(bodyA, bodyB, contactInfo);
         }
     } else {
         // The center of A is in B, use EPA to find the collision vector, and
         // increase it to clear the whole circle A from B.
         ContactInfo contactInfo{EPA(supportFunctionA, colliderB.supportFunction, collision.second)};
-        Vector2d normalized{contactInfo.normal / norm(contactInfo.normal)};
-        contactInfo.normal += normalized * circleA.radius;
+        contactInfo.normal += contactInfo.normal * circleA.radius / norm(contactInfo.normal);
         collisionResponse(bodyA, bodyB, contactInfo);
     }
 }
 
 void CollisionSystem::collisionResponse(Body& bodyA, Body& bodyB, const ContactInfo& contactInfo) {
-    // Vector going from the center of mass to the contact point
+    // Vector going from the center of mass to the contact point.
+    // We don't use Body::worldToLocal because we need to keep the angle.
     const Vector2d R_A{contactInfo.C_A - bodyA.position};
     const Vector2d R_B{contactInfo.C_B - bodyB.position};
     const Vector2d v_A{bodyA.velocity};
@@ -131,7 +127,6 @@ void CollisionSystem::collisionResponse(Body& bodyA, Body& bodyB, const ContactI
     const double R_A_n{cross(R_A, n)};
     const double R_B_n{cross(R_B, n)};
     const double restitution{bodyA.restitution * bodyB.restitution};
-
 
     // norm_J is the norm of the resulting impulse vector
     const double norm_J_elastic{2 *
@@ -181,6 +176,13 @@ std::size_t CollisionSystem::MinkowskyPolygon::size() const {
     return _pointsA.size();
 }
 
+CollisionSystem::ContactInfo::ContactInfo(const Vector2d& A, const Vector2d& B):
+    C_A{A},
+    C_B{B},
+    normal{B - A}, // TODO THIS SHOULD BE A - B, WHATS GOING ON HERE
+    distance{norm(normal)} {
+}
+
 std::pair<bool, CollisionSystem::MinkowskyPolygon> CollisionSystem::collisionGJK(
             const SupportFunction& functionA, const SupportFunction& functionB) {
     // GJK algorithm, see https://blog.winter.dev/2020/gjk-algorithm/
@@ -211,18 +213,14 @@ std::pair<bool, CollisionSystem::MinkowskyPolygon> CollisionSystem::collisionGJK
     return {false, simplex};
 }
 
-CollisionSystem::DistanceInfo CollisionSystem::distanceGJK(const SupportFunction& functionA,
+CollisionSystem::ContactInfo CollisionSystem::distanceGJK(const SupportFunction& functionA,
         const SupportFunction& functionB, CollisionSystem::MinkowskyPolygon simplex) {
     assert(simplex.size() == 2 or simplex.size() == 3);
 
     const double eps{0.0001};
     // Special case: if the simplex contains only the closest point already
     if (norm(simplex.getDifference(0) - simplex.getDifference(1)) < eps) {
-        DistanceInfo info;
-        info.C_A = simplex.getPointA(0);
-        info.C_B = simplex.getPointB(0);
-        info.distance = norm(info.C_A - info.C_B);
-        return info;
+        return ContactInfo(simplex.getPointA(0), simplex.getPointB(0));
     }
 
     Vector2d closest;
@@ -245,30 +243,16 @@ CollisionSystem::DistanceInfo CollisionSystem::distanceGJK(const SupportFunction
         supportPoint = supportA - supportB;
         // If we didn't get any closer to the origin
         if (std::abs(dot(oldSupportPoint, direction) - dot(supportPoint, direction)) < eps or t == maxIter - 1) {
-            // Find the four points in A and B which correspond to the current
-            // simplex
-            Vector2d A_0{simplex.getPointA(0)},     A_1{simplex.getPointA(1)};
-            Vector2d B_0{simplex.getPointB(0)},     B_1{simplex.getPointB(1)};
-            Vector2d S_0{simplex.getDifference(0)}, S_1{simplex.getDifference(1)};
-            // Alpha is the barycentric coordinate between S_0 and S_1
-            // of the vector projection of the origin onto the line S_0 S_1.
-            // So if alpha = 0, then the origin maps to S_0, and if alpha = 1,
-            // it maps to S_1
-            double alpha{dot(S_1 - S_0, -S_0) / norm2(S_1 - S_0)};
-            alpha = std::clamp(alpha, 0., 1.);
-
-            DistanceInfo info;
-            info.C_A = A_0 * (1 - alpha) + A_1 * alpha;
-            info.C_B = B_0 * (1 - alpha) + B_1 * alpha;
-            info.distance = norm(info.C_A - info.C_B);
-            return info;
+            // We don't expect the projection of the origin to be on the
+            // simplex, so we don't check the value of alpha
+            return createContactInfo(simplex, 0, 1, false);
         }
         simplex.pushBack(supportA, supportB);
         direction = -updateSimplexDistance(simplex);
     }
     // Unreachable code
     assert(false);
-    return DistanceInfo();
+    return ContactInfo();
 }
 
 CollisionSystem::ContactInfo CollisionSystem::EPA(const SupportFunction& functionA,
@@ -276,29 +260,29 @@ CollisionSystem::ContactInfo CollisionSystem::EPA(const SupportFunction& functio
     assert(polygon.size() == 3);
 
     double eps{0.0001};
-    double collisionGap{0.001};
+    //double collisionGap{0.001};
     std::size_t maxIter{100};
-
-    double minDistance;
-    Vector2d minNormal;
-    std::size_t minIndex;
-
     for (std::size_t t{0}; t < maxIter; ++t) {
         // Find the polygon edge closest to the origin, and the associated
         // normal vector pointing away from the origin
-        minDistance = std::numeric_limits<double>::max();
+        double minDistance{std::numeric_limits<double>::max()};
+        Vector2d minNormal;
+        std::size_t minIndex;
+        bool found{false};
         for (std::size_t i{0}; i < polygon.size(); ++i) {
             std::size_t j{(i + 1) % polygon.size()};
-            Vector2d A{polygon.getDifference(i)}, B{polygon.getDifference(j)};
-            Vector2d normal{perpendicular(B - A, A)};
+            Vector2d D_i{polygon.getDifference(i)}, D_j{polygon.getDifference(j)};
+            Vector2d normal{perpendicular(D_j - D_i, D_i)};
+            double distance{dot(normal, D_i)};
             normal /= norm(normal);
-            double distance{dot(normal, A)};
             if (distance < minDistance) {
                 minDistance = distance;
                 minNormal = normal;
                 minIndex = i;
+                found = true;
             }
         }
+        assert(found);
 
         // Find the support point in the direction of the normal, and check
         // if this point is further
@@ -309,24 +293,10 @@ CollisionSystem::ContactInfo CollisionSystem::EPA(const SupportFunction& functio
         // If the point is no further, we found the closest edge.
         // We also stop here if we are at the end of the loop
         if (std::abs(supportDistance - minDistance) <= eps or t == maxIter - 1) {
-            // Find the four points in A and B which correspond to the current
-            // edge of the the polygon
             std::size_t j{(minIndex + 1) % polygon.size()};
-            Vector2d A_i{polygon.getPointA(minIndex)}, A_j{polygon.getPointA(j)};
-            Vector2d B_i{polygon.getPointB(minIndex)}, B_j{polygon.getPointB(j)};
-            Vector2d S_i{A_i - B_i}, S_j{A_j - B_j};
-            // Alpha is the barycentric coordinate between S_i and S_j
-            // of the vector projection of the origin onto the line S_i S_J.
-            // So if alpha = 0, then the origin maps to S_i, and if alpha = 1,
-            // it maps to S_j
-            double alpha{dot(S_j - S_i, -S_i) / norm2(S_j - S_i)};
-            assert(alpha >= 0 and alpha <= 1);
-
-            ContactInfo info;
-            info.normal = minNormal * (minDistance + collisionGap);
-            info.C_A = A_i * (1 - alpha) + A_j * alpha;
-            info.C_B = B_i * (1 - alpha) + B_j * alpha;
-            return info;
+            // Since the origin is in the simplex, it should be projected on the
+            // edge, so we check the value of alpha
+            return createContactInfo(polygon, minIndex, j, true);
         }
         // Otherwise, add the point to the polygon
         polygon.insert((minIndex + 1) % polygon.size(), supportA, supportB);
@@ -334,6 +304,27 @@ CollisionSystem::ContactInfo CollisionSystem::EPA(const SupportFunction& functio
     // Unreachable code
     assert(false);
     return ContactInfo();
+}
+
+CollisionSystem::ContactInfo CollisionSystem::createContactInfo(
+        const CollisionSystem::MinkowskyPolygon& simplex,
+        std::size_t i, std::size_t j, bool assertAlpha) {
+    // Find the four points in A and B which correspond to the current
+    // edge of the the polygon
+    Vector2d A_i{simplex.getPointA(i)}, A_j{simplex.getPointA(j)};
+    Vector2d B_i{simplex.getPointB(i)}, B_j{simplex.getPointB(j)};
+    Vector2d D_i{A_i - B_i}, D_j{A_j - B_j};
+    // Alpha is the barycentric coordinate between D_i and D_j
+    // of the vector projection of the origin onto the line D_i S_J.
+    // So if alpha = 0, then the origin maps to D_i, and if alpha = 1,
+    // it maps to D_j
+    double alpha{dot(D_j - D_i, -D_i) / norm2(D_j - D_i)};
+    if (assertAlpha) {
+        assert(0 <= alpha and alpha <= 1);
+    }
+    alpha = std::clamp(alpha, 0., 1.);
+
+    return ContactInfo(A_i * (1 - alpha) + A_j * alpha, B_i * (1 - alpha) + B_j * alpha);
 }
 
 bool CollisionSystem::updateSimplex(CollisionSystem::MinkowskyPolygon& simplex, Vector2d& direction) {
