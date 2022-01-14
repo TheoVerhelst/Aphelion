@@ -53,15 +53,15 @@ void Application::run() {
         _debugOverlay.update();
         _gameplaySystem.handleTriggerActions(_inputManager.getTriggerActions());
         _gameplaySystem.handleContinuousActions(elapsedTime, _inputManager.getContinuousActions());
-        const sf::Vector2i canvasSize{_sceneCanvas->getViewport().getSize()};
         _lightSystem.update();
 
         // Draw graphics
-        _sceneCanvas->clear(sf::Color::Black);
+        _sceneCanvas->clear(sf::Color::Transparent);
         _sceneCanvas->draw(_renderSystem, &_shaderManager.get("light"));
         _sceneCanvas->draw(_debugOverlay);
         _sceneCanvas->display();
         _window.clear(sf::Color::Black);
+        _window.draw(_backgrounSprite);
         _gui.draw();
         _window.display();
     }
@@ -73,6 +73,7 @@ void Application::loadResources() {
     _textureManager.loadFromFile("resources/play_hover.png", "playHoverButton");
     _textureManager.loadFromFile("resources/pause.png", "pauseButton");
     _textureManager.loadFromFile("resources/pause_hover.png", "pauseHoverButton");
+    _textureManager.loadFromFile("resources/background.png", "background");
     _textureManager.loadFromFile("resources/ship.png", "ship");
     _textureManager.loadFromFile("resources/sun.png", "sun");
     _textureManager.loadFromFile("resources/mercury.png", "mercury");
@@ -82,6 +83,8 @@ void Application::loadResources() {
     _textureManager.loadFromFile("resources/asteroid.png", "asteroid");
     _textureManager.loadFromFile("resources/rcs.png", "rcs");
     _shaderManager.loadFromFile("resources/light.frag", "light", sf::Shader::Fragment);
+    _backgrounSprite.setTexture(_textureManager.get("background"));
+    _backgrounSprite.setOrigin(1500, 900); // Interesting region on the background
 }
 
 void Application::setFullscreen() {
