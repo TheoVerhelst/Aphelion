@@ -114,7 +114,7 @@ std::vector<Vector2d> LightSystem::computeShadowGeometry(const Vector2d& A,
     bool containsA{boxContains(view, A)};
     bool containsB{boxContains(view, B)};
 
-    // Compute intersection between the shadow edges and the view
+    // Iterate on every corner of the view
     std::vector<Vector2d> shadow;
     for (std::size_t i{0}; i < view.size(); ++i) {
         const Vector2d V1{view[i]};

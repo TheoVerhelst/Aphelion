@@ -102,10 +102,11 @@ std::pair<Vector2d, Vector2d> ConvexBody::shadowFunction(const Body& body, const
         angles[i] = angle(worldV[i] - lightSource) - angle0;
     }
     // Find which vertices have the greatest and smallest angles. Greater angle
-    // means the leftmost respective to the light source.
+    // means the rightmost respective to the light source (since the y-axis goes
+    // down).
     auto pair = std::minmax_element(angles.begin(), angles.end());
-    return {*(worldV.begin() + std::distance(angles.begin(), pair.second)),
-            *(worldV.begin() + std::distance(angles.begin(), pair.first))};
+    return {*(worldV.begin() + std::distance(angles.begin(), pair.first)),
+            *(worldV.begin() + std::distance(angles.begin(), pair.second))};
 }
 
 void Trace::draw(sf::RenderTarget& target, sf::RenderStates states) const {
