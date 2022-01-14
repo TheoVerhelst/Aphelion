@@ -74,7 +74,8 @@
             "radius": 600.0
         },
         "sprite": {
-            "texture": "earth"
+            "texture": "earth",
+            "offset": {"x": -100, "y": -100}
         },
         "body": {
             "mass": 5419100000000.0,

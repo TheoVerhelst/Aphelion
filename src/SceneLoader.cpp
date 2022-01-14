@@ -56,14 +56,6 @@ void setupCircleBody(Scene& scene, const json& value, EntityId id) {
     value.get_to(circle);
     Body& body{scene.getComponent<Body>(id)};
 
-    Trace& trace{scene.assignComponent<Trace>(id)};
-    // Fill the trace with points at the body position, to avoid
-    // undefined traces because of the unitialized vector.
-    trace.trace = sf::VertexArray(sf::Lines, trace.traceLength * 2);
-    for (std::size_t i{0}; i < trace.traceLength * 2; ++i) {
-        trace.trace[i] = sf::Vertex(static_cast<Vector2f>(body.position), sf::Color::White);
-    }
-
     // Physical constants
     body.centerOfMass = circle.computeCenterOfMass();
     body.momentOfInertia =  circle.computeMomentOfInertia(body.mass);
@@ -103,7 +95,11 @@ void setupSprite(Scene& scene, const json& value, EntityId id, const ResourceMan
     if (value.contains("rect")) {
         sprite.setTextureRect(value.at("rect").get<sf::IntRect>());
     }
-    sprite.setOrigin(static_cast<Vector2f>(scene.getComponent<Body>(id).centerOfMass));
+    Vector2f offset{0, 0};
+    if (value.contains("offset")) {
+        value.at("offset").get_to(offset);
+    }
+    sprite.setOrigin(static_cast<Vector2f>(scene.getComponent<Body>(id).centerOfMass) - offset);
 }
 
 void setupAnimations(Scene& scene, const json& value, EntityId id, const ResourceManager<sf::Texture>& textureManager) {
