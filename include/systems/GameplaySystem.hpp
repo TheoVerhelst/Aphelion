@@ -6,6 +6,7 @@
 #include <SFML/System/Time.hpp>
 #include <SFML/Graphics/RenderTarget.hpp>
 #include <Action.hpp>
+#include <vector.hpp>
 #include <Scene.hpp>
 
 class GameplaySystem {
@@ -18,6 +19,8 @@ public:
 private:
     Scene& _scene;
     sf::RenderTarget* _renderTarget{nullptr};
+    const Vector2f maxViewSize{320000, 200000};
+    const Vector2f minViewSize{130, 70};
 };
 
 #endif // GAMEPLAYSYSTEM_HPP

@@ -74,9 +74,24 @@ void GameplaySystem::handleContinuousActions(const sf::Time& dt, const std::set<
 
         if (_renderTarget != nullptr) {
             sf::View playerView{_renderTarget->getView()};
+            Vector2f viewSize{playerView.getSize() * zoom};
+            const float aspectRatio{viewSize.x / viewSize.y};
+            if (viewSize.x > maxViewSize.x) {
+                viewSize = {maxViewSize.x, maxViewSize.x / aspectRatio};
+            }
+            if (viewSize.y > maxViewSize.y) {
+                viewSize = {maxViewSize.y * aspectRatio, maxViewSize.y};
+            }
+            if (viewSize.x < minViewSize.x) {
+                viewSize = {minViewSize.x, minViewSize.x / aspectRatio};
+            }
+            if (viewSize.y < minViewSize.y) {
+                viewSize = {minViewSize.y * aspectRatio, minViewSize.y};
+            }
+
             playerView.setCenter(static_cast<Vector2f>(body.position));
-            playerView.setSize(playerView.getSize() * zoom);
-            playerView.setRotation(body.rotation * 180 / pi);
+            playerView.setSize(viewSize);
+            //playerView.setRotation(body.rotation * 180 / pi);
             _renderTarget->setView(playerView);
         }
         break;

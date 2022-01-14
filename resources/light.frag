@@ -6,8 +6,22 @@ uniform int numberLightSources;
 uniform mat3 viewMatrix;
 uniform vec2 screenSize;
 
-void main()
-{
+vec4 getBlurredPixel(sampler2D texture, vec2 coord) {
+    float radius = 0.01;
+    vec2 offX = vec2(radius, 0.);
+    vec2 offY = vec2(0., radius);
+    return (texture2D(texture, coord)               * 4.0 +
+            texture2D(texture, coord - offX)        * 2.0 +
+            texture2D(texture, coord + offX)        * 2.0 +
+            texture2D(texture, coord - offY)        * 2.0 +
+            texture2D(texture, coord + offY)        * 2.0 +
+            texture2D(texture, coord - offX - offY) * 1.0 +
+            texture2D(texture, coord - offX + offY) * 1.0 +
+            texture2D(texture, coord + offX - offY) * 1.0 +
+            texture2D(texture, coord + offX + offY) * 1.0) / 16.;
+}
+
+void main() {
     // gl_FragColor has domain [0, screenSize.x] x [0, screenSize.y]
     vec2 unitScreenCoord = gl_FragCoord.xy / screenSize; // domain [0, 1]
     vec2 homoScreenCoord = 2. * unitScreenCoord - 1.; // domain [-1, 1]
@@ -19,6 +33,6 @@ void main()
         localLight += lightBrightnesses[i] / dot(gap, gap);
     }
     localLight = clamp(localLight, 0., 10.);
-    vec4 lightColor = texture2D(shadowTexture, unitScreenCoord) * localLight * (1. - ambiantLight) + ambiantLight;
+    vec4 lightColor = getBlurredPixel(shadowTexture, unitScreenCoord) * localLight * (1. - ambiantLight) + ambiantLight;
     gl_FragColor = texture2D(texture, gl_TexCoord[0].st) * gl_Color * lightColor;
 }
