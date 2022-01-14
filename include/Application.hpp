@@ -34,7 +34,6 @@ private:
     ResourceManager<sf::Font> _fontManager;
     ResourceManager<sf::Texture> _textureManager;
     ResourceManager<sf::Shader> _shaderManager;
-    const float _baseZoomFactor{2.f};
     sf::Sprite _backgrounSprite;
 
     void loadResources();

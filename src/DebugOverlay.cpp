@@ -40,6 +40,7 @@ bool DebugOverlay::handleEvent(const sf::Event& event) {
 
 void DebugOverlay::buildGui() {
     _gui.get<tgui::ChildWindow>("controlsPanel")->setVisible(_debugView);
+    _gui.get<tgui::ChildWindow>("controlsPanel")->setFocusable(false);
 
     // Spin controls. Do not work with GUI text file import for some reason.
     auto timeSpeedControl = tgui::SpinControl::create(-100, 100, 1, 2, 0.1);
