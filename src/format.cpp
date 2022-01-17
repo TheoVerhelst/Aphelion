@@ -1,6 +1,7 @@
 #include <format.hpp>
 #include <iostream>
 #include <iomanip>
+#include <sstream>
 #include <cmath>
 
 std::string formatTime(double seconds) {

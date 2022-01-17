@@ -62,5 +62,5 @@ void RenderSystem::update(const sf::Time& dt) {
 void RenderSystem::updateTransformable(sf::Transformable& transformable, EntityId id) const {
     Body& body{_scene.getComponent<Body>(id)};
     transformable.setPosition(static_cast<Vector2f>(body.position));
-    transformable.setRotation(body.rotation * 180. / pi);
+    transformable.setRotation(static_cast<float>(body.rotation * 180. / pi));
 }

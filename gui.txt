@@ -57,8 +57,8 @@ ChildWindow.controlsPanel {
         Position = (pauseButton.left - width - 2, pauseButton.top);
         TextSize = 20;
         Renderer = {
-            Texture = "resources/previous.png";
-            TextureHover = "resources/previous_hover.png";
+            Texture = "resources/gui/previous.png";
+            TextureHover = "resources/gui/previous_hover.png";
         }
         Size = (40, 40);
     }
@@ -68,8 +68,8 @@ ChildWindow.controlsPanel {
         Position = ((parent.width - width) / 2, parent.height - height - 28);
         TextSize = 20;
         Renderer = {
-            Texture = "resources/pause.png";
-            TextureHover = "resources/pause_hover.png";
+            Texture = "resources/gui/pause.png";
+            TextureHover = "resources/gui/pause_hover.png";
         }
     }
 
@@ -77,8 +77,8 @@ ChildWindow.controlsPanel {
         Position = (pauseButton.right + 2, pauseButton.top);
         TextSize = 20;
         Renderer = {
-            Texture = "resources/next.png";
-            TextureHover = "resources/next_hover.png";
+            Texture = "resources/gui/next.png";
+            TextureHover = "resources/gui/next_hover.png";
         }
         Size = (40, 40);
     }

@@ -131,10 +131,10 @@ void setupAnimations(Scene& scene, const json& value, EntityId id, const Resourc
 void setupCircleShape(Scene& scene, const json& value, EntityId id) {
     sf::CircleShape& shape{scene.assignComponent<sf::CircleShape>(id)};
     CircleBody& circle{scene.getComponent<CircleBody>(id)};
-    shape.setRadius(circle.radius);
+    shape.setRadius(static_cast<float>(circle.radius));
     shape.setFillColor(value.at("color").get<sf::Color>());
-    shape.setOrigin(circle.radius, circle.radius);
-    shape.setPointCount(circle.radius);
+    shape.setOrigin(static_cast<float>(circle.radius), static_cast<float>(circle.radius));
+    shape.setPointCount(static_cast<std::size_t>(circle.radius));
 }
 
 void setupPlayer(Scene& scene, const json&, EntityId id) {

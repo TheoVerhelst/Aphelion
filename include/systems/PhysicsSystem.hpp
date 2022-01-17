@@ -21,7 +21,7 @@ private:
 	Scene& _scene;
 	CollisionSystem _collisionSystem;
 	float _timeScale{1};
-	sf::Time _timeStep{sf::seconds(0.02)};
+	sf::Time _timeStep{sf::seconds(0.02f)};
 	sf::Time _currentStep{sf::seconds(0)};
 	// Might go back in time, so step counter is signed, and at least 64 bits.
 	long long int _stepCounter{0};

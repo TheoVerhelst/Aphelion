@@ -1,7 +1,7 @@
 #include <Application.hpp>
 
 int main(int argc, char** argv) {
-    std::string setupFile{"setup.txt"};
+    std::string setupFile{"save.json"};
     if(argc >= 2) {
         setupFile = argv[1];
     }

@@ -13,6 +13,7 @@
 #include <DebugOverlay.hpp>
 #include <InputManager.hpp>
 #include <ResourceManager.hpp>
+#include <MusicManager.hpp>
 
 class Application {
 public:
@@ -34,11 +35,13 @@ private:
     ResourceManager<sf::Font> _fontManager;
     ResourceManager<sf::Texture> _textureManager;
     ResourceManager<sf::Shader> _shaderManager;
-    sf::Sprite _backgrounSprite;
+    sf::Sprite _backgroundSprite;
+    MusicManager _musicManager;
+    Vector2u _currentWindowSize;
 
     void loadResources();
     void setFullscreen();
-    void handleResizeEvent(const sf::Event& event);
+    void updateView();
 };
 
 #endif // APPLICATION_HPP

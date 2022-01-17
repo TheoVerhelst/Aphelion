@@ -18,10 +18,8 @@ void LightSystem::setShader(sf::Shader& shader) {
 }
 
 void LightSystem::update() {
-    const sf::View& view{_target->getView()};
-    const Vector2u uScreenSize(_target->getViewport(view).width, _target->getViewport(view).height);
+    const Vector2u uScreenSize(_target->getSize());
     _screenSize = static_cast<Vector2f>(uScreenSize);
-    _distanceRatio = view.getSize().x / _screenSize.x;
 
     if (uScreenSize != _renderTexture.getSize()) {
         _renderTexture.create(uScreenSize.x, uScreenSize.y);
@@ -42,20 +40,22 @@ void LightSystem::update() {
     _shader->setUniformArray("lightPositions", _lightPositions.data(), _maxLightSources);
     _shader->setUniformArray("lightBrightnesses", _lightBrightnesses.data(), _maxLightSources);
     _shader->setUniform("numberLightSources", _numberLightSources);
-    _shader->setUniform("viewMatrix", sf::Glsl::Mat3(view.getInverseTransform()));
+    _shader->setUniform("viewMatrix", sf::Glsl::Mat3(_target->getView().getInverseTransform()));
     _shader->setUniform("screenSize", _screenSize);
-}
+}   
 
 void LightSystem::updateLightSources() {
-    int i{0};
+    _numberLightSources = 0;
     for (EntityId lightId : _scene.view<Body, LightSource>()) {
         Body& body{_scene.getComponent<Body>(lightId)};
         LightSource& lightSource{_scene.getComponent<LightSource>(lightId)};
-        _lightPositions[i] = static_cast<Vector2f>(body.position);
-        _lightBrightnesses[i] = lightSource.brightness;
-        ++i;
+        _lightPositions[_numberLightSources] = static_cast<Vector2f>(body.position);
+        _lightBrightnesses[_numberLightSources] = static_cast<float>(lightSource.brightness);
+        ++_numberLightSources;
+        if (_numberLightSources >= _maxLightSources) {
+            break;
+        }
     }
-    _numberLightSources = i;
 }
 
 std::vector<sf::ConvexShape> LightSystem::computeShadowShapes() {

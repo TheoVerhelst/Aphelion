@@ -11,7 +11,7 @@ typedef sf::Vector2<float> Vector2f;
 typedef sf::Vector2<int> Vector2i;
 typedef sf::Vector2<unsigned int> Vector2u;
 
-constexpr double pi{std::acos(-1)};
+const double pi{std::acos(-1)};
 
 template <typename T>
 constexpr T dot(const sf::Vector2<T>& a, const sf::Vector2<T>& b) {

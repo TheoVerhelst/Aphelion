@@ -27,7 +27,6 @@ private:
     std::array<float, _maxLightSources> _lightBrightnesses;
     int _numberLightSources;
     Vector2f _screenSize;
-    float _distanceRatio;
 
     void updateLightSources();
     std::vector<sf::ConvexShape> computeShadowShapes();

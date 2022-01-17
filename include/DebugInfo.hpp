@@ -20,7 +20,7 @@ private:
 
     private:
         sf::VertexArray _arrow{sf::Lines, 6};
-        float _headAngle{0.7};
+        float _headAngle{0.7f};
         float _headLength{5};
     };
 
