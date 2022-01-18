@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.0)
-project(Perihelion)
+project(Aphelion)
 
+set(SFML_STATIC_LIBRARIES TRUE)
+set(TGUI_STATIC_LIBRARIES TRUE)
 find_package(SFML 2.5 COMPONENTS system graphics window audio REQUIRED)
 find_package(TGUI 0.10 REQUIRED)
 
@@ -14,6 +16,7 @@ if (CMAKE_COMPILER_IS_GNUCC)
 endif()
 if (MSVC)
     set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} /W4")
+	set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 endif()
 
 
@@ -38,6 +41,5 @@ set(SOURCE_FILES
 )
 
 # Create the main executable
-set(EXECUTABLE_NAME Perihelion)
-add_executable(${EXECUTABLE_NAME} ${SOURCE_FILES})
-target_link_libraries(${EXECUTABLE_NAME} tgui sfml-audio sfml-graphics sfml-window sfml-system)
+add_executable(${CMAKE_PROJECT_NAME} ${SOURCE_FILES})
+target_link_libraries(${CMAKE_PROJECT_NAME} TGUI::TGUI sfml-audio sfml-graphics sfml-window sfml-system)

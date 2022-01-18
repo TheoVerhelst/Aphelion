@@ -96,7 +96,7 @@ void Application::setFullscreen() {
     const std::vector<sf::VideoMode>& modes{sf::VideoMode::getFullscreenModes()};
     if (modes.size() > 0) {
         // Mode 0 is always the highest resolution
-        _window.create(modes[0], "Perihelion");
+        _window.create(modes[0], "Aphelion",  sf::Style::Fullscreen);
     }
 }
 
