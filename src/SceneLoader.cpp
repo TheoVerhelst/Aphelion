@@ -2,7 +2,6 @@
 #include <algorithm>
 #include <functional>
 #include <cmath>
-#include <iostream>
 #include <stdexcept>
 #include <SFML/Graphics.hpp>
 #include <serializers.hpp>

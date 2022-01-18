@@ -70,7 +70,7 @@ void GameplaySystem::handleContinuousActions(const sf::Time& dt, const std::set<
 
         Body& body{_scene.getComponent<Body>(id)};
         body.velocity += rotate(dv, body.rotation) * static_cast<double>(dt.asSeconds());
-        body.angularVelocity += dw * dt.asSeconds();
+        body.angularVelocity += dw * static_cast<double>(dt.asSeconds());
 
         if (_renderTarget != nullptr) {
             sf::View playerView{_renderTarget->getView()};

@@ -108,7 +108,7 @@ void Application::updateView() {
     _window.setView(windowView);
 
     sf::View canvasView{_sceneCanvas->getView()};
-    float previousZoom{_currentWindowSize.x / canvasView.getSize().x};
+    float previousZoom{static_cast<float>(_currentWindowSize.x) / canvasView.getSize().x};
     canvasView.setSize(newWindowSize / previousZoom);
     _sceneCanvas->setView(canvasView);
     _currentWindowSize = _window.getSize();

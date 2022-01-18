@@ -84,7 +84,7 @@ void CollisionSystem::collideCircleAndBody(const CircleBody& circleA, const Coll
         Body& bodyA, Body& bodyB) {
     // Check the distance between the B and the center of A
     const Vector2d centerA{bodyA.localToWorld({0, 0})};
-    SupportFunction supportFunctionA = [centerA](const Vector2d&) {return centerA;};
+    SupportFunction supportFunctionA = [centerA](const Vector2d&) noexcept {return centerA;};
     std::pair<bool, MinkowskyPolygon> collision{collisionGJK(supportFunctionA, colliderB.supportFunction)};
     // If the center of A is not in B
     if (not collision.first) {

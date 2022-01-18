@@ -1,5 +1,5 @@
 #include <cmath>
-#include <iostream>
+#include <limits>
 #include <DebugInfo.hpp>
 
 DebugInfo::DebugInfo(const sf::Font& font):
@@ -16,7 +16,8 @@ void DebugInfo::update(const Body& body) {
     _position.setPosition(pos);
     sf::Color color{sf::Color::Red};
     // Parenthesis initializer to allow implicit conversion to sf::Uint8
-    sf::Color opposite(127 - color.r, 127 - color.g, 127 - color.b, color.a);
+    sf::Uint8 max{std::numeric_limits<sf::Uint8>::max()};
+    sf::Color opposite(max - color.r, max - color.g, max - color.b, color.a);
     _position.setFillColor(opposite);
 
     std::stringstream rotationStr, angularVelocityStr;

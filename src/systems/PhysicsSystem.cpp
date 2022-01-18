@@ -1,5 +1,4 @@
 #include <cmath>
-#include <iostream>
 #include <sstream>
 #include <fstream>
 #include <systems/PhysicsSystem.hpp>

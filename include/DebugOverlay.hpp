@@ -16,7 +16,7 @@ public:
         const SceneView<Body, DebugInfo>& scene,
         ResourceManager<sf::Texture>& textureManager);
     void update();
-    void draw(sf::RenderTarget& target, sf::RenderStates states) const;
+    virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
     bool handleEvent(const sf::Event& event);
     void buildGui();
 
