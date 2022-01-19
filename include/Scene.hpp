@@ -3,8 +3,11 @@
 
 #include <cstddef>
 #include <vector>
-#include <list>
+#include <queue>
+#include <memory>
 #include <map>
+#include <cassert>
+#include <typeindex>
 #include <functional>
 #include <type_traits>
 #include <iterator>
@@ -19,32 +22,29 @@ public:
     EntityId createEntity();
     void removeEntity(EntityId id);
 
+    template <typename T>
+    void registerComponent() {
+        _arrays[typeid(T)] = std::make_unique<ArrayModel<T>>();
+    }
+
     template <typename T, typename... Args>
     T& assignComponent(EntityId id, Args&&... args) {
-        // Register the action of cleaning up this component when the entity
-        // will be destroyed
-        _destructors[id].push_back(std::bind(&Scene::removeComponent<T>, this, id));
-        // Add a new default-constructed component to the list
-        T& component{getComponentList<T>().emplace_back(std::forward<Args>(args)...)};
-        // Map the added element to the entity ID
-        getComponentMap<T>().emplace(id, --getComponentList<T>().end());
-        return component;
+        return getArray<T>().assign(id, std::forward<Args>(args)...);
     }
 
     template <typename T>
     const T& getComponent(EntityId id) const {
-        return *getComponentMap<T>().at(id);
+        return getArray<T>().get(id);
     }
 
     template <typename T>
     T& getComponent(EntityId id) {
-        return const_cast<T&>(const_cast<const Scene&>(*this).getComponent<T>(id));
+        return getArray<T>().get(id);
     }
 
     template <typename T>
-    void removeComponent(EntityId id) {
-        getComponentList<T>().erase(getComponentMap<T>().at(id));
-        getComponentMap<T>().erase(id);
+    void eraseComponent(EntityId id) {
+        getArray<T>().erase(id);
     }
 
     template <typename... Types>
@@ -53,35 +53,71 @@ public:
     }
 
 private:
-    template <typename T>
-    using ComponentList = std::list<T>;
-    template <typename T>
-    using ComponentMap = std::map<EntityId, typename std::list<T>::iterator>;
+    // Type erasure idiom to store component arrays of any type. The base class
+    // is called the concept, and the derived class the model. The base class
+    // just defines the functions we need to call without knowing the underlying
+    // type. In this case, it's only erase, since we need to call it when we
+    // delete an entity (and we don't know the component types in that context).
+    class ArrayConcept {
+    public:
+        virtual ~ArrayConcept() = default;
+        virtual void erase(EntityId id) = 0;
+    };
 
-    EntityId _entityCounter{0};
-    std::vector<EntityId> _freeIds;
-    std::map<EntityId, std::vector<std::function<void()>>> _destructors;
+    // The derived class is template, so it can store the underlying array. It
+    // also implements the virtual functions.
+    template <typename T>
+    class ArrayModel : public ArrayConcept {
+    public:
+        template <typename... Args>
+        T& assign(EntityId id, Args&&... args) {
+            assert(not mapping.contains(id));
+            mapping.emplace(id, T(std::forward<Args>(args)...));
+            return mapping.at(id);
+        }
+
+        const T& get(EntityId id) const {
+            assert(contains(id));
+            return mapping.at(id);
+        }
+
+        T& get(EntityId id) {
+            return const_cast<T&>(const_cast<const ArrayModel<T>&>(*this).get(id));
+        }
+
+        virtual void erase(EntityId id) override {
+            assert(contains(id));
+            mapping.erase(id);
+        }
+
+        bool contains(EntityId id) const {
+            return mapping.contains(id);
+        }
+
+    private:
+        // TODO We should use a vector of component in order to store them
+        // close in memory, but somehow this code breaks if we use a vector...
+        // std::vector<T> components;
+        std::map<EntityId, T> mapping;
+    };
+
+    // Maximum entity ID, which is also the size of the component arrays.
+    EntityId _maxEntityId{0};
+    // List of entity IDs that can be recycled for new entities. Gives the
+    // smallest id first.
+    std::priority_queue<EntityId, std::vector<EntityId>, std::greater<EntityId>> _freeIds;
+    // Storage of component arrays, indexed by type_index
+    std::unordered_map<std::type_index, std::unique_ptr<ArrayConcept>> _arrays;
 
     template <typename T>
-    const ComponentList<T>& getComponentList() const {
-        static ComponentList<T> list;
-        return list;
+    inline const ArrayModel<T>& getArray() const {
+        assert(_arrays.contains(typeid(T)));
+        return dynamic_cast<const ArrayModel<T>&>(*_arrays.at(typeid(T)));
     }
 
     template <typename T>
-    ComponentList<T>& getComponentList() {
-        return const_cast<ComponentList<T>&>(const_cast<const Scene&>(*this).getComponentList<T>());
-    }
-
-    template <typename T>
-    const ComponentMap<T>& getComponentMap() const {
-        static ComponentMap<T> map;
-        return map;
-    }
-
-    template <typename T>
-    ComponentMap<T>& getComponentMap() {
-        return const_cast<ComponentMap<T>&>(const_cast<const Scene&>(*this).getComponentMap<T>());
+    inline ArrayModel<T>& getArray() {
+        return const_cast<ArrayModel<T>&>(const_cast<const Scene&>(*this).getArray<T>());
     }
 
     template <typename... Types>
@@ -103,7 +139,7 @@ public:
     SceneIterator(EntityId id, const Scene& scene):
         _id{id},
         _scene{scene} {
-        advanceValid();
+        advanceUntilValid();
     }
 
     EntityId operator*() const {
@@ -120,30 +156,25 @@ public:
 
     SceneIterator<Types...>& operator++() {
         ++_id;
-        advanceValid();
+        advanceUntilValid();
         return *this;
     }
 private:
     EntityId _id;
     const Scene& _scene;
 
-    void advanceValid() {
-        while (_id < _scene._entityCounter and not componentsMatch<Types...>()) {
+    void advanceUntilValid() {
+        while (_id < _scene._maxEntityId and not componentsMatch()) {
             ++_id;
         }
     }
 
-    template <typename T, typename... Rest>
-    bool componentsMatch() const requires (sizeof...(Rest) > 0) {
-        return _scene.getComponentMap<T>().contains(_id) and componentsMatch<Rest...>();
-    }
-
-    template <typename T>
     bool componentsMatch() const {
-        return _scene.getComponentMap<T>().contains(_id);
+        // Fold expression, it's equivalent to calling [...].contains<T>(_id)
+        // for every type T in Types and joining with and operators
+        return (_scene.getArray<Types>().contains(_id) and ...);
     }
 };
-
 
 
 template <typename... Types>
@@ -158,7 +189,7 @@ public:
     }
 
     SceneIterator<Types...> end() const {
-        return SceneIterator<Types...>(_scene._entityCounter, _scene);
+        return SceneIterator<Types...>(_scene._maxEntityId, _scene);
     }
 
     template <typename T>
@@ -168,8 +199,7 @@ public:
 
     template <typename T>
     const T& getComponent(EntityId id) const {
-        static_assert(std::disjunction_v<std::is_same<T, Types>...>,
-            "Cannot get component outside of Types...");
+        static_assert((std::is_same_v<T, Types> or ...), "Component T is not in Types...");
         return _scene.getComponent<T>(id);
     }
 

@@ -8,20 +8,24 @@ Application::Application(const std::string& setupFile):
     _gameplaySystem{_scene},
     _lightSystem{_scene},
     _debugOverlay{_gui, _physicsSystem, _scene.view<Body, DebugInfo>(), _textureManager} {
+    // Setup GUI
     setFullscreen();
     _gui.setWindow(_window);
-    loadResources();
     _gui.loadWidgetsFromFile(_guiFile);
     _sceneCanvas = _gui.get<tgui::CanvasSFML>("sceneCanvas");
-    _gui.add(_sceneCanvas);
     _sceneCanvas->moveToBack();
-    _lightSystem.setRenderTarget(_sceneCanvas->getRenderTexture());
-    _lightSystem.setShader(_shaderManager.get("light"));
     _debugOverlay.buildGui();
-    _gameplaySystem.setRenderTarget(_sceneCanvas->getRenderTexture());
-    loadScene(_scene, setupFile, _fontManager, _textureManager);
     _currentWindowSize = _window.getSize();
     updateView();
+    // Load the game
+    registerComponents();
+    loadResources();
+    loadScene(_scene, setupFile, _fontManager, _textureManager);
+    // Give references to systems. This has to be done once the GUI is set up
+    // and the resources loaded.
+    _lightSystem.setRenderTarget(_sceneCanvas->getRenderTexture());
+    _lightSystem.setShader(_shaderManager.get("light"));
+    _gameplaySystem.setRenderTarget(_sceneCanvas->getRenderTexture());
 }
 
 void Application::run() {
@@ -68,6 +72,22 @@ void Application::run() {
         _gui.draw();
         _window.display();
     }
+}
+
+void Application::registerComponents() {
+    _scene.registerComponent<Body>();
+    _scene.registerComponent<CircleBody>();
+    _scene.registerComponent<ConvexBody>();
+    _scene.registerComponent<Trace>();
+    _scene.registerComponent<Collider>();
+    _scene.registerComponent<AnimationComponent>();
+    _scene.registerComponent<LightSource>();
+    _scene.registerComponent<Shadow>();
+    _scene.registerComponent<Player>();
+    _scene.registerComponent<DebugInfo>();
+    _scene.registerComponent<sf::Sprite>();
+    _scene.registerComponent<sf::CircleShape>();
+    _scene.registerComponent<sf::ConvexShape>();
 }
 
 void Application::loadResources() {

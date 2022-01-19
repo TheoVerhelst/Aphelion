@@ -24,7 +24,6 @@ private:
         float _headLength{5};
     };
 
-    const sf::Font& _font;
     sf::CircleShape _position{3}; // Radius of the circle
     sf::Text _rotation;
     sf::Text _angularVelocity;

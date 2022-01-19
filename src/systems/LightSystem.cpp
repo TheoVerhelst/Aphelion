@@ -42,7 +42,7 @@ void LightSystem::update() {
     _shader->setUniform("numberLightSources", _numberLightSources);
     _shader->setUniform("viewMatrix", sf::Glsl::Mat3(_target->getView().getInverseTransform()));
     _shader->setUniform("screenSize", _screenSize);
-}   
+}
 
 void LightSystem::updateLightSources() {
     _numberLightSources = 0;

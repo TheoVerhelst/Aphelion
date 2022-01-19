@@ -3,18 +3,17 @@
 EntityId Scene::createEntity() {
     EntityId id;
     if (not _freeIds.empty()) {
-        id = _freeIds.back();
-        _freeIds.pop_back();
+        id = _freeIds.top();
+        _freeIds.pop();
     } else {
-        id = _entityCounter++;
+        id = _maxEntityId++;
     }
     return id;
 }
 
 void Scene::removeEntity(EntityId id) {
-    for (auto& destructor : _destructors[id]) {
-        destructor();
+    for (auto& [type, array] : _arrays) {
+        array->erase(id);
     }
-    _destructors.erase(id);
-    _freeIds.push_back(id);
+    _freeIds.push(id);
 }

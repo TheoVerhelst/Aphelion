@@ -2,12 +2,11 @@
 #include <limits>
 #include <DebugInfo.hpp>
 
-DebugInfo::DebugInfo(const sf::Font& font):
-    _font{font} {
+DebugInfo::DebugInfo(const sf::Font& font) {
     _position.setOrigin(_position.getRadius(), _position.getRadius());
-    _rotation.setFont(_font);
+    _rotation.setFont(font);
     _rotation.setCharacterSize(10);
-    _angularVelocity.setFont(_font);
+    _angularVelocity.setFont(font);
     _angularVelocity.setCharacterSize(10);
 }
 

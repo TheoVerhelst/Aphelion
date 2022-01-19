@@ -39,6 +39,7 @@ private:
     MusicManager _musicManager;
     Vector2u _currentWindowSize;
 
+    void registerComponents();
     void loadResources();
     void setFullscreen();
     void updateView();
