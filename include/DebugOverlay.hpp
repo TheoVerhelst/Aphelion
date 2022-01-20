@@ -3,7 +3,6 @@
 
 #include <SFML/Graphics/Drawable.hpp>
 #include <TGUI/TGUI.hpp>
-#include <TGUI/Backend/SFML-Graphics.hpp>
 #include <systems/PhysicsSystem.hpp>
 #include <Scene.hpp>
 #include <ResourceManager.hpp>
@@ -12,8 +11,7 @@
 
 class DebugOverlay : public sf::Drawable {
 public:
-    DebugOverlay(tgui::Gui& gui, PhysicsSystem& physicsSystem,
-        const SceneView<Body, DebugInfo>& scene,
+    DebugOverlay(tgui::BackendGui& gui, PhysicsSystem& physicsSystem, Scene& scene,
         ResourceManager<sf::Texture>& textureManager);
     void update();
     virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
@@ -21,9 +19,9 @@ public:
     void buildGui();
 
 private:
-    tgui::Gui& _gui;
+    tgui::BackendGui& _gui;
     PhysicsSystem& _physicsSystem;
-    SceneView<Body, DebugInfo> _scene;
+    Scene& _scene;
     ResourceManager<sf::Texture>& _textureManager;
     bool _debugView{false};
     bool _paused{false};

@@ -41,7 +41,6 @@ private:
 
     void registerComponents();
     void loadResources();
-    void setFullscreen();
     void updateView();
 };
 

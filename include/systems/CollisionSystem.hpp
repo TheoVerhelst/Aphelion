@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <cstddef>
+#include <functional>
 #include <vector.hpp>
 #include <Scene.hpp>
 #include <components.hpp>
@@ -13,6 +14,8 @@ public:
 	void update();
 
 private:
+	typedef std::function<Vector2d(const Vector2d&)> SupportFunction;
+
 	Scene& _scene;
 
 	// List of 2D points formed by the difference of two shapes. This class
@@ -54,13 +57,13 @@ private:
 		double distance;
 	};
 
-	void collideBodies(const Collider& colliderA, const Collider& colliderB, Body& bodyA, Body& bodyB);
+	void collideBodies(const SupportFunction& functionA, const SupportFunction& functionB, Body& bodyA, Body& bodyB);
 
 	// In the special case of two circle, the collision detection and response
 	// is much simpler, so we do both at once here.
 	void collideCircles(const CircleBody& circleA, const CircleBody& circleB, Body& bodyA, Body& bodyB);
 
-	void collideCircleAndBody(const CircleBody& circleA, const Collider& colliderB, Body& bodyA, Body& bodyB);
+	void collideCircleAndBody(const CircleBody& circleA, const SupportFunction& functionB, Body& bodyA, Body& bodyB);
 
 	// Collision response between arbitrary bodies.
 	void collisionResponse(Body& bodyA, Body& bodyB, const ContactInfo& contactInfo);

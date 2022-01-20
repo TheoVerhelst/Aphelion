@@ -9,16 +9,16 @@
 #include <cassert>
 #include <typeindex>
 #include <functional>
-#include <type_traits>
-#include <iterator>
 
 typedef std::uint32_t EntityId;
 
-template <typename... Types>
-class SceneView;
-
 class Scene {
 public:
+    // Scene is non-copyable
+    Scene() = default;
+    Scene(const Scene&) = delete;
+    Scene& operator=(const Scene&) = delete;
+
     EntityId createEntity();
     void removeEntity(EntityId id);
 
@@ -48,8 +48,18 @@ public:
     }
 
     template <typename... Types>
-    SceneView<Types...> view() {
-        return SceneView<Types...>(*this);
+    std::vector<EntityId> view() const {
+        // TODO Replace by STL algorithm
+        std::vector<EntityId> res;
+        for (EntityId id{0}; id < _maxEntityId; ++id) {
+            // Fold expression, it's equivalent to calling
+            // getArray<T>.contains(id) for every type T in Types and joining
+            // them with "and" operators
+            if ((getArray<Types>().contains(id) and ...)) {
+                res.push_back(id);
+            }
+        }
+        return res;
     }
 
 private:
@@ -72,21 +82,30 @@ private:
         template <typename... Args>
         T& assign(EntityId id, Args&&... args) {
             assert(not mapping.contains(id));
-            mapping.emplace(id, T(std::forward<Args>(args)...));
-            return mapping.at(id);
+            mapping.emplace(id, components.size());
+            return components.emplace_back(std::forward<Args>(args)...);
         }
 
         const T& get(EntityId id) const {
             assert(contains(id));
-            return mapping.at(id);
+            return components[mapping.at(id)];
         }
 
         T& get(EntityId id) {
-            return const_cast<T&>(const_cast<const ArrayModel<T>&>(*this).get(id));
+            assert(contains(id));
+            return components[mapping.at(id)];
         }
 
         virtual void erase(EntityId id) override {
             assert(contains(id));
+            std::size_t index{mapping.at(id)};
+            // Update all subsequent index mappings
+            for (auto& [otherId, otherIndex] : mapping) {
+                if (otherIndex > index) {
+                    otherIndex--;
+                }
+            }
+            components.erase(components.begin() + index);
             mapping.erase(id);
         }
 
@@ -95,13 +114,11 @@ private:
         }
 
     private:
-        // TODO We should use a vector of component in order to store them
-        // close in memory, but somehow this code breaks if we use a vector...
-        // std::vector<T> components;
-        std::map<EntityId, T> mapping;
+        std::vector<T> components;
+        std::map<EntityId, std::size_t> mapping;
     };
 
-    // Maximum entity ID, which is also the size of the component arrays.
+    // Maximum entity ID we have assigned so far.
     EntityId _maxEntityId{0};
     // List of entity IDs that can be recycled for new entities. Gives the
     // smallest id first.
@@ -119,92 +136,6 @@ private:
     inline ArrayModel<T>& getArray() {
         return const_cast<ArrayModel<T>&>(const_cast<const Scene&>(*this).getArray<T>());
     }
-
-    template <typename... Types>
-    friend class SceneView;
-
-    template <typename... Types>
-    friend class SceneIterator;
-};
-
-template <typename... Types>
-class SceneIterator {
-public:
-    typedef EntityId difference_type;
-    typedef EntityId value_type;
-    typedef EntityId* pointer;
-    typedef EntityId& reference;
-    typedef std::forward_iterator_tag iterator_category;
-
-    SceneIterator(EntityId id, const Scene& scene):
-        _id{id},
-        _scene{scene} {
-        advanceUntilValid();
-    }
-
-    EntityId operator*() const {
-        return _id;
-    }
-
-    bool operator==(const SceneIterator& other) {
-        return _id == other._id;
-    }
-
-    bool operator!=(const SceneIterator& other) {
-        return not (*this == other);
-    }
-
-    SceneIterator<Types...>& operator++() {
-        ++_id;
-        advanceUntilValid();
-        return *this;
-    }
-private:
-    EntityId _id;
-    const Scene& _scene;
-
-    void advanceUntilValid() {
-        while (_id < _scene._maxEntityId and not componentsMatch()) {
-            ++_id;
-        }
-    }
-
-    bool componentsMatch() const {
-        // Fold expression, it's equivalent to calling [...].contains<T>(_id)
-        // for every type T in Types and joining with and operators
-        return (_scene.getArray<Types>().contains(_id) and ...);
-    }
-};
-
-
-template <typename... Types>
-class SceneView {
-public:
-    SceneView(Scene& scene):
-        _scene{scene} {
-    }
-
-    SceneIterator<Types...> begin() const {
-        return SceneIterator<Types...>(0, _scene);
-    }
-
-    SceneIterator<Types...> end() const {
-        return SceneIterator<Types...>(_scene._maxEntityId, _scene);
-    }
-
-    template <typename T>
-    T& getComponent(EntityId id) {
-        return const_cast<T&>(const_cast<const SceneView<Types...>&>(*this).getComponent<T>(id));
-    }
-
-    template <typename T>
-    const T& getComponent(EntityId id) const {
-        static_assert((std::is_same_v<T, Types> or ...), "Component T is not in Types...");
-        return _scene.getComponent<T>(id);
-    }
-
-private:
-    Scene& _scene;
 };
 
 #endif // SCENE_HPP

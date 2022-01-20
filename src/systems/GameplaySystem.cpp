@@ -65,6 +65,8 @@ void GameplaySystem::handleContinuousActions(const sf::Time& dt, const std::set<
                 case Action::ZoomOut:
                     zoom /= std::pow(zoomSpeed, dt.asSeconds());
                     break;
+                default:
+                    assert(false);
             }
         }
 

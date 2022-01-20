@@ -10,24 +10,12 @@ Vector2d Body::worldToLocal(const Vector2d& point) const {
     return rotate(point - position, -rotation);
 }
 
-
 Vector2d CircleBody::computeCenterOfMass() const {
     return {radius, radius};
 }
 
 double CircleBody::computeMomentOfInertia(double mass) const {
     return mass * radius * radius / 2.;
-}
-
-Vector2d CircleBody::supportFunction(const Body& body, const Vector2d& direction) const {
-    return body.localToWorld(direction * radius / norm(direction));
-}
-
-std::pair<Vector2d, Vector2d> CircleBody::shadowFunction(const Body& body, const Vector2d& lightSource) const {
-    // Get the left-side orthogonal vector
-    Vector2d orthogonal{perpendicular(body.position - lightSource, true)};
-    orthogonal /= norm(orthogonal);
-    return {body.position + orthogonal * radius, body.position - orthogonal * radius};
 }
 
 Vector2d ConvexBody::computeCenterOfMass() const {
@@ -72,11 +60,16 @@ double ConvexBody::computeMomentOfInertia(double mass, const Vector2d& centerOfM
     return (momentOfInertia / 6.) - mass * norm2(centerOfMass);
 }
 
-Vector2d ConvexBody::supportFunction(const Body& body, const Vector2d& direction) const {
+Vector2d Collider::supportFunction(const Vector2d& direction, const Scene& scene, EntityId id) const {
+    // For now, we only have convex bodies which need a support function,
+    // so no dispatch like for Shadow.
+    const Body& body{scene.getComponent<Body>(id)};
+    const ConvexBody& convex{scene.getComponent<ConvexBody>(id)};
+
 	double largestProd{-std::numeric_limits<double>::max()};
 	Vector2d furthestPoint;
     bool found{false};
-	for (Vector2d vertex : vertices) {
+	for (Vector2d vertex : convex.vertices) {
 		// Rotate the point around the center of mass to account for rotation
 		Vector2d worldPoint{body.localToWorld(vertex)};
 
@@ -91,10 +84,31 @@ Vector2d ConvexBody::supportFunction(const Body& body, const Vector2d& direction
     return furthestPoint;
 }
 
-std::pair<Vector2d, Vector2d> ConvexBody::shadowFunction(const Body& body, const Vector2d& lightSource) const {
-    std::vector<double> angles(vertices.size());
+std::pair<Vector2d, Vector2d> Shadow::shadowFunction(const Vector2d& lightSource, const Scene& scene, EntityId id) const {
+    const Body& body{scene.getComponent<Body>(id)};
+    switch(body.type) {
+        case BodyType::Circle:
+            return circleShadow(lightSource, body, scene.getComponent<CircleBody>(id));
+            break;
+        case BodyType::Convex:
+            return convexShadow(lightSource, body, scene.getComponent<ConvexBody>(id));
+            break;
+        default:
+            assert(false);
+    }
+}
+
+std::pair<Vector2d, Vector2d> Shadow::circleShadow(const Vector2d& lightSource, const Body& body, const CircleBody& circle) const {
+    // Get the left-side orthogonal vector
+    Vector2d orthogonal{perpendicular(body.position - lightSource, true)};
+    orthogonal /= norm(orthogonal);
+    return {body.position + orthogonal * circle.radius, body.position - orthogonal * circle.radius};
+}
+
+std::pair<Vector2d, Vector2d> Shadow::convexShadow(const Vector2d& lightSource, const Body& body, const ConvexBody& convex) const {
+    std::vector<double> angles(convex.vertices.size());
     std::vector<Vector2d> worldV;
-    std::transform(vertices.begin(), vertices.end(), std::back_inserter(worldV),
+    std::transform(convex.vertices.begin(), convex.vertices.end(), std::back_inserter(worldV),
         std::bind(&Body::localToWorld, &body, std::placeholders::_1));
     angles[0] = 0;
     const double angle0{angle(worldV[0] - lightSource)};

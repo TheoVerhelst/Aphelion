@@ -52,7 +52,7 @@ void LightSystem::updateLightSources() {
         _lightPositions[_numberLightSources] = static_cast<Vector2f>(body.position);
         _lightBrightnesses[_numberLightSources] = static_cast<float>(lightSource.brightness);
         ++_numberLightSources;
-        if (_numberLightSources >= _maxLightSources) {
+        if (_numberLightSources >= static_cast<int>(_maxLightSources)) {
             break;
         }
     }
@@ -68,22 +68,19 @@ std::vector<sf::ConvexShape> LightSystem::computeShadowShapes() {
 
     // Fetch the list of shadow entities in advance to avoid repeating the call
     // in the loop
-    SceneView<Shadow> shadowScene{_scene.view<Shadow>()};
-    std::vector<EntityId> shadowEntities;
-    std::copy(shadowScene.begin(), shadowScene.end(), std::back_inserter(shadowEntities));
-
+    std::vector<EntityId> shadowView{_scene.view<Shadow>()};
     std::vector<sf::ConvexShape> shadowShapes;
     for (EntityId lightId : _scene.view<Body, LightSource>()) {
         Body& body{_scene.getComponent<Body>(lightId)};
         const Vector2d lightSource{body.position};
 
-        for (EntityId shadowId : shadowEntities) {
+        for (EntityId shadowId : shadowView) {
             if (lightId == shadowId) {
                 continue;
             }
-            const auto& shadowFunction = _scene.getComponent<Shadow>(shadowId).shadowFunction;
+            const Shadow& shadow{_scene.getComponent<Shadow>(shadowId)};
             // Compute the edges of the shadow
-            const auto [A, B] = shadowFunction(body.position);
+            const auto [A, B] = shadow.shadowFunction(body.position, _scene, shadowId);
             // Compute the shadow geometry from the edges and the light source
             const auto shadowGeometry = computeShadowGeometry(A, B, lightSource, viewArray);
             if (shadowGeometry.size() > 2) {

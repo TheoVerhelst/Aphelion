@@ -13,11 +13,7 @@ DebugInfo::DebugInfo(const sf::Font& font) {
 void DebugInfo::update(const Body& body) {
     Vector2f pos{static_cast<Vector2f>(body.position)};
     _position.setPosition(pos);
-    sf::Color color{sf::Color::Red};
-    // Parenthesis initializer to allow implicit conversion to sf::Uint8
-    sf::Uint8 max{std::numeric_limits<sf::Uint8>::max()};
-    sf::Color opposite(max - color.r, max - color.g, max - color.b, color.a);
-    _position.setFillColor(opposite);
+    _position.setFillColor(sf::Color::White);
 
     std::stringstream rotationStr, angularVelocityStr;
     rotationStr        << "r = " << std::fixed << std::setprecision(2) << body.rotation << " rad";
@@ -28,7 +24,7 @@ void DebugInfo::update(const Body& body) {
     _angularVelocity.setPosition(pos + Vector2f(10, -20));
 
     _velocity.setPoints(static_cast<Vector2f>(body.position), static_cast<Vector2f>(body.position + body.velocity));
-    _velocity.setColor(opposite);
+    _velocity.setColor(sf::Color::White);
 }
 
 void DebugInfo::draw(sf::RenderTarget& target, sf::RenderStates states) const {

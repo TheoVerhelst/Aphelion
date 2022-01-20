@@ -3,14 +3,14 @@
 #include <SceneLoader.hpp>
 
 Application::Application(const std::string& setupFile):
+    _window{sf::VideoMode::getDesktopMode(), "Aphelion",  sf::Style::Fullscreen},
+    _gui{_window},
     _physicsSystem{_scene},
     _renderSystem{_scene, _shaderManager},
     _gameplaySystem{_scene},
     _lightSystem{_scene},
-    _debugOverlay{_gui, _physicsSystem, _scene.view<Body, DebugInfo>(), _textureManager} {
+    _debugOverlay{_gui, _physicsSystem, _scene, _textureManager} {
     // Setup GUI
-    setFullscreen();
-    _gui.setWindow(_window);
     _gui.loadWidgetsFromFile(_guiFile);
     _sceneCanvas = _gui.get<tgui::CanvasSFML>("sceneCanvas");
     _sceneCanvas->moveToBack();
@@ -110,14 +110,6 @@ void Application::loadResources() {
     _backgroundSprite.setTexture(_textureManager.get("background"));
     // Center on an interesting region on the background
     _backgroundSprite.setOrigin(1500, 900);
-}
-
-void Application::setFullscreen() {
-    const std::vector<sf::VideoMode>& modes{sf::VideoMode::getFullscreenModes()};
-    if (modes.size() > 0) {
-        // Mode 0 is always the highest resolution
-        _window.create(modes[0], "Aphelion",  sf::Style::Fullscreen);
-    }
 }
 
 void Application::updateView() {

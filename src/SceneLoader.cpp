@@ -53,23 +53,24 @@ void setupBody(Scene& scene, const json& value, EntityId id, const ResourceManag
 void setupCircleBody(Scene& scene, const json& value, EntityId id) {
     CircleBody& circle{scene.assignComponent<CircleBody>(id)};
     value.get_to(circle);
-    Body& body{scene.getComponent<Body>(id)};
+    scene.assignComponent<Shadow>(id);
 
     // Physical constants
+    Body& body{scene.getComponent<Body>(id)};
     body.centerOfMass = circle.computeCenterOfMass();
     body.momentOfInertia =  circle.computeMomentOfInertia(body.mass);
+    body.type = BodyType::Circle;
 
-    // Shadow
-    Shadow& shadow{scene.assignComponent<Shadow>(id)};
-    shadow.shadowFunction = std::bind(&CircleBody::shadowFunction, &circle, std::ref(body), _1);
 }
 
 void setupConvexBody(Scene& scene, const json& value, EntityId id) {
     ConvexBody& convex{scene.assignComponent<ConvexBody>(id)};
     value.get_to(convex);
-    Body& body{scene.getComponent<Body>(id)};
+    scene.assignComponent<Collider>(id);
+    scene.assignComponent<Shadow>(id);
 
     // Physical constants
+    Body& body{scene.getComponent<Body>(id)};
     body.centerOfMass = convex.computeCenterOfMass();
     // Shift the vertices so they represent correct local coordinates around the
     // center of mass
@@ -77,14 +78,8 @@ void setupConvexBody(Scene& scene, const json& value, EntityId id) {
         vertex -= body.centerOfMass;
     }
     body.momentOfInertia =  convex.computeMomentOfInertia(body.mass, {0., 0.});
+    body.type = BodyType::Convex;
 
-    // Collider
-    Collider& collider{scene.assignComponent<Collider>(id)};
-    collider.supportFunction = std::bind(&ConvexBody::supportFunction, &convex, std::ref(body), _1);
-
-    // Shadow
-    Shadow& shadow{scene.assignComponent<Shadow>(id)};
-    shadow.shadowFunction = std::bind(&ConvexBody::shadowFunction, &convex, std::ref(body), _1);
 }
 
 void setupSprite(Scene& scene, const json& value, EntityId id, const ResourceManager<sf::Texture>& textureManager) {

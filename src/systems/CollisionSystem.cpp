@@ -1,60 +1,65 @@
 #include <stdexcept>
 #include <systems/CollisionSystem.hpp>
 
+using namespace std::placeholders;
+
 CollisionSystem::CollisionSystem(Scene& scene):
     _scene{scene} {
 }
 
 void CollisionSystem::update() {
-    SceneView<Body, Collider> colliderScene{_scene.view<Body, Collider>()};
-    SceneView<Body, CircleBody> circleScene{_scene.view<Body, CircleBody>()};
-    std::vector<EntityId> colliderIds(colliderScene.begin(), colliderScene.end());
-    std::vector<EntityId> circleIds(circleScene.begin(), circleScene.end());
+    std::vector<EntityId> colliderView{_scene.view<Body, Collider>()};
+    std::vector<EntityId> circleView{_scene.view<Body, CircleBody>()};
 
-    for (std::size_t i{0}; i < circleIds.size(); ++i) {
-        Body& bodyA{circleScene.getComponent<Body>(circleIds[i])};
-        const CircleBody& circleA{circleScene.getComponent<CircleBody>(circleIds[i])};
+    for (std::size_t i{0}; i < circleView.size(); ++i) {
+        Body& bodyA{_scene.getComponent<Body>(circleView[i])};
+        const CircleBody& circleA{_scene.getComponent<CircleBody>(circleView[i])};
 
         // Circle - circle collisions
-        for (std::size_t j{i + 1}; j < circleIds.size(); ++j) {
-            Body& bodyB{circleScene.getComponent<Body>(circleIds[j])};
-            const CircleBody& circleB{circleScene.getComponent<CircleBody>(circleIds[j])};
+        for (std::size_t j{i + 1}; j < circleView.size(); ++j) {
+            Body& bodyB{_scene.getComponent<Body>(circleView[j])};
+            const CircleBody& circleB{_scene.getComponent<CircleBody>(circleView[j])};
             collideCircles(circleA, circleB, bodyA, bodyB);
         }
 
-        // Circle - convex collisions
-        for (std::size_t j{0}; j < colliderIds.size(); ++j) {
-            Body& bodyB{circleScene.getComponent<Body>(colliderIds[j])};
-            const Collider& colliderB{colliderScene.getComponent<Collider>(colliderIds[j])};
-            collideCircleAndBody(circleA, colliderB, bodyA, bodyB);
+        // Circle - arbitrary body collisions
+        for (std::size_t j{0}; j < colliderView.size(); ++j) {
+            Body& bodyB{_scene.getComponent<Body>(colliderView[j])};
+            const Collider& colliderB{_scene.getComponent<Collider>(colliderView[j])};
+            SupportFunction functionB{std::bind(&Collider::supportFunction, &colliderB, _1, std::cref(_scene), colliderView[j])};
+            collideCircleAndBody(circleA, functionB, bodyA, bodyB);
         }
     }
 
-    for (std::size_t i{0}; i < colliderIds.size(); ++i) {
-        Body& bodyA{colliderScene.getComponent<Body>(colliderIds[i])};
-        const Collider& colliderA{colliderScene.getComponent<Collider>(colliderIds[i])};
+    for (std::size_t i{0}; i < colliderView.size(); ++i) {
+        Body& bodyA{_scene.getComponent<Body>(colliderView[i])};
+        const Collider& colliderA{_scene.getComponent<Collider>(colliderView[i])};
+        SupportFunction functionA{std::bind(&Collider::supportFunction, &colliderA, _1, std::cref(_scene), colliderView[i])};
 
-        // Convex - convex collisions
-        for (std::size_t j{i + 1}; j < colliderIds.size(); ++j) {
-            Body& bodyB{colliderScene.getComponent<Body>(colliderIds[j])};
-            const Collider& colliderB{colliderScene.getComponent<Collider>(colliderIds[j])};
-            collideBodies(colliderA, colliderB, bodyA, bodyB);
+        // arbitrary body - body collisions
+        for (std::size_t j{i + 1}; j < colliderView.size(); ++j) {
+            Body& bodyB{_scene.getComponent<Body>(colliderView[j])};
+            const Collider& colliderB{_scene.getComponent<Collider>(colliderView[j])};
+            SupportFunction functionB{std::bind(&Collider::supportFunction, &colliderB, _1, std::cref(_scene), colliderView[j])};
+            collideBodies(functionA, functionB, bodyA, bodyB);
         }
     }
 }
 
-void CollisionSystem::collideBodies(const Collider& colliderA, const Collider& colliderB, Body& bodyA, Body& bodyB) {
+void CollisionSystem::collideBodies(const SupportFunction& functionA,
+        const SupportFunction& functionB, Body& bodyA, Body& bodyB) {
     // Determine if the bodies collide with GJK
-    std::pair<bool, MinkowskyPolygon> collision{collisionGJK(colliderA.supportFunction, colliderB.supportFunction)};
+    std::pair<bool, MinkowskyPolygon> collision{collisionGJK(functionA, functionB)};
     if (collision.first) {
         // Determine the collision info with EPA
-        ContactInfo contactInfo{EPA(colliderA.supportFunction, colliderB.supportFunction, collision.second)};
+        ContactInfo contactInfo{EPA(functionA, functionB, collision.second)};
         // Update the bodies' speed, position and rotation according to the collision
         collisionResponse(bodyA, bodyB, contactInfo);
     }
 }
 
-void CollisionSystem::collideCircles(const CircleBody& circleA, const CircleBody& circleB, Body& bodyA, Body& bodyB) {
+void CollisionSystem::collideCircles(const CircleBody& circleA,
+        const CircleBody& circleB, Body& bodyA, Body& bodyB) {
     const Vector2d diff_x = bodyB.position - bodyA.position;
     const double dist{norm(diff_x)};
     const double overlap{circleA.radius + circleB.radius - dist};
@@ -80,16 +85,16 @@ void CollisionSystem::collideCircles(const CircleBody& circleA, const CircleBody
     }
 }
 
-void CollisionSystem::collideCircleAndBody(const CircleBody& circleA, const Collider& colliderB,
-        Body& bodyA, Body& bodyB) {
+void CollisionSystem::collideCircleAndBody(const CircleBody& circleA,
+        const SupportFunction& functionB, Body& bodyA, Body& bodyB) {
     // Check the distance between the B and the center of A
     const Vector2d centerA{bodyA.localToWorld({0, 0})};
-    SupportFunction supportFunctionA = [centerA](const Vector2d&) noexcept {return centerA;};
-    std::pair<bool, MinkowskyPolygon> collision{collisionGJK(supportFunctionA, colliderB.supportFunction)};
+    SupportFunction functionA = [centerA](const Vector2d&) noexcept {return centerA;};
+    std::pair<bool, MinkowskyPolygon> collision{collisionGJK(functionA, functionB)};
     // If the center of A is not in B
     if (not collision.first) {
         // Find the distance between B and the center of A
-        ContactInfo distanceInfo{distanceGJK(supportFunctionA, colliderB.supportFunction, collision.second)};
+        ContactInfo distanceInfo{distanceGJK(functionA, functionB, collision.second)};
         // If the distance is greater than the radius, we are fine. Otherwise,
         // we need to solve the collision by translating the distance info to
         // a contact info between the circle A and the body B.
@@ -103,7 +108,7 @@ void CollisionSystem::collideCircleAndBody(const CircleBody& circleA, const Coll
     } else {
         // The center of A is in B, use EPA to find the collision vector, and
         // increase it to clear the whole circle A from B.
-        ContactInfo contactInfo{EPA(supportFunctionA, colliderB.supportFunction, collision.second)};
+        ContactInfo contactInfo{EPA(functionA, functionB, collision.second)};
         contactInfo.normal += contactInfo.normal * circleA.radius / norm(contactInfo.normal);
         collisionResponse(bodyA, bodyB, contactInfo);
     }

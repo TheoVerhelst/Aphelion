@@ -1,8 +1,8 @@
 #include <DebugOverlay.hpp>
 #include <format.hpp>
 
-DebugOverlay::DebugOverlay(tgui::Gui& gui, PhysicsSystem& physicsSystem,
-    const SceneView<Body, DebugInfo>& scene, ResourceManager<sf::Texture>& textureManager):
+DebugOverlay::DebugOverlay(tgui::BackendGui& gui, PhysicsSystem& physicsSystem,
+    Scene& scene, ResourceManager<sf::Texture>& textureManager):
     _gui{gui},
     _physicsSystem{physicsSystem},
     _scene{scene},
@@ -11,7 +11,7 @@ DebugOverlay::DebugOverlay(tgui::Gui& gui, PhysicsSystem& physicsSystem,
 
 void DebugOverlay::update() {
     if (_debugView) {
-        for (EntityId id : _scene) {
+        for (EntityId id : _scene.view<Body, DebugInfo>()) {
             Body& body{_scene.getComponent<Body>(id)};
             DebugInfo& debugInfo{_scene.getComponent<DebugInfo>(id)};
             debugInfo.update(body);
@@ -23,7 +23,7 @@ void DebugOverlay::update() {
 
 void DebugOverlay::draw(sf::RenderTarget& target, sf::RenderStates states) const {
     if (_debugView) {
-        for (EntityId id : _scene) {
+        for (EntityId id : _scene.view<Body, DebugInfo>()) {
             target.draw(_scene.getComponent<DebugInfo>(id), states);
         }
     }
