@@ -78,7 +78,6 @@ void Application::registerComponents() {
     _scene.registerComponent<Body>();
     _scene.registerComponent<CircleBody>();
     _scene.registerComponent<ConvexBody>();
-    _scene.registerComponent<Trace>();
     _scene.registerComponent<Collider>();
     _scene.registerComponent<AnimationComponent>();
     _scene.registerComponent<LightSource>();

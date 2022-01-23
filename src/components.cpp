@@ -123,10 +123,6 @@ std::pair<Vector2d, Vector2d> Shadow::convexShadow(const Vector2d& lightSource, 
             *(worldV.begin() + std::distance(angles.begin(), pair.second))};
 }
 
-void Trace::draw(sf::RenderTarget& target, sf::RenderStates states) const {
-    target.draw(trace, states);
-}
-
 void AnimationComponent::draw(sf::RenderTarget& target, sf::RenderStates states) const {
     for (auto& [acion, animation] : animations) {
         if(not animation.isStopped()) {

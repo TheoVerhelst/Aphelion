@@ -49,7 +49,6 @@ public:
 
     template <typename... Types>
     std::vector<EntityId> view() const {
-        // TODO Replace by STL algorithm
         std::vector<EntityId> res;
         for (EntityId id{0}; id < _maxEntityId; ++id) {
             // Fold expression, it's equivalent to calling

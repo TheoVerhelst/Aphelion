@@ -73,7 +73,6 @@ void CollisionSystem::collideCircles(const CircleBody& circleA,
         const double m_b{bodyB.mass};
         const Vector2d normal{diff_x / dist};
         const double restitution{bodyA.restitution * bodyB.restitution};
-        // Based on stackoverflow.com/questions/35211114/2d-elastic-ball-collision-physics
         const Vector2d addedVel = dot(v_a - v_b, normal) * normal / (m_a + m_b);
         bodyA.velocity -= addedVel * (m_b + restitution * m_b);
         bodyB.velocity += addedVel * (m_a + restitution * m_a);
@@ -87,7 +86,7 @@ void CollisionSystem::collideCircles(const CircleBody& circleA,
 
 void CollisionSystem::collideCircleAndBody(const CircleBody& circleA,
         const SupportFunction& functionB, Body& bodyA, Body& bodyB) {
-    // Check the distance between the B and the center of A
+    // Check the distance between B and the center of A
     const Vector2d centerA{bodyA.localToWorld({0, 0})};
     SupportFunction functionA = [centerA](const Vector2d&) noexcept {return centerA;};
     std::pair<bool, MinkowskyPolygon> collision{collisionGJK(functionA, functionB)};
@@ -139,7 +138,16 @@ void CollisionSystem::collisionResponse(Body& bodyA, Body& bodyB, const ContactI
         (1 / m_A + 1 / m_B + R_A_n * R_A_n / I_A + R_B_n * R_B_n / I_B)
     };
     const double norm_J_inelastic{m_A * m_B * dot(v_A - v_B, n) / (m_A + m_B)};
-    const Vector2d J{n * (restitution * norm_J_elastic + (1 - restitution) * norm_J_inelastic)};
+    Vector2d J{n * (restitution * norm_J_elastic + (1 - restitution) * norm_J_inelastic)};
+
+    // Add friction if necessary. First, let's compute the normalized tangent
+    // vector, orthogonal to the normal vector.
+    const Vector2d t{perpendicular(n, true)};
+    const double relativeVelocity{dot(v_A - v_B, t) - w_A * norm(R_A) - w_B * norm(R_B)};
+    const double eps{0.0001};
+    if (std::abs(relativeVelocity) >= eps) {
+        J += t * bodyA.friction * bodyB.friction * norm(J) * relativeVelocity / std::abs(relativeVelocity);
+    }
 
     bodyA.velocity -= J / m_A;
     bodyB.velocity += J / m_B;

@@ -2,9 +2,8 @@
 #define COMPONENTS_HPP
 
 #include <vector>
-#include <cstddef>
-#include <functional>
-#include <SFML/Graphics/VertexArray.hpp>
+#include <utility>
+#include <map>
 #include <SFML/Graphics/Drawable.hpp>
 #include <json.hpp>
 #include <serializers.hpp>
@@ -25,6 +24,7 @@ struct Body {
 	double rotation;
 	double angularVelocity;
 	double restitution;
+	double friction;
 	// The center of mass is used here only in the reference frame of the drawable shapes.
 	// For example, for a sf::CircleShape, this is {radius, radius}.
 	// The position vector is otherwise already pointing to the center of mass.
@@ -35,7 +35,7 @@ struct Body {
 	Vector2d localToWorld(const Vector2d& point) const;
 	Vector2d worldToLocal(const Vector2d& point) const;
 };
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(Body, mass, position, velocity, rotation, angularVelocity, restitution)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(Body, mass, position, velocity, rotation, angularVelocity, restitution, friction)
 
 struct CircleBody {
     double radius;
@@ -73,14 +73,6 @@ private:
 // ConvexBody. Any colliding body casts shadows.
 struct LightSource {
 	double brightness;
-};
-
-struct Trace : public sf::Drawable {
-    sf::VertexArray trace;
-    static constexpr std::size_t traceLength{1024};
-    std::size_t traceIndex{0};
-
-	virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 };
 
 struct AnimationComponent : public sf::Drawable  {
