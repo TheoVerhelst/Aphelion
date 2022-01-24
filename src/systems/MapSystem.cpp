@@ -10,10 +10,27 @@ void MapSystem::update(const TriggerAction& actionPair) {
     auto& [action, start] = actionPair;
     if (action == Action::ToggleMap and start) {
         // Toggle the map
+        _mapView = not _mapView;
         for (EntityId id : _scene.view<MapElement>()) {
             tgui::Picture::Ptr icon{_scene.getComponent<MapElement>(id).icon};
             icon->setVisible(not icon->isVisible());
         }
+
+        // Update the view
+        assert(_renderTarget != nullptr);
+        sf::View playerView{_renderTarget->getView()};
+        Vector2f viewSize{playerView.getSize()};
+
+        if (_mapView) {
+            _normalViewSize = viewSize;
+            viewSize = _mapViewSize;
+        } else {
+            _mapViewSize = viewSize;
+            viewSize = _normalViewSize;
+        }
+
+        playerView.setSize(viewSize);
+        _renderTarget->setView(playerView);
     }
 }
 

@@ -6,6 +6,7 @@
 #include <Observer.hpp>
 #include <Action.hpp>
 #include <Scene.hpp>
+#include <vector.hpp>
 
 class MapSystem : public Observer<const TriggerAction&>, public Observer<const sf::Time&> {
 public:
@@ -17,6 +18,9 @@ public:
 private:
     Scene& _scene;
     sf::RenderTarget* _renderTarget;
+    Vector2f _normalViewSize{1366.f, 768.f};
+    Vector2f _mapViewSize{68300.f, 38400.f};
+    bool _mapView{false};
 };
 
 #endif // MAPSYSTEM_HPP

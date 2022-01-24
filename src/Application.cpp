@@ -119,19 +119,21 @@ void Application::loadResources() {
 }
 
 void Application::registerObservers() {
+    // TODO understand why _gameplaySystem has to be after _renderSystem to
+    // avoid glitches
     _timeEventSource.registerObserver(_collisionSystem);
-    _timeEventSource.registerObserver(_gameplaySystem);
     _timeEventSource.registerObserver(_lightSystem);
-    //_timeEventSource.registerObserver(_mapSystem);
+    _timeEventSource.registerObserver(_mapSystem);
     _timeEventSource.registerObserver(_physicsSystem);
     _timeEventSource.registerObserver(_renderSystem);
+    _timeEventSource.registerObserver(_gameplaySystem);
     _timeEventSource.registerObserver(_debugOverlay);
     _timeEventSource.registerObserver(_inputManager);
     _timeEventSource.registerObserver(_musicManager);
     // Disambiguate the call between the two base classes of InputManager
     static_cast<EventSource<const ContinuousAction&>&>(_inputManager).registerObserver(_gameplaySystem);
     static_cast<EventSource<const TriggerAction&>&>(_inputManager).registerObserver(_gameplaySystem);
-    //static_cast<EventSource<const TriggerAction&>&>(_inputManager).registerObserver(_mapSystem);
+    static_cast<EventSource<const TriggerAction&>&>(_inputManager).registerObserver(_mapSystem);
 }
 
 void Application::updateView() {
