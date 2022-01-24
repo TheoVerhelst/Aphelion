@@ -28,8 +28,6 @@ private:
     }
 
     void updateTransformable(sf::Transformable& transformable, EntityId id) const;
-    void updateMapElements();
-
 };
 
 #endif // RENDERSYSTEM_HPP

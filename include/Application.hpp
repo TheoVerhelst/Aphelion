@@ -6,11 +6,12 @@
 #include <TGUI/TGUI.hpp>
 #include <TGUI/Backend/SFML-Graphics.hpp>
 #include <Scene.hpp>
-#include <systems/PhysicsSystem.hpp>
 #include <systems/CollisionSystem.hpp>
-#include <systems/RenderSystem.hpp>
 #include <systems/GameplaySystem.hpp>
 #include <systems/LightSystem.hpp>
+#include <systems/MapSystem.hpp>
+#include <systems/PhysicsSystem.hpp>
+#include <systems/RenderSystem.hpp>
 #include <DebugOverlay.hpp>
 #include <InputManager.hpp>
 #include <ResourceManager.hpp>
@@ -30,11 +31,12 @@ private:
     tgui::CanvasSFML::Ptr _sceneCanvas;
 
     // Systems
-    PhysicsSystem _physicsSystem;
-	CollisionSystem _collisionSystem;
-    RenderSystem _renderSystem;
+    CollisionSystem _collisionSystem;
     GameplaySystem _gameplaySystem;
     LightSystem _lightSystem;
+    MapSystem _mapSystem;
+    PhysicsSystem _physicsSystem;
+    RenderSystem _renderSystem;
     DebugOverlay _debugOverlay;
     InputManager _inputManager;
     EventSource<const sf::Time&> _timeEventSource;

@@ -5,11 +5,12 @@
 Application::Application(const std::string& setupFile):
     _window{sf::VideoMode::getDesktopMode(), "Aphelion",  sf::Style::Fullscreen},
     _gui{_window},
-    _physicsSystem{_scene},
     _collisionSystem{_scene},
-    _renderSystem{_scene, _shaderManager},
     _gameplaySystem{_scene},
     _lightSystem{_scene},
+    _mapSystem{_scene},
+    _physicsSystem{_scene},
+    _renderSystem{_scene, _shaderManager},
     _debugOverlay{_gui, _physicsSystem, _scene, _textureManager} {
     // Setup GUI
     _gui.loadWidgetsFromFile(_guiFile);
@@ -27,6 +28,7 @@ Application::Application(const std::string& setupFile):
     // done once the GUI is set up and the resources are loaded.
     _renderSystem.setRenderTarget(_sceneCanvas->getRenderTexture());
     _gameplaySystem.setRenderTarget(_sceneCanvas->getRenderTexture());
+    _mapSystem.setRenderTarget(_sceneCanvas->getRenderTexture());
     _lightSystem.setRenderTarget(_sceneCanvas->getRenderTexture());
     _lightSystem.setShader(_shaderManager.get("light"));
 }
@@ -118,9 +120,10 @@ void Application::loadResources() {
 
 void Application::registerObservers() {
     _timeEventSource.registerObserver(_collisionSystem);
-    _timeEventSource.registerObserver(_lightSystem);
-    _timeEventSource.registerObserver(_physicsSystem);
     _timeEventSource.registerObserver(_gameplaySystem);
+    _timeEventSource.registerObserver(_lightSystem);
+    //_timeEventSource.registerObserver(_mapSystem);
+    _timeEventSource.registerObserver(_physicsSystem);
     _timeEventSource.registerObserver(_renderSystem);
     _timeEventSource.registerObserver(_debugOverlay);
     _timeEventSource.registerObserver(_inputManager);
@@ -128,6 +131,7 @@ void Application::registerObservers() {
     // Disambiguate the call between the two base classes of InputManager
     static_cast<EventSource<const ContinuousAction&>&>(_inputManager).registerObserver(_gameplaySystem);
     static_cast<EventSource<const TriggerAction&>&>(_inputManager).registerObserver(_gameplaySystem);
+    //static_cast<EventSource<const TriggerAction&>&>(_inputManager).registerObserver(_mapSystem);
 }
 
 void Application::updateView() {

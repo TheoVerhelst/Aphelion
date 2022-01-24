@@ -23,15 +23,6 @@ void GameplaySystem::update(const TriggerAction& actionPair) {
             animationIt->second.stop();
         }
     }
-
-    // Handle specific actions
-    if (action == Action::ToggleMap and start) {
-        // Toggle the map
-        for (EntityId id : _scene.view<MapElement>()) {
-            tgui::Picture::Ptr icon{_scene.getComponent<MapElement>(id).icon};
-            icon->setVisible(not icon->isVisible());
-        }
-    }
 }
 
 void GameplaySystem::update(const ContinuousAction& actionPair) {
@@ -106,7 +97,6 @@ void GameplaySystem::update(const ContinuousAction& actionPair) {
         viewSize = {minViewSize.y * aspectRatio, minViewSize.y};
     }
 
-    playerView.setCenter(static_cast<Vector2f>(body.position));
     playerView.setSize(viewSize);
     if (rotateView) {
         playerView.setRotation(static_cast<float>(body.rotation * 180 / pi));
@@ -115,14 +105,12 @@ void GameplaySystem::update(const ContinuousAction& actionPair) {
 }
 
 void GameplaySystem::update(const sf::Time&) {
-    Body& body{_scene.getComponent<Body>(_scene.findUnique<Player>())};
-
     // Update the view
     assert(_renderTarget != nullptr);
     sf::View playerView{_renderTarget->getView()};
+    Body& body{_scene.getComponent<Body>(_scene.findUnique<Player>())};
     playerView.setCenter(static_cast<Vector2f>(body.position));
     _renderTarget->setView(playerView);
-
 }
 
 void GameplaySystem::setRenderTarget(sf::RenderTarget& renderTarget) {

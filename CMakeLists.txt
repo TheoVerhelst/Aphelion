@@ -53,6 +53,7 @@ set(SOURCE_FILES
 	src/systems/CollisionSystem.cpp
 	src/systems/GameplaySystem.cpp
 	src/systems/LightSystem.cpp
+	src/systems/MapSystem.cpp
 	src/systems/PhysicsSystem.cpp
 	src/systems/RenderSystem.cpp
 	src/Animation.cpp
