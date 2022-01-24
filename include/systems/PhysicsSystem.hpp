@@ -4,14 +4,14 @@
 #include <cstddef>
 #include <SFML/System/Time.hpp>
 #include <Scene.hpp>
-#include <systems/CollisionSystem.hpp>
 #include <components.hpp>
 #include <vector.hpp>
+#include <Observer.hpp>
 
-class PhysicsSystem {
+class PhysicsSystem : public Observer<const sf::Time&> {
 public:
 	PhysicsSystem(Scene& scene);
-	void updateTime(const sf::Time& elapsedTime);
+    virtual void update(const sf::Time& dt) override;
 	void updateSteps(int steps);
 	void setTimeScale(float timeScale);
 	long long int getStepCounter() const;
@@ -19,7 +19,6 @@ public:
 
 private:
 	Scene& _scene;
-	CollisionSystem _collisionSystem;
 	float _timeScale{1};
 	sf::Time _timeStep{sf::seconds(0.02f)};
 	sf::Time _currentStep{sf::seconds(0)};

@@ -6,13 +6,14 @@
 #include <SFML/Graphics/Shader.hpp>
 #include <ResourceManager.hpp>
 #include <Scene.hpp>
+#include <Observer.hpp>
 
-class RenderSystem : public sf::Drawable {
+class RenderSystem : public sf::Drawable, public Observer<const sf::Time&> {
 public:
     RenderSystem(Scene& scene, ResourceManager<sf::Shader>& shaderManager);
     void setRenderTarget(const sf::RenderTarget& renderTarget);
-    void update(const sf::Time& dt);
-	virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
+    virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
+    virtual void update(const sf::Time& dt) override;
 
 private:
     Scene& _scene;

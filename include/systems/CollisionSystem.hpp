@@ -4,18 +4,22 @@
 #include <vector>
 #include <cstddef>
 #include <functional>
+#include <SFML/System/Time.hpp>
 #include <vector.hpp>
 #include <Scene.hpp>
 #include <components.hpp>
+#include <Observer.hpp>
 
-class CollisionSystem {
+
+class CollisionSystem : public Observer<const sf::Time&> {
 public:
 	CollisionSystem(Scene& scene);
-	void update();
+	virtual void update(const sf::Time& dt) override;
 
 private:
 	typedef std::function<Vector2d(const Vector2d&)> SupportFunction;
 
+	static constexpr double eps{0.00001};
 	Scene& _scene;
 
 	// List of 2D points formed by the difference of two shapes. This class

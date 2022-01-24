@@ -8,12 +8,13 @@
 #include <ResourceManager.hpp>
 #include <DebugInfo.hpp>
 #include <components.hpp>
+#include <Observer.hpp>
 
-class DebugOverlay : public sf::Drawable {
+class DebugOverlay : public sf::Drawable, public Observer<const sf::Time&> {
 public:
     DebugOverlay(tgui::BackendGui& gui, PhysicsSystem& physicsSystem, Scene& scene,
         ResourceManager<sf::Texture>& textureManager);
-    void update();
+    virtual void update(const sf::Time& dt) override;
     virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
     bool handleEvent(const sf::Event& event);
     void buildGui();

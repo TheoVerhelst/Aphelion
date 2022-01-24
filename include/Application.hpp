@@ -7,6 +7,7 @@
 #include <TGUI/Backend/SFML-Graphics.hpp>
 #include <Scene.hpp>
 #include <systems/PhysicsSystem.hpp>
+#include <systems/CollisionSystem.hpp>
 #include <systems/RenderSystem.hpp>
 #include <systems/GameplaySystem.hpp>
 #include <systems/LightSystem.hpp>
@@ -14,6 +15,7 @@
 #include <InputManager.hpp>
 #include <ResourceManager.hpp>
 #include <MusicManager.hpp>
+#include <Observer.hpp>
 
 class Application {
 public:
@@ -21,26 +23,36 @@ public:
     void run();
 
 private:
-    const std::string _guiFile{"gui.txt"};
+    // Main objects
     sf::RenderWindow _window;
     tgui::Gui _gui;
     Scene _scene;
+    tgui::CanvasSFML::Ptr _sceneCanvas;
+
+    // Systems
     PhysicsSystem _physicsSystem;
+	CollisionSystem _collisionSystem;
     RenderSystem _renderSystem;
     GameplaySystem _gameplaySystem;
     LightSystem _lightSystem;
     DebugOverlay _debugOverlay;
     InputManager _inputManager;
-    tgui::CanvasSFML::Ptr _sceneCanvas;
+    EventSource<const sf::Time&> _timeEventSource;
+
+    // Resource managers
     ResourceManager<sf::Font> _fontManager;
     ResourceManager<sf::Texture> _textureManager;
     ResourceManager<tgui::Texture> _tguiTextureManager;
     ResourceManager<sf::Shader> _shaderManager;
-    sf::Sprite _backgroundSprite;
     MusicManager _musicManager;
+
+    // Others
+    const std::string _guiFile{"gui.txt"};
+    sf::Sprite _backgroundSprite;
     Vector2u _currentWindowSize;
 
     void registerComponents();
+    void registerObservers();
     void loadResources();
     void updateView();
 };

@@ -4,15 +4,15 @@
 #include <systems/PhysicsSystem.hpp>
 
 PhysicsSystem::PhysicsSystem(Scene& scene):
-    _scene{scene},
-    _collisionSystem{_scene} {
+    _scene{scene} {
 }
 
-void PhysicsSystem::updateTime(const sf::Time& elapsedTime) {
+void PhysicsSystem::update(const sf::Time& dt) {
 	// Skip physics update until we waited for enough time (which is _timeStep)
 	// We take into account the time scale here. If it is negative, we proceed
-	// as if it was positive but we specify to the update function to go backwards.
-	_currentStep += elapsedTime * std::abs(_timeScale);
+	// as if it was positive but we specify to the update function to go
+	// backwards.
+	_currentStep += dt * std::abs(_timeScale);
 	if (_currentStep < _timeStep) {
 		return;
 	}
@@ -86,6 +86,4 @@ void PhysicsSystem::updateStep(bool backwards) {
 		body.rotation += body.angularVelocity * dt;
         body.rotation = std::remainder(body.rotation, 2. * pi);
 	}
-
-    _collisionSystem.update();
 }

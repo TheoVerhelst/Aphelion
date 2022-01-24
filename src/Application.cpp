@@ -6,6 +6,7 @@ Application::Application(const std::string& setupFile):
     _window{sf::VideoMode::getDesktopMode(), "Aphelion",  sf::Style::Fullscreen},
     _gui{_window},
     _physicsSystem{_scene},
+    _collisionSystem{_scene},
     _renderSystem{_scene, _shaderManager},
     _gameplaySystem{_scene},
     _lightSystem{_scene},
@@ -21,12 +22,13 @@ Application::Application(const std::string& setupFile):
     registerComponents();
     loadResources();
     loadScene(_scene, setupFile, _fontManager, _textureManager, _tguiTextureManager, _gui);
-    // Give references to systems. This has to be done once the GUI is set up
-    // and the resources loaded.
+    registerObservers();
+    // Give the reference to the render texture to the systems. This has to be
+    // done once the GUI is set up and the resources are loaded.
     _renderSystem.setRenderTarget(_sceneCanvas->getRenderTexture());
+    _gameplaySystem.setRenderTarget(_sceneCanvas->getRenderTexture());
     _lightSystem.setRenderTarget(_sceneCanvas->getRenderTexture());
     _lightSystem.setShader(_shaderManager.get("light"));
-    _gameplaySystem.setRenderTarget(_sceneCanvas->getRenderTexture());
 }
 
 void Application::run() {
@@ -45,7 +47,7 @@ void Application::run() {
                 updateView();
             }
 
-            // Dispatch remaining events to various in-game UI
+            // Dispatch remaining events to various in-game UIs
             if (_debugOverlay.handleEvent(event)) {
                 continue;
             } else if (_inputManager.handleEvent(event)) {
@@ -54,14 +56,8 @@ void Application::run() {
         }
 
         // Update various systems
-        sf::Time elapsedTime{clock.restart()};
-        _physicsSystem.updateTime(elapsedTime);
-        _renderSystem.update(elapsedTime);
-        _debugOverlay.update();
-        _gameplaySystem.handleTriggerActions(_inputManager.getTriggerActions());
-        _gameplaySystem.handleContinuousActions(elapsedTime, _inputManager.getContinuousActions());
-        _lightSystem.update();
-        _musicManager.update();
+        sf::Time dt{clock.restart()};
+        _timeEventSource.notifyObservers(dt);
 
         // Draw graphics
         _sceneCanvas->clear(sf::Color::Transparent);
@@ -92,6 +88,7 @@ void Application::registerComponents() {
 }
 
 void Application::loadResources() {
+    tgui::Texture::setDefaultSmooth(false);
     _fontManager.loadFromFile("resources/fonts/FreeSans.ttf", "debugFont");
     _tguiTextureManager.loadFromFile("resources/gui/play.png", "playButton");
     _tguiTextureManager.loadFromFile("resources/gui/playHover.png", "playHoverButton");
@@ -117,6 +114,20 @@ void Application::loadResources() {
     _backgroundSprite.setTexture(_textureManager.get("background"));
     // Center on an interesting region on the background
     _backgroundSprite.setOrigin(1500, 900);
+}
+
+void Application::registerObservers() {
+    _timeEventSource.registerObserver(_collisionSystem);
+    _timeEventSource.registerObserver(_lightSystem);
+    _timeEventSource.registerObserver(_physicsSystem);
+    _timeEventSource.registerObserver(_gameplaySystem);
+    _timeEventSource.registerObserver(_renderSystem);
+    _timeEventSource.registerObserver(_debugOverlay);
+    _timeEventSource.registerObserver(_inputManager);
+    _timeEventSource.registerObserver(_musicManager);
+    // Disambiguate the call between the two base classes of InputManager
+    static_cast<EventSource<const ContinuousAction&>&>(_inputManager).registerObserver(_gameplaySystem);
+    static_cast<EventSource<const TriggerAction&>&>(_inputManager).registerObserver(_gameplaySystem);
 }
 
 void Application::updateView() {

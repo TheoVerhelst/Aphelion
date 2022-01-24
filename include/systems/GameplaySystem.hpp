@@ -8,12 +8,14 @@
 #include <Action.hpp>
 #include <vector.hpp>
 #include <Scene.hpp>
+#include <Observer.hpp>
 
-class GameplaySystem {
+class GameplaySystem : public Observer<const TriggerAction&>, public Observer<const ContinuousAction&>, public Observer<const sf::Time&> {
 public:
     GameplaySystem(Scene& scene);
-    void handleTriggerActions(const std::map<Action, bool>& actions);
-    void handleContinuousActions(const sf::Time& dt, const std::set<Action>& actions);
+    virtual void update(const TriggerAction& action) override;
+    virtual void update(const ContinuousAction& action) override;
+    virtual void update(const sf::Time& action) override;
     void setRenderTarget(sf::RenderTarget& renderTarget);
 
 private:

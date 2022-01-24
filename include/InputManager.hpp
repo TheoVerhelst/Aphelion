@@ -1,20 +1,19 @@
 #ifndef INPUTMANAGER_HPP
 #define INPUTMANAGER_HPP
 
-#include <set>
 #include <map>
 #include <SFML/Window/Keyboard.hpp>
 #include <SFML/Window/Event.hpp>
 #include <Action.hpp>
+#include <Observer.hpp>
 
-class InputManager {
+class InputManager : public EventSource<const ContinuousAction&>, public EventSource<const TriggerAction&>, public Observer<const sf::Time&>{
 public:
-    std::set<Action> getContinuousActions();
-    std::map<Action, bool> getTriggerActions();
     bool handleEvent(const sf::Event& event);
+    virtual void update(const sf::Time& dt) override;
 
 private:
-    std::map<sf::Keyboard::Key, Action> _mapping{
+    const std::map<sf::Keyboard::Key, Action> _mapping{
         {sf::Keyboard::Z, Action::RcsUp},
         {sf::Keyboard::Q, Action::RcsLeft},
         {sf::Keyboard::S, Action::RcsDown},
@@ -27,7 +26,6 @@ private:
         {sf::Keyboard::M, Action::ToggleMap},
         {sf::Keyboard::LAlt, Action::RotateView}
     };
-    std::map<Action, bool> _triggerActions;
 };
 
 #endif // INPUTMANAGER_HPP

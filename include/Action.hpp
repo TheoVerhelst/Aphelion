@@ -1,6 +1,12 @@
 #ifndef ACTION_HPP
 #define ACTION_HPP
 
+#include <utility>
+
+namespace sf {
+    class Time;
+}
+
 enum class Action {
     Engine,
     RcsUp,
@@ -14,5 +20,8 @@ enum class Action {
     RotateView,
     ToggleMap
 };
+
+typedef std::pair<Action, bool> TriggerAction;
+typedef std::pair<Action, sf::Time> ContinuousAction;
 
 #endif // ACTION_HPP

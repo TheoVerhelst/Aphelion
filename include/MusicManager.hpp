@@ -7,11 +7,13 @@
 #include <memory>
 #include <SFML/Audio/Music.hpp>
 #include <SFML/System/Clock.hpp>
+#include <SFML/System/Time.hpp>
+#include <Observer.hpp>
 
-class MusicManager {
+class MusicManager : public Observer<const sf::Time&> {
 public:
     void openFromFile(const std::string& filename);
-    void update();
+    virtual void update(const sf::Time& dt) override;
 
 private:
     std::vector<std::shared_ptr<sf::Music>> _musics;

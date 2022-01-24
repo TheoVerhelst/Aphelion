@@ -9,7 +9,7 @@ DebugOverlay::DebugOverlay(tgui::BackendGui& gui, PhysicsSystem& physicsSystem,
     _textureManager{textureManager} {
 }
 
-void DebugOverlay::update() {
+void DebugOverlay::update(const sf::Time&) {
     if (_debugView) {
         for (EntityId id : _scene.view<Body, DebugInfo>()) {
             Body& body{_scene.getComponent<Body>(id)};

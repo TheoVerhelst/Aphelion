@@ -17,7 +17,7 @@ void LightSystem::setShader(sf::Shader& shader) {
     _shader = &shader;
 }
 
-void LightSystem::update() {
+void LightSystem::update(const sf::Time&) {
     const Vector2u uScreenSize(_target->getSize());
     _screenSize = static_cast<Vector2f>(uScreenSize);
 

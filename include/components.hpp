@@ -82,8 +82,18 @@ struct AnimationComponent : public sf::Drawable  {
 	virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 };
 
+enum class MapElementType {
+	CelestialBody,
+	Ship
+};
+NLOHMANN_JSON_SERIALIZE_ENUM(MapElementType, {
+    {MapElementType::CelestialBody, "celestialBody"},
+    {MapElementType::Ship, "ship"},
+})
+
 struct MapElement {
 	tgui::Picture::Ptr icon;
+	MapElementType type;
 };
 
 // Tag component, it has no data but it used to find which entity is the player

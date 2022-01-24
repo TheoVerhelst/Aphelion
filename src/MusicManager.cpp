@@ -9,7 +9,7 @@ void MusicManager::openFromFile(const std::string& filename) {
     _musics.back()->setVolume(_volume);
 }
 
-void MusicManager::update() {
+void MusicManager::update(const sf::Time&) {
     if(not _silence and _musics[_played]->getStatus() == sf::SoundSource::Stopped) {
         // The music has stopped since last update
         _silence = true;

@@ -7,7 +7,7 @@ CollisionSystem::CollisionSystem(Scene& scene):
     _scene{scene} {
 }
 
-void CollisionSystem::update() {
+void CollisionSystem::update(const sf::Time&) {
     std::vector<EntityId> colliderView{_scene.view<Body, Collider>()};
     std::vector<EntityId> circleView{_scene.view<Body, CircleBody>()};
 
@@ -95,11 +95,13 @@ void CollisionSystem::collideCircleAndBody(const CircleBody& circleA,
         // Find the distance between B and the center of A
         ContactInfo distanceInfo{distanceGJK(functionA, functionB, collision.second)};
         // If the distance is greater than the radius, we are fine. Otherwise,
-        // we need to solve the collision by translating the distance info to
-        // a contact info between the circle A and the body B.
-        if (distanceInfo.distance < circleA.radius) {
+        // we need to solve the collision by translating the distance info to a
+        // contact info between the circle A and the body B. We use an epsilon
+        // value to avoid detecting a collision when the overlap is not big
+        // enough.
+        if (circleA.radius - distanceInfo.distance > eps) {
             // Normalized vector from the closest point on B to the center of A
-            Vector2d normal{distanceInfo.normal / norm(distanceInfo.normal)};
+            Vector2d normal{distanceInfo.normal / distanceInfo.distance};
 
             ContactInfo contactInfo{distanceInfo.C_B, centerA + normal * circleA.radius};
             collisionResponse(bodyA, bodyB, contactInfo);
@@ -144,7 +146,6 @@ void CollisionSystem::collisionResponse(Body& bodyA, Body& bodyB, const ContactI
     // vector, orthogonal to the normal vector.
     const Vector2d t{perpendicular(n, true)};
     const double relativeVelocity{dot(v_A - v_B, t) - w_A * norm(R_A) - w_B * norm(R_B)};
-    const double eps{0.0001};
     if (std::abs(relativeVelocity) >= eps) {
         J += t * bodyA.friction * bodyB.friction * norm(J) * relativeVelocity / std::abs(relativeVelocity);
     }
@@ -194,6 +195,7 @@ CollisionSystem::ContactInfo::ContactInfo(const Vector2d& A, const Vector2d& B):
     C_B{B},
     normal{B - A}, // TODO THIS SHOULD BE A - B, WHATS GOING ON HERE
     distance{norm(normal)} {
+    assert(A != B);
 }
 
 std::pair<bool, CollisionSystem::MinkowskyPolygon> CollisionSystem::collisionGJK(
@@ -230,7 +232,6 @@ CollisionSystem::ContactInfo CollisionSystem::distanceGJK(const SupportFunction&
         const SupportFunction& functionB, CollisionSystem::MinkowskyPolygon simplex) {
     assert(simplex.size() == 2 or simplex.size() == 3);
 
-    const double eps{0.0001};
     // Special case: if the simplex contains only the closest point already
     if (norm(simplex.getDifference(0) - simplex.getDifference(1)) < eps) {
         return ContactInfo(simplex.getPointA(0), simplex.getPointB(0));
@@ -272,8 +273,6 @@ CollisionSystem::ContactInfo CollisionSystem::EPA(const SupportFunction& functio
         const SupportFunction& functionB, CollisionSystem::MinkowskyPolygon polygon) {
     assert(polygon.size() == 3);
 
-    double eps{0.0001};
-    //double collisionGap{0.001};
     std::size_t maxIter{100};
     for (std::size_t t{0}; t < maxIter; ++t) {
         // Find the polygon edge closest to the origin, and the associated

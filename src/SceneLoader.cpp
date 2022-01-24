@@ -146,9 +146,14 @@ void setupLightSource(Scene& scene, const json& value, EntityId id) {
 
 void setupMapElement(Scene& scene, const json& value, EntityId id, const ResourceManager<tgui::Texture>& tguiTextureManager, tgui::BackendGui& gui) {
     MapElement& mapElement{scene.assignComponent<MapElement>(id)};
+    value.at("type").get_to(mapElement.type);
     std::string textureName{value.at("texture").get<std::string>()};
     mapElement.icon = tgui::Picture::create(tguiTextureManager.get(textureName));
     gui.add(mapElement.icon);
     mapElement.icon->setVisible(false);
     mapElement.icon->setOrigin(0.5, 0.5);
+    mapElement.icon->moveToFront();
+    if (mapElement.type == MapElementType::CelestialBody) {
+        mapElement.icon->setScale(2.f);
+    }
 }

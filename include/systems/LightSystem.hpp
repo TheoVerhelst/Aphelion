@@ -1,6 +1,7 @@
 #ifndef LIGHTSYSTEM_HPP
 #define LIGHTSYSTEM_HPP
 
+#include <SFML/System/Time.hpp>
 #include <SFML/Graphics/RenderTarget.hpp>
 #include <SFML/Graphics/Image.hpp>
 #include <SFML/Graphics/Texture.hpp>
@@ -8,13 +9,14 @@
 #include <SFML/Graphics/RenderTexture.hpp>
 #include <Scene.hpp>
 #include <vector.hpp>
+#include <Observer.hpp>
 
-class LightSystem {
+class LightSystem : public Observer<const sf::Time&> {
 public:
     LightSystem(Scene& scene);
     void setRenderTarget(const sf::RenderTarget& target);
     void setShader(sf::Shader& shader);
-    void update();
+    virtual void update(const sf::Time& dt) override;
 
 private:
     Scene& _scene;

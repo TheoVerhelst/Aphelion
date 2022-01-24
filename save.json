@@ -8,7 +8,8 @@
             "texture": "sun"
         },
         "mapElement": {
-            "texture": "sunIcon"
+            "texture": "sunIcon",
+            "type": "celestialBody"
         },
         "lightSource": {
             "brightness": 800000000
@@ -37,7 +38,8 @@
             "texture": "mercury"
         },
         "mapElement": {
-            "texture": "mercuryIcon"
+            "texture": "mercuryIcon",
+            "type": "celestialBody"
         },
         "body": {
             "mass": 299620000000.0,
@@ -63,7 +65,8 @@
             "texture": "venus"
         },
         "mapElement": {
-            "texture": "venusIcon"
+            "texture": "venusIcon",
+            "type": "celestialBody"
         },
         "body": {
             "mass": 4417700000000.0,
@@ -90,7 +93,8 @@
             "offset": {"x": -100, "y": -100}
         },
         "mapElement": {
-            "texture": "earthIcon"
+            "texture": "earthIcon",
+            "type": "celestialBody"
         },
         "body": {
             "mass": 5419100000000.0,
@@ -116,7 +120,8 @@
             "texture": "mars"
         },
         "mapElement": {
-            "texture": "marsIcon"
+            "texture": "marsIcon",
+            "type": "celestialBody"
         },
         "body": {
             "mass": 582290000000.0,
@@ -149,7 +154,8 @@
                 "rect": {"top": 0, "left": 96, "width": 24, "height": 48}
             },
             "mapElement": {
-                "texture": "shipIcon"
+                "texture": "shipIcon",
+                "type": "ship"
             },
             "animations": {
                 "engine": {
