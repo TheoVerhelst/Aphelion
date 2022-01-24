@@ -9,9 +9,10 @@ enum class Action {
     RcsRight,
     RcsClockwise,
     RcsCounterClockwise,
-    Headlights,
     ZoomIn,
-    ZoomOut
+    ZoomOut,
+    RotateView,
+    ToggleMap
 };
 
 #endif // ACTION_HPP

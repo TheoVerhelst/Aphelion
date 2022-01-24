@@ -34,6 +34,7 @@ private:
     tgui::CanvasSFML::Ptr _sceneCanvas;
     ResourceManager<sf::Font> _fontManager;
     ResourceManager<sf::Texture> _textureManager;
+    ResourceManager<tgui::Texture> _tguiTextureManager;
     ResourceManager<sf::Shader> _shaderManager;
     sf::Sprite _backgroundSprite;
     MusicManager _musicManager;

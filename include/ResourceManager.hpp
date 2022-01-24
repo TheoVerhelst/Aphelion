@@ -3,6 +3,8 @@
 
 #include <string>
 #include <unordered_map>
+#include <TGUI/Texture.hpp>
+
 
 template <typename T>
 class ResourceManager {
@@ -28,6 +30,17 @@ public:
 private:
     std::unordered_map<std::string, T> _resources;
 };
+
+
+// tgui::Texture has a different interface to load from file
+template <>
+template <typename... Args>
+void ResourceManager<tgui::Texture>::loadFromFile(const std::string& filename, const std::string& id, const Args&... args)  {
+    if (_resources.contains(id)) {
+        throw std::runtime_error("Resource " + id + " already loaded, not loading from " + filename);
+    }
+    _resources[id].load(filename, args...);
+}
 
 
 #endif // RESOURCEMANAGER_HPP

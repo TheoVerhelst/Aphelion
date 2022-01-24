@@ -61,6 +61,13 @@ public:
         return res;
     }
 
+    template <typename T>
+    EntityId findUnique() const {
+        const std::vector<EntityId> ids{view<T>()};
+        assert(ids.size() == 1);
+        return ids.front();
+    }
+
 private:
     // Type erasure idiom to store component arrays of any type. The base class
     // is called the concept, and the derived class the model. The base class

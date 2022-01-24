@@ -20,9 +20,10 @@ Application::Application(const std::string& setupFile):
     // Load the game
     registerComponents();
     loadResources();
-    loadScene(_scene, setupFile, _fontManager, _textureManager);
+    loadScene(_scene, setupFile, _fontManager, _textureManager, _tguiTextureManager, _gui);
     // Give references to systems. This has to be done once the GUI is set up
     // and the resources loaded.
+    _renderSystem.setRenderTarget(_sceneCanvas->getRenderTexture());
     _lightSystem.setRenderTarget(_sceneCanvas->getRenderTexture());
     _lightSystem.setShader(_shaderManager.get("light"));
     _gameplaySystem.setRenderTarget(_sceneCanvas->getRenderTexture());
@@ -84,6 +85,7 @@ void Application::registerComponents() {
     _scene.registerComponent<Shadow>();
     _scene.registerComponent<Player>();
     _scene.registerComponent<DebugInfo>();
+    _scene.registerComponent<MapElement>();
     _scene.registerComponent<sf::Sprite>();
     _scene.registerComponent<sf::CircleShape>();
     _scene.registerComponent<sf::ConvexShape>();
@@ -91,10 +93,16 @@ void Application::registerComponents() {
 
 void Application::loadResources() {
     _fontManager.loadFromFile("resources/fonts/FreeSans.ttf", "debugFont");
-    _textureManager.loadFromFile("resources/gui/play.png", "playButton");
-    _textureManager.loadFromFile("resources/gui/play_hover.png", "playHoverButton");
-    _textureManager.loadFromFile("resources/gui/pause.png", "pauseButton");
-    _textureManager.loadFromFile("resources/gui/pause_hover.png", "pauseHoverButton");
+    _tguiTextureManager.loadFromFile("resources/gui/play.png", "playButton");
+    _tguiTextureManager.loadFromFile("resources/gui/playHover.png", "playHoverButton");
+    _tguiTextureManager.loadFromFile("resources/gui/pause.png", "pauseButton");
+    _tguiTextureManager.loadFromFile("resources/gui/pauseHover.png", "pauseHoverButton");
+    _tguiTextureManager.loadFromFile("resources/gui/sunIcon.png", "sunIcon");
+    _tguiTextureManager.loadFromFile("resources/gui/mercuryIcon.png", "mercuryIcon");
+    _tguiTextureManager.loadFromFile("resources/gui/venusIcon.png", "venusIcon");
+    _tguiTextureManager.loadFromFile("resources/gui/earthIcon.png", "earthIcon");
+    _tguiTextureManager.loadFromFile("resources/gui/marsIcon.png", "marsIcon");
+    _tguiTextureManager.loadFromFile("resources/gui/shipIcon.png", "shipIcon");
     _textureManager.loadFromFile("resources/textures/background.png", "background");
     _textureManager.loadFromFile("resources/textures/ship.png", "ship");
     _textureManager.loadFromFile("resources/textures/sun.png", "sun");

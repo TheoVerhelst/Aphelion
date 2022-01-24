@@ -7,6 +7,9 @@
         "sprite": {
             "texture": "sun"
         },
+        "mapElement": {
+            "texture": "sunIcon"
+        },
         "lightSource": {
             "brightness": 800000000
         },
@@ -33,6 +36,9 @@
         "sprite": {
             "texture": "mercury"
         },
+        "mapElement": {
+            "texture": "mercuryIcon"
+        },
         "body": {
             "mass": 299620000000.0,
             "position": {
@@ -55,6 +61,9 @@
         },
         "sprite": {
             "texture": "venus"
+        },
+        "mapElement": {
+            "texture": "venusIcon"
         },
         "body": {
             "mass": 4417700000000.0,
@@ -80,6 +89,9 @@
             "texture": "earth",
             "offset": {"x": -100, "y": -100}
         },
+        "mapElement": {
+            "texture": "earthIcon"
+        },
         "body": {
             "mass": 5419100000000.0,
             "position": {
@@ -102,6 +114,9 @@
         },
         "sprite": {
             "texture": "mars"
+        },
+        "mapElement": {
+            "texture": "marsIcon"
         },
         "body": {
             "mass": 582290000000.0,
@@ -132,6 +147,9 @@
             "sprite": {
                 "texture": "ship",
                 "rect": {"top": 0, "left": 96, "width": 24, "height": 48}
+            },
+            "mapElement": {
+                "texture": "shipIcon"
             },
             "animations": {
                 "engine": {

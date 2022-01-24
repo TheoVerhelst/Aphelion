@@ -10,12 +10,14 @@
 class RenderSystem : public sf::Drawable {
 public:
     RenderSystem(Scene& scene, ResourceManager<sf::Shader>& shaderManager);
+    void setRenderTarget(const sf::RenderTarget& renderTarget);
     void update(const sf::Time& dt);
 	virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 
 private:
     Scene& _scene;
     ResourceManager<sf::Shader>& _shaderManager;
+    const sf::RenderTarget* _renderTarget{nullptr};
 
     template <typename T>
     void drawComponent(sf::RenderTarget& target, sf::RenderStates states) const {
@@ -25,6 +27,7 @@ private:
     }
 
     void updateTransformable(sf::Transformable& transformable, EntityId id) const;
+    void updateMapElements();
 
 };
 

@@ -4,6 +4,7 @@
 #include <cmath>
 #include <stdexcept>
 #include <SFML/Graphics.hpp>
+#include <TGUI/TGUI.hpp>
 #include <serializers.hpp>
 #include <Animation.hpp>
 #include <DebugInfo.hpp>
@@ -14,7 +15,9 @@ using namespace std::placeholders;
 
 void loadScene(Scene& scene, const std::string& setupFile,
         const ResourceManager<sf::Font>& fontManager,
-        const ResourceManager<sf::Texture>& textureManager) {
+        const ResourceManager<sf::Texture>& textureManager,
+        const ResourceManager<tgui::Texture>& tguiTextureManager,
+        tgui::BackendGui& gui) {
     std::ifstream file{setupFile};
 	json j;
 	try	{
@@ -31,7 +34,8 @@ void loadScene(Scene& scene, const std::string& setupFile,
         {"animations", std::bind(setupAnimations, _1, _2, _3, std::cref(textureManager))},
         {"circleShape", setupCircleShape},
         {"player", setupPlayer},
-        {"lightSource", setupLightSource}
+        {"lightSource", setupLightSource},
+        {"mapElement", std::bind(setupMapElement, _1, _2, _3, std::cref(tguiTextureManager), std::ref(gui))}
     };
 
 	for (json& components : j.at("entities")) {
@@ -138,4 +142,13 @@ void setupPlayer(Scene& scene, const json&, EntityId id) {
 void setupLightSource(Scene& scene, const json& value, EntityId id) {
     LightSource& lightSource{scene.assignComponent<LightSource>(id)};
     value.at("brightness").get_to(lightSource.brightness);
+}
+
+void setupMapElement(Scene& scene, const json& value, EntityId id, const ResourceManager<tgui::Texture>& tguiTextureManager, tgui::BackendGui& gui) {
+    MapElement& mapElement{scene.assignComponent<MapElement>(id)};
+    std::string textureName{value.at("texture").get<std::string>()};
+    mapElement.icon = tgui::Picture::create(tguiTextureManager.get(textureName));
+    gui.add(mapElement.icon);
+    mapElement.icon->setVisible(false);
+    mapElement.icon->setOrigin(0.5, 0.5);
 }

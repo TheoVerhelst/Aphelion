@@ -5,6 +5,7 @@
 #include <utility>
 #include <map>
 #include <SFML/Graphics/Drawable.hpp>
+#include <TGUI/Widgets/Picture.hpp>
 #include <json.hpp>
 #include <serializers.hpp>
 #include <Animation.hpp>
@@ -79,6 +80,10 @@ struct AnimationComponent : public sf::Drawable  {
 	std::map<Action, Animation> animations;
 
 	virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
+};
+
+struct MapElement {
+	tgui::Picture::Ptr icon;
 };
 
 // Tag component, it has no data but it used to find which entity is the player
