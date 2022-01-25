@@ -19,7 +19,7 @@ public:
 private:
 	typedef std::function<Vector2f(const Vector2f&)> SupportFunction;
 
-	static constexpr float eps{0.01f};
+	static constexpr float eps{0.0001f};
 	Scene& _scene;
 
 	// List of 2D points formed by the difference of two shapes. This class
@@ -44,20 +44,17 @@ private:
 	// between two bodies, and by the distance function to describe the gap
 	// between two bodies.
 	struct ContactInfo {
-		ContactInfo() = default;
-		// Constructor. Determines the normal vector and the distance from C_A
-		// and C_B.
-		ContactInfo(const Vector2f& A, const Vector2f& B);
 		// Point on A and B in world coordinates where body A and body B would
 		// touch if they were brought close enough to touch but not overlap.
 		// They belong to the border of the bodies, and are the furthest point
 		// into the collision.
 		Vector2f C_A, C_B;
-		// Collision vector, pointing from B to A. If B is shifted by this
-		// vector, the bodies will just touch but not overlap or be separated
-		// anymore.
+		// Collision normal vector, pointing from A to B. If A is shifted by
+		// this vector times the signed distance, the bodies will just touch but
+		// not overlap or be separated anymore.
 		Vector2f normal;
-		// Norm of the normal vector, distance between C_A and C_B.
+		// Signed distance between C_A and C_B. Positive means no overlap,
+		// negative means overlap
 		float distance;
 	};
 
