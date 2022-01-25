@@ -84,7 +84,7 @@ private:
 	// as input the simplex enclosing the origin computed by collision GJK.
 	ContactInfo EPA(const SupportFunction& functionA, const SupportFunction& functionB, MinkowskyPolygon polygon);
 
-	ContactInfo createContactInfo(const MinkowskyPolygon& simplex, std::size_t i, std::size_t j, bool assertAlpha);
+	ContactInfo createContactInfo(const MinkowskyPolygon& simplex, std::size_t i, std::size_t j, bool inside);
 
 	// Updates the simplex for collision GJK. It just dispatches to the line or
 	// triangle functions. The simplex and the direction vector are both updated

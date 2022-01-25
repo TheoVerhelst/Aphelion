@@ -5,8 +5,9 @@
 #include <Animation.hpp>
 #include <components.hpp>
 
-GameplaySystem::GameplaySystem(Scene& scene):
-    _scene{scene} {
+GameplaySystem::GameplaySystem(Scene& scene, sf::RenderTarget& renderTarget):
+    _scene{scene},
+    _renderTarget{renderTarget} {
 }
 
 void GameplaySystem::update(const TriggerAction& actionPair) {
@@ -80,8 +81,7 @@ void GameplaySystem::update(const ContinuousAction& actionPair) {
     body.angularVelocity += dw * dt.asSeconds();
 
     // Update the view
-    assert(_renderTarget != nullptr);
-    sf::View playerView{_renderTarget->getView()};
+    sf::View playerView{_renderTarget.getView()};
     Vector2f viewSize{playerView.getSize() * zoom};
     const float aspectRatio{viewSize.x / viewSize.y};
     if (viewSize.x > maxViewSize.x) {
@@ -101,18 +101,13 @@ void GameplaySystem::update(const ContinuousAction& actionPair) {
     if (rotateView) {
         playerView.setRotation(body.rotation * 180 / pi);
     }
-    _renderTarget->setView(playerView);
+    _renderTarget.setView(playerView);
 }
 
 void GameplaySystem::update(const sf::Time&) {
     // Update the view
-    assert(_renderTarget != nullptr);
-    sf::View playerView{_renderTarget->getView()};
+    sf::View playerView{_renderTarget.getView()};
     Body& body{_scene.getComponent<Body>(_scene.findUnique<Player>())};
     playerView.setCenter(body.position);
-    _renderTarget->setView(playerView);
-}
-
-void GameplaySystem::setRenderTarget(sf::RenderTarget& renderTarget) {
-    _renderTarget = &renderTarget;
+    _renderTarget.setView(playerView);
 }

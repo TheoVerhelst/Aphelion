@@ -12,10 +12,6 @@ RenderSystem::RenderSystem(Scene& scene, ResourceManager<sf::Shader>& shaderMana
     _shaderManager{shaderManager} {
 }
 
-void RenderSystem::setRenderTarget(const sf::RenderTarget& renderTarget) {
-    _renderTarget = &renderTarget;
-}
-
 void RenderSystem::draw(sf::RenderTarget& target, sf::RenderStates states) const {
     drawComponent<sf::CircleShape>(target, states);
     drawComponent<sf::ConvexShape>(target, states);

@@ -5,16 +5,17 @@
 Application::Application(const std::string& setupFile):
     _window{sf::VideoMode::getDesktopMode(), "Aphelion",  sf::Style::Fullscreen},
     _gui{_window},
+    _sceneCanvas{tgui::CanvasSFML::create()},
     _collisionSystem{_scene},
-    _gameplaySystem{_scene},
-    _lightSystem{_scene},
-    _mapSystem{_scene},
+    _gameplaySystem{_scene, _sceneCanvas->getRenderTexture()},
+    _lightSystem{_scene, _sceneCanvas->getRenderTexture()},
+    _mapSystem{_scene, _sceneCanvas->getRenderTexture()},
     _physicsSystem{_scene},
     _renderSystem{_scene, _shaderManager},
     _debugOverlay{_gui, _physicsSystem, _scene, _textureManager} {
     // Setup GUI
     _gui.loadWidgetsFromFile(_guiFile);
-    _sceneCanvas = _gui.get<tgui::CanvasSFML>("sceneCanvas");
+    _gui.add(_sceneCanvas);
     _sceneCanvas->moveToBack();
     _debugOverlay.buildGui();
     _currentWindowSize = _window.getSize();
@@ -24,12 +25,6 @@ Application::Application(const std::string& setupFile):
     loadResources();
     loadScene(_scene, setupFile, _fontManager, _textureManager, _tguiTextureManager, _gui);
     registerObservers();
-    // Give the reference to the render texture to the systems. This has to be
-    // done once the GUI is set up and the resources are loaded.
-    _renderSystem.setRenderTarget(_sceneCanvas->getRenderTexture());
-    _gameplaySystem.setRenderTarget(_sceneCanvas->getRenderTexture());
-    _mapSystem.setRenderTarget(_sceneCanvas->getRenderTexture());
-    _lightSystem.setRenderTarget(_sceneCanvas->getRenderTexture());
     _lightSystem.setShader(_shaderManager.get("light"));
 }
 

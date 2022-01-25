@@ -11,14 +11,12 @@
 class RenderSystem : public sf::Drawable, public Observer<const sf::Time&> {
 public:
     RenderSystem(Scene& scene, ResourceManager<sf::Shader>& shaderManager);
-    void setRenderTarget(const sf::RenderTarget& renderTarget);
     virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
     virtual void update(const sf::Time& dt) override;
 
 private:
     Scene& _scene;
     ResourceManager<sf::Shader>& _shaderManager;
-    const sf::RenderTarget* _renderTarget{nullptr};
 
     template <typename T>
     void drawComponent(sf::RenderTarget& target, sf::RenderStates states) const {

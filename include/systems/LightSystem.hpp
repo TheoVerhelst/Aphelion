@@ -13,14 +13,13 @@
 
 class LightSystem : public Observer<const sf::Time&> {
 public:
-    LightSystem(Scene& scene);
-    void setRenderTarget(const sf::RenderTarget& target);
+    LightSystem(Scene& scene, const sf::RenderTarget& renderTarget);
     void setShader(sf::Shader& shader);
     virtual void update(const sf::Time& dt) override;
 
 private:
     Scene& _scene;
-    const sf::RenderTarget* _target;
+    const sf::RenderTarget& _renderTarget;
     sf::Shader* _shader;
     sf::RenderTexture _renderTexture;
     // Limited because we cannot pass variable size array to the shader

@@ -4,13 +4,10 @@
 #include <systems/LightSystem.hpp>
 #include <components.hpp>
 
-LightSystem::LightSystem(Scene& scene):
-    _scene{scene} {
+LightSystem::LightSystem(Scene& scene, const sf::RenderTarget& renderTarget):
+    _scene{scene},
+    _renderTarget{renderTarget} {
     _renderTexture.create(1, 1);
-}
-
-void LightSystem::setRenderTarget(const sf::RenderTarget& target) {
-    _target = &target;
 }
 
 void LightSystem::setShader(sf::Shader& shader) {
@@ -18,7 +15,7 @@ void LightSystem::setShader(sf::Shader& shader) {
 }
 
 void LightSystem::update(const sf::Time&) {
-    const Vector2u uScreenSize(_target->getSize());
+    const Vector2u uScreenSize(_renderTarget.getSize());
     _screenSize = static_cast<Vector2f>(uScreenSize);
 
     if (uScreenSize != _renderTexture.getSize()) {
@@ -40,7 +37,7 @@ void LightSystem::update(const sf::Time&) {
     _shader->setUniformArray("lightPositions", _lightPositions.data(), _maxLightSources);
     _shader->setUniformArray("lightBrightnesses", _lightBrightnesses.data(), _maxLightSources);
     _shader->setUniform("numberLightSources", _numberLightSources);
-    _shader->setUniform("viewMatrix", sf::Glsl::Mat3(_target->getView().getInverseTransform()));
+    _shader->setUniform("viewMatrix", sf::Glsl::Mat3(_renderTarget.getView().getInverseTransform()));
     _shader->setUniform("screenSize", _screenSize);
 }
 
@@ -59,11 +56,11 @@ void LightSystem::updateLightSources() {
 }
 
 std::vector<sf::ConvexShape> LightSystem::computeShadowShapes() {
-    int w(_target->getSize().x), h(_target->getSize().y);
+    int w(_renderTarget.getSize().x), h(_renderTarget.getSize().y);
     std::vector<Vector2i> corners{{0, 0}, {w, 0}, {w, h}, {0, h}};
     std::array<Vector2f, 4> viewArray;
     for (std::size_t i{0}; i < corners.size(); ++i) {
-        viewArray[i] = _target->mapPixelToCoords(corners[i]);
+        viewArray[i] = _renderTarget.mapPixelToCoords(corners[i]);
     }
 
     // Fetch the list of shadow entities in advance to avoid repeating the call
@@ -87,7 +84,7 @@ std::vector<sf::ConvexShape> LightSystem::computeShadowShapes() {
                 // Convert to a sf::ConvexShape
                 shadowShapes.emplace_back(shadowGeometry.size());
                 for(std::size_t i{0}; i < shadowGeometry.size(); ++i) {
-                    Vector2i targetCoord{_target->mapCoordsToPixel(shadowGeometry[i])};
+                    Vector2i targetCoord{_renderTarget.mapCoordsToPixel(shadowGeometry[i])};
                     shadowShapes.back().setPoint(i, static_cast<Vector2f>(targetCoord));
                 }
             }

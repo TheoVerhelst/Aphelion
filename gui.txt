@@ -7,11 +7,6 @@ Renderer.valueDisplayRenderer {
     TextStyle = Bold;
 }
 
-CanvasSFML.sceneCanvas {
-    Position = (0, 0);
-    Size = (100%, 100%);
-}
-
 ChildWindow.controlsPanel {
     Size = (245, 140);
     Position = (5, parent.height - height - 5);

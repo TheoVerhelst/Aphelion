@@ -2,8 +2,9 @@
 #include <systems/MapSystem.hpp>
 #include <components.hpp>
 
-MapSystem::MapSystem(Scene& scene):
-    _scene{scene} {
+MapSystem::MapSystem(Scene& scene, sf::RenderTarget& renderTarget):
+    _scene{scene},
+    _renderTarget{renderTarget} {
 }
 
 void MapSystem::update(const TriggerAction& actionPair) {
@@ -17,8 +18,7 @@ void MapSystem::update(const TriggerAction& actionPair) {
         }
 
         // Update the view
-        assert(_renderTarget != nullptr);
-        sf::View playerView{_renderTarget->getView()};
+        sf::View playerView{_renderTarget.getView()};
         Vector2f viewSize{playerView.getSize()};
 
         if (_mapView) {
@@ -30,7 +30,7 @@ void MapSystem::update(const TriggerAction& actionPair) {
         }
 
         playerView.setSize(viewSize);
-        _renderTarget->setView(playerView);
+        _renderTarget.setView(playerView);
     }
 }
 
@@ -41,17 +41,12 @@ void MapSystem::update(const sf::Time&) {
 
         // Compute the position of the map element on the screen. Note that we
         // don't rotate the map icon.
-        assert(_renderTarget != nullptr);
-        Vector2i screenPosition{_renderTarget->mapCoordsToPixel(body.position)};
+        Vector2i screenPosition{_renderTarget.mapCoordsToPixel(body.position)};
         mapElement.icon->setPosition(tgui::Vector2f(static_cast<Vector2f>(screenPosition)));
         // Except for ship icons
         if (mapElement.type == MapElementType::Ship) {
-            float rotation{(body.rotation * 180.f / pi) - _renderTarget->getView().getRotation()};
+            float rotation{(body.rotation * 180.f / pi) - _renderTarget.getView().getRotation()};
             mapElement.icon->setRotation(rotation);
         }
     }
-}
-
-void MapSystem::setRenderTarget(sf::RenderTarget& renderTarget) {
-    _renderTarget = &renderTarget;
 }

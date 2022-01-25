@@ -12,15 +12,14 @@
 
 class GameplaySystem : public Observer<const TriggerAction&>, public Observer<const ContinuousAction&>, public Observer<const sf::Time&> {
 public:
-    GameplaySystem(Scene& scene);
+    GameplaySystem(Scene& scene, sf::RenderTarget& renderTarget);
     virtual void update(const TriggerAction& action) override;
     virtual void update(const ContinuousAction& action) override;
     virtual void update(const sf::Time& action) override;
-    void setRenderTarget(sf::RenderTarget& renderTarget);
 
 private:
     Scene& _scene;
-    sf::RenderTarget* _renderTarget{nullptr};
+    sf::RenderTarget& _renderTarget;
     const Vector2f maxViewSize{320000, 200000};
     const Vector2f minViewSize{130, 70};
 };
