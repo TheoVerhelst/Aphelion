@@ -22,6 +22,8 @@ private:
     const Vector2f _maxNormalViewSize{6400.f, 4500.f};
     const Vector2f _minMapViewSize{32000.f, 18000.f};
     const Vector2f _maxMapViewSize{320000.f, 180000.f};
+    const float _zoomSpeed{15};
+    const float _rotationSpeed{3};
     Vector2f _normalViewSize{1366.f, 768.f};
     Vector2f _mapViewSize{68300.f, 38400.f};
     bool _mapView{false};

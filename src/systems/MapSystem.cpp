@@ -42,14 +42,12 @@ void MapSystem::update(const ContinuousAction& actionPair) {
 
     float zoom{1.f};
     bool rotateView{false};
-    const float zoomSpeed{15};
-    const float rotationSpeed{3};
     switch (action) {
         case Action::ZoomIn:
-            zoom *= std::pow(zoomSpeed, dt.asSeconds());
+            zoom *= std::pow(_zoomSpeed, dt.asSeconds());
             break;
         case Action::ZoomOut:
-            zoom /= std::pow(zoomSpeed, dt.asSeconds());
+            zoom /= std::pow(_zoomSpeed, dt.asSeconds());
             break;
         case Action::RotateView:
             rotateView = true;
@@ -76,7 +74,7 @@ void MapSystem::update(const ContinuousAction& actionPair) {
         } else if (current - target > pi) {
             target += 2.f * pi;
         }
-        float newAngle{current + rotationSpeed * dt.asSeconds() * (target > current ? 1 : -1)};
+        float newAngle{current + _rotationSpeed * dt.asSeconds() * (target > current ? 1 : -1)};
         if (target > current) {
             playerView.setRotation(radToDeg(std::min(newAngle, target)));
         } else {
