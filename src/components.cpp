@@ -2,78 +2,78 @@
 #include <SFML/Graphics/RenderTarget.hpp>
 #include <components.hpp>
 
-Vector2d Body::localToWorld(const Vector2d& point) const {
+Vector2f Body::localToWorld(const Vector2f& point) const {
     return rotate(point, rotation) + position;
 }
 
-Vector2d Body::worldToLocal(const Vector2d& point) const {
+Vector2f Body::worldToLocal(const Vector2f& point) const {
     return rotate(point - position, -rotation);
 }
 
-Vector2d CircleBody::computeCenterOfMass() const {
+Vector2f CircleBody::computeCenterOfMass() const {
     return {radius, radius};
 }
 
-double CircleBody::computeMomentOfInertia(double mass) const {
-    return mass * radius * radius / 2.;
+float CircleBody::computeMomentOfInertia(float mass) const {
+    return mass * radius * radius / 2.f;
 }
 
-Vector2d ConvexBody::computeCenterOfMass() const {
+Vector2f ConvexBody::computeCenterOfMass() const {
 	if (vertices.size() < 3) {
 		throw std::runtime_error("Invalid shape");
 	}
-	std::vector<double> triangleAreas;
-	std::vector<Vector2d> triangleCenters;
-    const Vector2d A{vertices[0]};
+	std::vector<float> triangleAreas;
+	std::vector<Vector2f> triangleCenters;
+    const Vector2f A{vertices[0]};
 	for (std::size_t i{1}; i < vertices.size() - 1; ++i) {
-		Vector2d B{vertices[i]};
-		Vector2d C{vertices[i + 1]};
-		triangleAreas.push_back(std::abs(cross(B - A, C - A)) / 2.);
-		triangleCenters.push_back((A + B + C) / 3.);
+		Vector2f B{vertices[i]};
+		Vector2f C{vertices[i + 1]};
+		triangleAreas.push_back(std::abs(cross(B - A, C - A)) / 2.f);
+		triangleCenters.push_back((A + B + C) / 3.f);
 	}
-	double totalArea{std::accumulate(triangleAreas.begin(), triangleAreas.end(), 0.)};
-	Vector2d centerOfMass{std::inner_product(triangleCenters.begin(),
-		triangleCenters.end(), triangleAreas.begin(), Vector2d(0, 0))};
+	float totalArea{std::accumulate(triangleAreas.begin(), triangleAreas.end(), 0.f)};
+	Vector2f centerOfMass{std::inner_product(triangleCenters.begin(),
+		triangleCenters.end(), triangleAreas.begin(), Vector2f(0.f, 0.f))};
 	return centerOfMass / totalArea;
 }
 
-double ConvexBody::computeMomentOfInertia(double mass, const Vector2d& centerOfMass) const {
+float ConvexBody::computeMomentOfInertia(float mass, const Vector2f& centerOfMass) const {
 	if (vertices.size() < 3) {
 		throw std::runtime_error("Invalid shape");
 	}
-    std::vector<double> areas;
+    std::vector<float> areas;
     for (std::size_t i{0}; i < vertices.size(); ++i) {
-        Vector2d B{vertices[i]};
-        Vector2d C{vertices[(i + 1) % vertices.size()]};
-        areas.push_back(std::abs(cross(B, C)) / 2.);
+        Vector2f B{vertices[i]};
+        Vector2f C{vertices[(i + 1) % vertices.size()]};
+        areas.push_back(std::abs(cross(B, C)) / 2.f);
     }
-    double totalArea{std::accumulate(areas.begin(), areas.end(), 0.)};
-    double momentOfInertia{0};
+    float totalArea{std::accumulate(areas.begin(), areas.end(), 0.f)};
+    float momentOfInertia{0};
     for (std::size_t i{0}; i < vertices.size(); ++i) {
-        Vector2d B{vertices[i]};
-        Vector2d C{vertices[(i + 1) % vertices.size()]};
-        double signedArea{cross(B, C) / 2.};
-        double triangleArea{areas[i]};
-        double triangleMass{mass * triangleArea / totalArea};
+        Vector2f B{vertices[i]};
+        Vector2f C{vertices[(i + 1) % vertices.size()]};
+        float signedArea{cross(B, C) / 2.f};
+        float triangleArea{areas[i]};
+        float triangleMass{mass * triangleArea / totalArea};
         momentOfInertia += triangleMass * (signedArea / triangleArea) * (norm2(B) + norm2(C) + dot(B, C));
     }
-    return (momentOfInertia / 6.) - mass * norm2(centerOfMass);
+    return (momentOfInertia / 6.f) - mass * norm2(centerOfMass);
 }
 
-Vector2d Collider::supportFunction(const Vector2d& direction, const Scene& scene, EntityId id) const {
+Vector2f Collider::supportFunction(const Vector2f& direction, const Scene& scene, EntityId id) const {
     // For now, we only have convex bodies which need a support function,
     // so no dispatch like for Shadow.
     const Body& body{scene.getComponent<Body>(id)};
     const ConvexBody& convex{scene.getComponent<ConvexBody>(id)};
 
-	double largestProd{-std::numeric_limits<double>::max()};
-	Vector2d furthestPoint;
+	float largestProd{-std::numeric_limits<float>::max()};
+	Vector2f furthestPoint;
     bool found{false};
-	for (Vector2d vertex : convex.vertices) {
+	for (Vector2f vertex : convex.vertices) {
 		// Rotate the point around the center of mass to account for rotation
-		Vector2d worldPoint{body.localToWorld(vertex)};
+		Vector2f worldPoint{body.localToWorld(vertex)};
 
-		double product{dot(direction, worldPoint)};
+		float product{dot(direction, worldPoint)};
 		if (product > largestProd) {
 			furthestPoint = worldPoint;
 			largestProd = product;
@@ -84,7 +84,7 @@ Vector2d Collider::supportFunction(const Vector2d& direction, const Scene& scene
     return furthestPoint;
 }
 
-std::pair<Vector2d, Vector2d> Shadow::shadowFunction(const Vector2d& lightSource, const Scene& scene, EntityId id) const {
+std::pair<Vector2f, Vector2f> Shadow::shadowFunction(const Vector2f& lightSource, const Scene& scene, EntityId id) const {
     const Body& body{scene.getComponent<Body>(id)};
     switch(body.type) {
         case BodyType::Circle:
@@ -98,20 +98,20 @@ std::pair<Vector2d, Vector2d> Shadow::shadowFunction(const Vector2d& lightSource
     }
 }
 
-std::pair<Vector2d, Vector2d> Shadow::circleShadow(const Vector2d& lightSource, const Body& body, const CircleBody& circle) const {
+std::pair<Vector2f, Vector2f> Shadow::circleShadow(const Vector2f& lightSource, const Body& body, const CircleBody& circle) const {
     // Get the left-side orthogonal vector
-    Vector2d orthogonal{perpendicular(body.position - lightSource, true)};
+    Vector2f orthogonal{perpendicular(body.position - lightSource, true)};
     orthogonal /= norm(orthogonal);
     return {body.position + orthogonal * circle.radius, body.position - orthogonal * circle.radius};
 }
 
-std::pair<Vector2d, Vector2d> Shadow::convexShadow(const Vector2d& lightSource, const Body& body, const ConvexBody& convex) const {
-    std::vector<double> angles(convex.vertices.size());
-    std::vector<Vector2d> worldV;
+std::pair<Vector2f, Vector2f> Shadow::convexShadow(const Vector2f& lightSource, const Body& body, const ConvexBody& convex) const {
+    std::vector<float> angles(convex.vertices.size());
+    std::vector<Vector2f> worldV;
     std::transform(convex.vertices.begin(), convex.vertices.end(), std::back_inserter(worldV),
         std::bind(&Body::localToWorld, &body, std::placeholders::_1));
-    angles[0] = 0;
-    const double angle0{angle(worldV[0] - lightSource)};
+    angles[0] = 0.f;
+    const float angle0{angle(worldV[0] - lightSource)};
     for (std::size_t i{1}; i < worldV.size(); ++i) {
         angles[i] = angle(worldV[i] - lightSource) - angle0;
     }

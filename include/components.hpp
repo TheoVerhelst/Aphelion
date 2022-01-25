@@ -19,61 +19,61 @@ enum class BodyType {
 };
 
 struct Body {
-	double mass;
-	Vector2d position;
-	Vector2d velocity;
-	double rotation;
-	double angularVelocity;
-	double restitution;
-	double friction;
+	float mass;
+	Vector2f position;
+	Vector2f velocity;
+	float rotation;
+	float angularVelocity;
+	float restitution;
+	float friction;
 	// The center of mass is used here only in the reference frame of the drawable shapes.
 	// For example, for a sf::CircleShape, this is {radius, radius}.
 	// The position vector is otherwise already pointing to the center of mass.
-    Vector2d centerOfMass;
-    double momentOfInertia;
+    Vector2f centerOfMass;
+    float momentOfInertia;
 	BodyType type;
 
-	Vector2d localToWorld(const Vector2d& point) const;
-	Vector2d worldToLocal(const Vector2d& point) const;
+	Vector2f localToWorld(const Vector2f& point) const;
+	Vector2f worldToLocal(const Vector2f& point) const;
 };
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(Body, mass, position, velocity, rotation, angularVelocity, restitution, friction)
 
 struct CircleBody {
-    double radius;
+    float radius;
 
-	Vector2d computeCenterOfMass() const;
-	double computeMomentOfInertia(double mass) const;
+	Vector2f computeCenterOfMass() const;
+	float computeMomentOfInertia(float mass) const;
 };
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(CircleBody, radius)
 
 struct ConvexBody {
-    std::vector<Vector2d> vertices;
+    std::vector<Vector2f> vertices;
 
-	Vector2d computeCenterOfMass() const;
-	double computeMomentOfInertia(double mass, const Vector2d& centerOfMass) const;
+	Vector2f computeCenterOfMass() const;
+	float computeMomentOfInertia(float mass, const Vector2f& centerOfMass) const;
 };
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(ConvexBody, vertices)
 
 
 struct Collider {
-	Vector2d supportFunction(const Vector2d& direction, const Scene& scene, EntityId id) const;
+	Vector2f supportFunction(const Vector2f& direction, const Scene& scene, EntityId id) const;
 };
 
 // The shadow function returns two points that indicate the start of the shadow
 // cast by the body, located onto the body. Returns world coordinates.
 struct Shadow {
-	std::pair<Vector2d, Vector2d> shadowFunction(const Vector2d& lightSource, const Scene& scene, EntityId id) const;
+	std::pair<Vector2f, Vector2f> shadowFunction(const Vector2f& lightSource, const Scene& scene, EntityId id) const;
 
 private:
-	std::pair<Vector2d, Vector2d> circleShadow(const Vector2d& lightSource, const Body& body, const CircleBody& circle) const;
-	std::pair<Vector2d, Vector2d> convexShadow(const Vector2d& lightSource, const Body& body, const ConvexBody& convex) const;
+	std::pair<Vector2f, Vector2f> circleShadow(const Vector2f& lightSource, const Body& body, const CircleBody& circle) const;
+	std::pair<Vector2f, Vector2f> convexShadow(const Vector2f& lightSource, const Body& body, const ConvexBody& convex) const;
 };
 
 // A light source is supposed to emit light from the COM of the body.
 // This might change in the future. Shadows are computre with CircleBody and
 // ConvexBody. Any colliding body casts shadows.
 struct LightSource {
-	double brightness;
+	float brightness;
 };
 
 struct AnimationComponent : public sf::Drawable  {

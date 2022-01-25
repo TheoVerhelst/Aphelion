@@ -42,11 +42,11 @@ void MapSystem::update(const sf::Time&) {
         // Compute the position of the map element on the screen. Note that we
         // don't rotate the map icon.
         assert(_renderTarget != nullptr);
-        Vector2i screenPosition{_renderTarget->mapCoordsToPixel(static_cast<Vector2f>(body.position))};
+        Vector2i screenPosition{_renderTarget->mapCoordsToPixel(body.position)};
         mapElement.icon->setPosition(tgui::Vector2f(static_cast<Vector2f>(screenPosition)));
         // Except for ship icons
         if (mapElement.type == MapElementType::Ship) {
-            float rotation{static_cast<float>(body.rotation * 180. / pi) - _renderTarget->getView().getRotation()};
+            float rotation{(body.rotation * 180.f / pi) - _renderTarget->getView().getRotation()};
             mapElement.icon->setRotation(rotation);
         }
     }

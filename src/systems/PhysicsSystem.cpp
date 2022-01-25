@@ -21,7 +21,7 @@ void PhysicsSystem::update(const sf::Time& dt) {
 	// Usually only one update will be needed
 	while (_currentStep >= _timeStep) {
 		_currentStep -= _timeStep;
-		updateStep(_timeScale < 0);
+		updateStep(_timeScale < 0.f);
 	}
 }
 
@@ -44,13 +44,13 @@ sf::Time PhysicsSystem::getElapsedTime() const {
 	return _timeStep * _stepCounter;
 }
 
-Vector2d PhysicsSystem::computeAcceleration(const Vector2d& position, EntityId id) const {
-	Vector2d res{0., 0.};
+Vector2f PhysicsSystem::computeAcceleration(const Vector2f& position, EntityId id) const {
+	Vector2f res{0.f, 0.f};
 	for(EntityId otherId : _scene.view<Body>()) {
 		if (otherId != id) {
 			const Body& otherBody{_scene.getComponent<Body>(otherId)};
-			Vector2d dx{otherBody.position - position};
-			double dist{norm(dx)};
+			Vector2f dx{otherBody.position - position};
+			float dist{norm(dx)};
 			res += otherBody.mass * dx / (dist * dist * dist);
 		}
 	}
@@ -60,23 +60,23 @@ Vector2d PhysicsSystem::computeAcceleration(const Vector2d& position, EntityId i
 void PhysicsSystem::updateStep(bool backwards) {
 	_stepCounter += backwards ? -1 : 1;
 
-	double dt{_timeStep.asSeconds() * (backwards ? -1 : 1)};
-	std::map<EntityId, Vector2d> dv;
-	std::map<EntityId, Vector2d> dx;
+	float dt{_timeStep.asSeconds() * (backwards ? -1.f : 1.f)};
+	std::map<EntityId, Vector2f> dv;
+	std::map<EntityId, Vector2f> dx;
 	for(EntityId id : _scene.view<Body>()) {
 		Body& body{_scene.getComponent<Body>(id)};
-		Vector2d vel{body.velocity};
-		Vector2d pos{body.position};
-		Vector2d l1{dt * computeAcceleration(pos, id)};
-		Vector2d k1{dt * vel};
-		Vector2d l2{dt * computeAcceleration(pos + 0.5 * k1, id)};
-		Vector2d k2{dt * (vel + 0.5 * l1)};
-		Vector2d l3{dt * computeAcceleration(pos + 0.5 * k2, id)};
-		Vector2d k3{dt * (vel + 0.5 * l2)};
-		Vector2d l4{dt * computeAcceleration(pos + k3, id)};
-		Vector2d k4{dt * (vel + l3)};
-		dx[id] = (k1 + 2. * k2 + 2. *  k3 + k4) / 6.;
-		dv[id] = (l1 + 2. * l2 + 2. *  l3 + l4) / 6.;
+		Vector2f vel{body.velocity};
+		Vector2f pos{body.position};
+		Vector2f l1{dt * computeAcceleration(pos, id)};
+		Vector2f k1{dt * vel};
+		Vector2f l2{dt * computeAcceleration(pos + 0.5f * k1, id)};
+		Vector2f k2{dt * (vel + 0.5f * l1)};
+		Vector2f l3{dt * computeAcceleration(pos + 0.5f * k2, id)};
+		Vector2f k3{dt * (vel + 0.5f * l2)};
+		Vector2f l4{dt * computeAcceleration(pos + k3, id)};
+		Vector2f k4{dt * (vel + l3)};
+		dx[id] = (k1 + 2.f * k2 + 2.f *  k3 + k4) / 6.f;
+		dv[id] = (l1 + 2.f * l2 + 2.f *  l3 + l4) / 6.f;
 	}
 
 	for(EntityId id : _scene.view<Body>()) {
@@ -84,6 +84,6 @@ void PhysicsSystem::updateStep(bool backwards) {
 		body.position += dx[id];
 		body.velocity += dv[id];
 		body.rotation += body.angularVelocity * dt;
-        body.rotation = std::remainder(body.rotation, 2. * pi);
+        body.rotation = std::remainder(body.rotation, 2.f * pi);
 	}
 }

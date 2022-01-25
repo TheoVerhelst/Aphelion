@@ -11,7 +11,7 @@ typedef sf::Vector2<float> Vector2f;
 typedef sf::Vector2<int> Vector2i;
 typedef sf::Vector2<unsigned int> Vector2u;
 
-const double pi{std::acos(-1)};
+const float pi{static_cast<float>(std::acos(-1))};
 
 template <typename T>
 constexpr T dot(const sf::Vector2<T>& a, const sf::Vector2<T>& b) {
@@ -56,7 +56,7 @@ constexpr sf::Vector2<T> perpendicular(const sf::Vector2<T>& v, const sf::Vector
 	// We could use the formula (v x d) x v, but this requires three
 	// multiplications, which is not ideal for small vectors. We have a branch
 	// but no number stability issue here.
-	Vector2d res{v.y, -v.x};
+	Vector2f res{v.y, -v.x};
 	if (dot(res, d) < 0) {
 		return -res;
 	} else {
@@ -88,7 +88,7 @@ constexpr std::pair<T, T> intersection(const sf::Vector2<T>& A, const sf::Vector
 template <std::floating_point T>
 sf::Vector2<T> closestPoint(const sf::Vector2<T>& A, const sf::Vector2<T>& B,
 		const sf::Vector2<T>& P) {
-	const Vector2d AB{B - A};
+	const Vector2f AB{B - A};
 	const T c{dot(AB, P - A) / norm2(AB)};
 	if (c < 0) {
 		return A;

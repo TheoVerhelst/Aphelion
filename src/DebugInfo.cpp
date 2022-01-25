@@ -11,7 +11,7 @@ DebugInfo::DebugInfo(const sf::Font& font) {
 }
 
 void DebugInfo::update(const Body& body) {
-    Vector2f pos{static_cast<Vector2f>(body.position)};
+    Vector2f pos{body.position};
     _position.setPosition(pos);
     _position.setFillColor(sf::Color::White);
 
@@ -23,7 +23,7 @@ void DebugInfo::update(const Body& body) {
     _rotation.setPosition(pos + Vector2f(10, -31));
     _angularVelocity.setPosition(pos + Vector2f(10, -20));
 
-    _velocity.setPoints(static_cast<Vector2f>(body.position), static_cast<Vector2f>(body.position + body.velocity));
+    _velocity.setPoints(body.position, body.position + body.velocity);
     _velocity.setColor(sf::Color::White);
 }
 

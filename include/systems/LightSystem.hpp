@@ -32,8 +32,8 @@ private:
 
     void updateLightSources();
     std::vector<sf::ConvexShape> computeShadowShapes();
-    std::vector<Vector2d> computeShadowGeometry(const Vector2d& edgeA, const Vector2d& edgeB,
-            const Vector2d& lightSource, const std::array<Vector2d, 4>& view);
+    std::vector<Vector2f> computeShadowGeometry(const Vector2f& edgeA, const Vector2f& edgeB,
+            const Vector2f& lightSource, const std::array<Vector2f, 4>& view);
 };
 
 #endif // LIGHTSYSTEM_HPP

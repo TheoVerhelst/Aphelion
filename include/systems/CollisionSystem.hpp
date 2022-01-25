@@ -17,9 +17,9 @@ public:
 	virtual void update(const sf::Time& dt) override;
 
 private:
-	typedef std::function<Vector2d(const Vector2d&)> SupportFunction;
+	typedef std::function<Vector2f(const Vector2f&)> SupportFunction;
 
-	static constexpr double eps{0.00001};
+	static constexpr float eps{0.01f};
 	Scene& _scene;
 
 	// List of 2D points formed by the difference of two shapes. This class
@@ -27,16 +27,16 @@ private:
 	// points together.
 	class MinkowskyPolygon {
 	public:
-		void pushBack(const Vector2d& A, const Vector2d& B);
-		void insert(std::size_t index, const Vector2d& A, const Vector2d& B);
+		void pushBack(const Vector2f& A, const Vector2f& B);
+		void insert(std::size_t index, const Vector2f& A, const Vector2f& B);
 		void erase(std::size_t index);
-		Vector2d getDifference(std::size_t index) const;
-		Vector2d getPointA(std::size_t index) const;
-		Vector2d getPointB(std::size_t index) const;
+		Vector2f getDifference(std::size_t index) const;
+		Vector2f getPointA(std::size_t index) const;
+		Vector2f getPointB(std::size_t index) const;
 		std::size_t size() const;
 
 	private:
-		std::vector<Vector2d> _pointsA, _pointsB;
+		std::vector<Vector2f> _pointsA, _pointsB;
 	};
 
 	// Information about the contact points or the distance between two bodies.
@@ -47,18 +47,18 @@ private:
 		ContactInfo() = default;
 		// Constructor. Determines the normal vector and the distance from C_A
 		// and C_B.
-		ContactInfo(const Vector2d& A, const Vector2d& B);
+		ContactInfo(const Vector2f& A, const Vector2f& B);
 		// Point on A and B in world coordinates where body A and body B would
 		// touch if they were brought close enough to touch but not overlap.
 		// They belong to the border of the bodies, and are the furthest point
 		// into the collision.
-		Vector2d C_A, C_B;
+		Vector2f C_A, C_B;
 		// Collision vector, pointing from B to A. If B is shifted by this
 		// vector, the bodies will just touch but not overlap or be separated
 		// anymore.
-		Vector2d normal;
+		Vector2f normal;
 		// Norm of the normal vector, distance between C_A and C_B.
-		double distance;
+		float distance;
 	};
 
 	void collideBodies(const SupportFunction& functionA, const SupportFunction& functionB, Body& bodyA, Body& bodyB);
@@ -92,21 +92,21 @@ private:
 	// Updates the simplex for collision GJK. It just dispatches to the line or
 	// triangle functions. The simplex and the direction vector are both updated
 	// in-place. Returns true if the origin is in the simplex
-	bool updateSimplex(MinkowskyPolygon& simplex, Vector2d& direction);
+	bool updateSimplex(MinkowskyPolygon& simplex, Vector2f& direction);
 
 	// Computes the new direction as the vector orthogonal to the simplex
 	// towards the origin. Returns false.
-	bool updateSimplexLine(MinkowskyPolygon& simplex, Vector2d& direction);
+	bool updateSimplexLine(MinkowskyPolygon& simplex, Vector2f& direction);
 
 	// Checks if the origin is enclosed in the simplex. If not, finds the
 	// closest edge to the origin and set the direction towards the origin
 	// orthogonal from this edge.
-	bool updateSimplexTriangle(MinkowskyPolygon& simplex, Vector2d& direction);
+	bool updateSimplexTriangle(MinkowskyPolygon& simplex, Vector2f& direction);
 
 	// Returns the closest point to the origin on the simplex, and removes the
 	// simplex vertex that is not part of the simplex feature closest to the
 	// origin. To use only when simplex.size() == 3.
-	Vector2d updateSimplexDistance(MinkowskyPolygon& simplex);
+	Vector2f updateSimplexDistance(MinkowskyPolygon& simplex);
 
 };
 

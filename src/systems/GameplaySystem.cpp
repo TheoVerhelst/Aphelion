@@ -29,13 +29,13 @@ void GameplaySystem::update(const ContinuousAction& actionPair) {
     const EntityId playerId{_scene.findUnique<Player>()};
     auto& [action, dt] = actionPair;
 
-    Vector2d dv{0, 0};
-    double dw{0};
+    Vector2f dv{0, 0};
+    float dw{0};
     float zoom{1.f};
     bool rotateView{false};
-    const double engineAccel{200};
-    const double rcsLinearAccel{50};
-    const double rcsCircularAccel{10};
+    const float engineAccel{200};
+    const float rcsLinearAccel{50};
+    const float rcsCircularAccel{10};
     const float zoomSpeed{15};
 
     switch (action) {
@@ -76,8 +76,8 @@ void GameplaySystem::update(const ContinuousAction& actionPair) {
     }
 
     Body& body{_scene.getComponent<Body>(playerId)};
-    body.velocity += rotate(dv, body.rotation) * static_cast<double>(dt.asSeconds());
-    body.angularVelocity += dw * static_cast<double>(dt.asSeconds());
+    body.velocity += rotate(dv, body.rotation) * dt.asSeconds();
+    body.angularVelocity += dw * dt.asSeconds();
 
     // Update the view
     assert(_renderTarget != nullptr);
@@ -99,7 +99,7 @@ void GameplaySystem::update(const ContinuousAction& actionPair) {
 
     playerView.setSize(viewSize);
     if (rotateView) {
-        playerView.setRotation(static_cast<float>(body.rotation * 180 / pi));
+        playerView.setRotation(body.rotation * 180 / pi);
     }
     _renderTarget->setView(playerView);
 }
@@ -109,7 +109,7 @@ void GameplaySystem::update(const sf::Time&) {
     assert(_renderTarget != nullptr);
     sf::View playerView{_renderTarget->getView()};
     Body& body{_scene.getComponent<Body>(_scene.findUnique<Player>())};
-    playerView.setCenter(static_cast<Vector2f>(body.position));
+    playerView.setCenter(body.position);
     _renderTarget->setView(playerView);
 }
 

@@ -97,7 +97,7 @@ void setupSprite(Scene& scene, const json& value, EntityId id, const ResourceMan
     if (value.contains("offset")) {
         value.at("offset").get_to(offset);
     }
-    sprite.setOrigin(static_cast<Vector2f>(scene.getComponent<Body>(id).centerOfMass) - offset);
+    sprite.setOrigin(scene.getComponent<Body>(id).centerOfMass - offset);
 }
 
 void setupAnimations(Scene& scene, const json& value, EntityId id, const ResourceManager<sf::Texture>& textureManager) {
@@ -117,7 +117,7 @@ void setupAnimations(Scene& scene, const json& value, EntityId id, const Resourc
         animationValue.at("frames").get_to(frames);
         Animation animation{textureManager.get(textureName), frames};
         Vector2f spriteOrigin{0, 0};
-        spriteOrigin += static_cast<Vector2f>(scene.getComponent<Body>(id).centerOfMass);
+        spriteOrigin += scene.getComponent<Body>(id).centerOfMass;
         if (animationValue.contains("offset")) {
             spriteOrigin -= animationValue.at("offset").get<Vector2f>();
         }
@@ -129,9 +129,9 @@ void setupAnimations(Scene& scene, const json& value, EntityId id, const Resourc
 void setupCircleShape(Scene& scene, const json& value, EntityId id) {
     sf::CircleShape& shape{scene.assignComponent<sf::CircleShape>(id)};
     CircleBody& circle{scene.getComponent<CircleBody>(id)};
-    shape.setRadius(static_cast<float>(circle.radius));
+    shape.setRadius(circle.radius);
     shape.setFillColor(value.at("color").get<sf::Color>());
-    shape.setOrigin(static_cast<float>(circle.radius), static_cast<float>(circle.radius));
+    shape.setOrigin(circle.radius, circle.radius);
     shape.setPointCount(static_cast<std::size_t>(circle.radius));
 }
 

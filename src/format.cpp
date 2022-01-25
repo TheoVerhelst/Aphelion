@@ -3,15 +3,15 @@
 #include <sstream>
 #include <cmath>
 
-std::string formatTime(double seconds) {
-    double sec{std::fmod(seconds, 60)};
-    double min{std::trunc(seconds / 60)};
-    double hour{std::trunc(seconds / 3600)};
+std::string formatTime(float seconds) {
+    float sec{std::fmod(seconds, 60.f)};
+    float min{std::trunc(seconds / 60.f)};
+    float hour{std::trunc(seconds / 3600.f)};
     std::stringstream ss;
-    if (hour > 0) {
+    if (hour > 0.f) {
         ss << hour << " h ";
     }
-    if (min > 0) {
+    if (min > 0.f) {
         ss << min << " min ";
     }
     ss << std::fixed << std::setprecision(2) << sec << " s";

@@ -25,11 +25,11 @@ private:
 	// Might go back in time, so step counter is signed, and at least 64 bits.
 	long long int _stepCounter{0};
 	// Convert G from meters^3 kg/s^2 to px^3 kg/s^2
-	const double _gravitationalConstant{6.67430e-11 * 36 * 36 * 36};
+	const float _gravitationalConstant{6.67430e-11f * 36.f * 36.f * 36.f};
 
 	/// Computes the acceleration field at a point given the other bodies.
 	/// The body with given id is ignored from the computation
-	Vector2d computeAcceleration(const Vector2d& position, EntityId id) const;
+	Vector2f computeAcceleration(const Vector2f& position, EntityId id) const;
 	void updateStep(bool backwards);
 };
 
