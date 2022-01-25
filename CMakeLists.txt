@@ -34,7 +34,7 @@ if (CMAKE_COMPILER_IS_GNUCC)
 -Wredundant-tags -Wregister -Wrestrict -Wshadow -Wshift-negative-value \
 -Wsign-promo -Wstack-protector -Wstrict-aliasing -Wstrict-null-sentinel \
 -Wstrict-overflow -Wstring-compare -Wstringop-truncation -Wsuggest-final-methods \
--Wsuggest-final-types -Wsuggest-override -Wswitch-default -Wswitch-enum -Wsynth \
+-Wsuggest-final-types -Wsuggest-override -Wswitch-default -Wsynth \
 -Wtrampolines -Wundef -Wunreachable-code -Wunsafe-loop-optimizations \
 -Wunused-macros -Wuseless-cast -Wvector-operation-performance -Wvla -Wvolatile \
 -Wwrite-strings -Wzero-as-null-pointer-constant")

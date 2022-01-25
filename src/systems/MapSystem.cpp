@@ -1,3 +1,4 @@
+#include <cmath>
 #include <TGUI/TGUI.hpp>
 #include <systems/MapSystem.hpp>
 #include <components.hpp>
@@ -17,7 +18,7 @@ void MapSystem::update(const TriggerAction& actionPair) {
             icon->setVisible(not icon->isVisible());
         }
 
-        // Update the view
+        // Set the view size
         sf::View playerView{_renderTarget.getView()};
         Vector2f viewSize{playerView.getSize()};
 
@@ -34,7 +35,47 @@ void MapSystem::update(const TriggerAction& actionPair) {
     }
 }
 
+
+void MapSystem::update(const ContinuousAction& actionPair) {
+    const EntityId playerId{_scene.findUnique<Player>()};
+    auto& [action, dt] = actionPair;
+
+    float zoom{1.f};
+    bool rotateView{false};
+    const float zoomSpeed{15};
+    switch (action) {
+        case Action::ZoomIn:
+            zoom *= std::pow(zoomSpeed, dt.asSeconds());
+            break;
+        case Action::ZoomOut:
+            zoom /= std::pow(zoomSpeed, dt.asSeconds());
+            break;
+        case Action::RotateView:
+            rotateView = true;
+            break;
+        default:
+            break;
+    }
+
+    // Update the view
+    sf::View playerView{_renderTarget.getView()};
+    Vector2f viewSize{playerView.getSize() * zoom};
+    if (_mapView) {
+        viewSize = clampVector(viewSize, _minMapViewSize, _maxMapViewSize);
+    } else {
+        viewSize = clampVector(viewSize, _minNormalViewSize, _maxNormalViewSize);
+    }
+    playerView.setSize(viewSize);
+    if (rotateView) {
+        Body& body{_scene.getComponent<Body>(playerId)};
+        playerView.setRotation(body.rotation * 180 / pi);
+    }
+    _renderTarget.setView(playerView);
+}
+
+
 void MapSystem::update(const sf::Time&) {
+    // Update map elements
     for (EntityId id : _scene.view<Body, MapElement>()) {
         const Body& body{_scene.getComponent<Body>(id)};
         MapElement& mapElement{_scene.getComponent<MapElement>(id)};
@@ -49,4 +90,27 @@ void MapSystem::update(const sf::Time&) {
             mapElement.icon->setRotation(rotation);
         }
     }
+
+    // Update the view
+    sf::View playerView{_renderTarget.getView()};
+    Body& body{_scene.getComponent<Body>(_scene.findUnique<Player>())};
+    playerView.setCenter(body.position);
+    _renderTarget.setView(playerView);
+}
+
+sf::Vector2f MapSystem::clampVector(sf::Vector2f v, const sf::Vector2f& min, const sf::Vector2f& max) {
+    const float aspectRatio{v.x / v.y};
+    if (v.x > max.x) {
+        v = {max.x, max.x / aspectRatio};
+    }
+    if (v.y > max.y) {
+        v = {max.y * aspectRatio, min.y};
+    }
+    if (v.x < min.x) {
+        v = {min.x, min.x / aspectRatio};
+    }
+    if (v.y < min.y) {
+        v = {min.y * aspectRatio, min.y};
+    }
+    return v;
 }
