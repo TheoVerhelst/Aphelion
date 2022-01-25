@@ -43,6 +43,7 @@ void MapSystem::update(const ContinuousAction& actionPair) {
     float zoom{1.f};
     bool rotateView{false};
     const float zoomSpeed{15};
+    const float rotationSpeed{3};
     switch (action) {
         case Action::ZoomIn:
             zoom *= std::pow(zoomSpeed, dt.asSeconds());
@@ -68,7 +69,19 @@ void MapSystem::update(const ContinuousAction& actionPair) {
     playerView.setSize(viewSize);
     if (rotateView) {
         Body& body{_scene.getComponent<Body>(playerId)};
-        playerView.setRotation(body.rotation * 180 / pi);
+        float target{body.rotation};
+        float current{degToRad(playerView.getRotation())};
+        if (target - current > pi) {
+            current += 2.f * pi;
+        } else if (current - target > pi) {
+            target += 2.f * pi;
+        }
+        float newAngle{current + rotationSpeed * dt.asSeconds() * (target > current ? 1 : -1)};
+        if (target > current) {
+            playerView.setRotation(radToDeg(std::min(newAngle, target)));
+        } else {
+            playerView.setRotation(radToDeg(std::max(newAngle, target)));
+        }
     }
     _renderTarget.setView(playerView);
 }

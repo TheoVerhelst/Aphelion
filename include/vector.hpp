@@ -13,6 +13,16 @@ typedef sf::Vector2<unsigned int> Vector2u;
 
 const float pi{static_cast<float>(std::acos(-1))};
 
+template <std::floating_point T>
+constexpr T degToRad(T v) {
+	return v * std::acos(static_cast<T>(-1)) / static_cast<T>(180);
+}
+
+template <std::floating_point T>
+constexpr T radToDeg(T v) {
+	return v * static_cast<T>(180) / std::acos(static_cast<T>(-1));
+}
+
 template <typename T>
 constexpr T dot(const sf::Vector2<T>& a, const sf::Vector2<T>& b) {
 	return a.x * b.x + a.y * b.y;
