@@ -63,6 +63,7 @@ set(SOURCE_FILES
 	src/DebugOverlay.cpp
 	src/format.cpp
 	src/InputManager.cpp
+	src/LoopedSound.cpp
 	src/main.cpp
 	src/MusicManager.cpp
 	src/Scene.cpp

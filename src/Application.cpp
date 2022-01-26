@@ -3,7 +3,7 @@
 #include <DebugInfo.hpp>
 #include <SceneLoader.hpp>
 
-Application::Application(const std::string& setupFile):
+Application::Application():
     _window{sf::VideoMode::getDesktopMode(), "Aphelion",  sf::Style::Fullscreen},
     _gui{_window},
     _sceneCanvas{tgui::CanvasSFML::create()},
@@ -20,11 +20,12 @@ Application::Application(const std::string& setupFile):
     _sceneCanvas->moveToBack();
     _debugOverlay.buildGui();
     _currentWindowSize = _window.getSize();
+    _window.setKeyRepeatEnabled(false);
     updateView();
     // Load the game
     registerComponents();
     loadResources();
-    loadScene(_scene, setupFile, _fontManager, _textureManager, _tguiTextureManager, _gui);
+    loadScene(_scene, _saveFile, _fontManager, _textureManager, _tguiTextureManager, _soundBufferManager, _gui);
     registerObservers();
     _lightSystem.setShader(_shaderManager.get("light"));
 }
@@ -81,8 +82,6 @@ void Application::registerComponents() {
     _scene.registerComponent<DebugInfo>();
     _scene.registerComponent<MapElement>();
     _scene.registerComponent<sf::Sprite>();
-    _scene.registerComponent<sf::CircleShape>();
-    _scene.registerComponent<sf::ConvexShape>();
 }
 
 void Application::loadResources() {
@@ -107,6 +106,9 @@ void Application::loadResources() {
     _textureManager.loadFromFile("resources/textures/mars.png", "mars");
     _textureManager.loadFromFile("resources/textures/rcs.png", "rcs");
     _shaderManager.loadFromFile("resources/shaders/light.frag", "light", sf::Shader::Fragment);
+    _soundBufferManager.loadFromFile("resources/sounds/mainEngine.wav", "mainEngine");
+    _soundBufferManager.loadFromFile("resources/sounds/rcs.wav", "rcs");
+    _soundBufferManager.loadFromFile("resources/sounds/landing.wav", "landing");
     _musicManager.openFromFile("resources/musics/Aphelion.ogg");
 
     _backgroundSprite.setTexture(_textureManager.get("background"));

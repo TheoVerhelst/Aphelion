@@ -1,10 +1,12 @@
 #include <SFML/System/Time.hpp>
-#include <SFML/Graphics.hpp>
+#include <SFML/Graphics/RenderTarget.hpp>
+#include <SFML/Graphics/Sprite.hpp>
 #include <TGUI/Widgets/Picture.hpp>
 #include <systems/RenderSystem.hpp>
 #include <ResourceManager.hpp>
 #include <components.hpp>
 #include <Animation.hpp>
+#include <vector.hpp>
 
 RenderSystem::RenderSystem(Scene& scene, ResourceManager<sf::Shader>& shaderManager):
     _scene{scene},
@@ -12,8 +14,6 @@ RenderSystem::RenderSystem(Scene& scene, ResourceManager<sf::Shader>& shaderMana
 }
 
 void RenderSystem::draw(sf::RenderTarget& target, sf::RenderStates states) const {
-    drawComponent<sf::CircleShape>(target, states);
-    drawComponent<sf::ConvexShape>(target, states);
     drawComponent<sf::Sprite>(target, states);
     drawComponent<AnimationComponent>(target, states);
 }
@@ -21,12 +21,6 @@ void RenderSystem::draw(sf::RenderTarget& target, sf::RenderStates states) const
 void RenderSystem::update(const sf::Time& dt) {
     for (EntityId id : _scene.view<Body, sf::Sprite>()) {
         updateTransformable(_scene.getComponent<sf::Sprite>(id), id);
-    }
-    for (EntityId id : _scene.view<Body, sf::CircleShape>()) {
-        updateTransformable(_scene.getComponent<sf::CircleShape>(id), id);
-    }
-    for (EntityId id : _scene.view<Body, sf::ConvexShape>()) {
-        updateTransformable(_scene.getComponent<sf::ConvexShape>(id), id);
     }
     for (EntityId id : _scene.view<Body, AnimationComponent>()) {
         auto& animations{_scene.getComponent<AnimationComponent>(id).animations};
@@ -42,5 +36,5 @@ void RenderSystem::update(const sf::Time& dt) {
 void RenderSystem::updateTransformable(sf::Transformable& transformable, EntityId id) const {
     const Body& body{_scene.getComponent<Body>(id)};
     transformable.setPosition(body.position);
-    transformable.setRotation(body.rotation * 180.f / pi);
+    transformable.setRotation(radToDeg(body.rotation));
 }

@@ -7,6 +7,7 @@
 #include <SFML/Graphics/Texture.hpp>
 #include <SFML/Graphics/Sprite.hpp>
 #include <SFML/Graphics/CircleShape.hpp>
+#include <SFML/Audio/SoundBuffer.hpp>
 #include <TGUI/TGUI.hpp>
 #include <ResourceManager.hpp>
 #include <Scene.hpp>
@@ -23,6 +24,7 @@ void loadScene(Scene& scene, const std::string& setupFile,
         const ResourceManager<sf::Font>& fontManager,
         const ResourceManager<sf::Texture>& textureManager,
         const ResourceManager<tgui::Texture>& tguiTextureManager,
+        const ResourceManager<sf::SoundBuffer>& soundBufferManager,
         tgui::BackendGui& gui) {
     std::ifstream file{setupFile};
 	json j;
@@ -37,7 +39,7 @@ void loadScene(Scene& scene, const std::string& setupFile,
         {"circleBody", setupCircleBody},
         {"convexBody", setupConvexBody},
         {"sprite", std::bind(setupSprite, _1, _2, _3, std::cref(textureManager))},
-        {"animations", std::bind(setupAnimations, _1, _2, _3, std::cref(textureManager))},
+        {"animations", std::bind(setupAnimations, _1, _2, _3, std::cref(textureManager), std::cref(soundBufferManager))},
         {"circleShape", setupCircleShape},
         {"player", setupPlayer},
         {"lightSource", setupLightSource},
@@ -106,7 +108,9 @@ void setupSprite(Scene& scene, const json& value, EntityId id, const ResourceMan
     sprite.setOrigin(scene.getComponent<Body>(id).centerOfMass - offset);
 }
 
-void setupAnimations(Scene& scene, const json& value, EntityId id, const ResourceManager<sf::Texture>& textureManager) {
+void setupAnimations(Scene& scene, const json& value, EntityId id,
+        const ResourceManager<sf::Texture>& textureManager,
+        const ResourceManager<sf::SoundBuffer>& soundBufferManager) {
     AnimationComponent& animations{scene.assignComponent<AnimationComponent>(id)};
     std::map<std::string, Action> nameToAction{
         {"engine", Action::Engine},
@@ -118,10 +122,17 @@ void setupAnimations(Scene& scene, const json& value, EntityId id, const Resourc
         {"rcsCounterClockwise", Action::RcsCounterClockwise}
     };
     for (auto& [name, animationValue] : value.items()) {
+        // Extract animation data from JSON
         std::string textureName{animationValue.at("texture").get<std::string>()};
         std::vector<AnimationFrame> frames;
         animationValue.at("frames").get_to(frames);
-        Animation animation{textureManager.get(textureName), frames};
+        std::string soundBufferName{animationValue.at("soundBuffer").get<std::string>()};
+        sf::Time loopStart{animationValue.at("soundLoopStart").get<sf::Time>()};
+        sf::Time loopEnd{animationValue.at("soundLoopEnd").get<sf::Time>()};
+        // Construct the animation object
+        Animation animation{textureManager.get(textureName), frames,
+                soundBufferManager.get(soundBufferName), loopStart, loopEnd};
+        // Set the sprite origin
         Vector2f spriteOrigin{0, 0};
         spriteOrigin += scene.getComponent<Body>(id).centerOfMass;
         if (animationValue.contains("offset")) {

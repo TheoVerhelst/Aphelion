@@ -2,7 +2,8 @@
 #define APLICATION_HPP
 
 #include <string>
-#include <SFML/Window.hpp>
+#include <SFML/Graphics.hpp>
+#include <SFML/Audio/SoundBuffer.hpp>
 #include <TGUI/TGUI.hpp>
 #include <TGUI/Backend/SFML-Graphics.hpp>
 #include <Scene.hpp>
@@ -20,7 +21,7 @@
 
 class Application {
 public:
-    Application(const std::string& setupFile);
+    Application();
     void run();
 
 private:
@@ -46,10 +47,12 @@ private:
     ResourceManager<sf::Texture> _textureManager;
     ResourceManager<tgui::Texture> _tguiTextureManager;
     ResourceManager<sf::Shader> _shaderManager;
+    ResourceManager<sf::SoundBuffer> _soundBufferManager;
     MusicManager _musicManager;
 
     // Others
     const std::string _guiFile{"gui.txt"};
+    const std::string _saveFile{"save.json"};
     sf::Sprite _backgroundSprite;
     Vector2u _currentWindowSize;
 

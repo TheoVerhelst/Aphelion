@@ -165,37 +165,58 @@
                         {"duration": 0.1, "rect": {"top": 0, "left": 24, "width": 24, "height": 48}},
                         {"duration": 0.1, "rect": {"top": 0, "left": 48, "width": 24, "height": 48}},
                         {"duration": 0.1, "rect": {"top": 0, "left": 72, "width": 24, "height": 48}}
-                    ]
+                    ],
+                    "soundBuffer": "mainEngine",
+                    "soundLoopStart": 0.3,
+                    "soundLoopEnd": 1.699
                 },
                 "rcsDown": {
                     "texture": "rcs",
                     "offset": {"x": -6, "y": 0},
-                    "frames": [{"duration": 1, "rect": {"top": 0, "left": 0, "width": 36, "height": 48}}]
+                    "frames": [{"duration": 1, "rect": {"top": 0, "left": 0, "width": 36, "height": 48}}],
+                    "soundBuffer": "rcs",
+                    "soundLoopStart": 0.2,
+                    "soundLoopEnd": 1.699
                 },
                 "rcsUp": {
                     "texture": "rcs",
                     "offset": {"x": -6, "y": 0},
-                    "frames": [{"duration": 1, "rect": {"top": 0, "left": 36, "width": 36, "height": 48}}]
+                    "frames": [{"duration": 1, "rect": {"top": 0, "left": 36, "width": 36, "height": 48}}],
+                    "soundBuffer": "rcs",
+                    "soundLoopStart": 0.2,
+                    "soundLoopEnd": 1.699
                 },
                 "rcsRight": {
                     "texture": "rcs",
                     "offset": {"x": -6, "y": 0},
-                    "frames": [{"duration": 1, "rect": {"top": 0, "left": 72, "width": 36, "height": 48}}]
+                    "frames": [{"duration": 1, "rect": {"top": 0, "left": 72, "width": 36, "height": 48}}],
+                    "soundBuffer": "rcs",
+                    "soundLoopStart": 0.2,
+                    "soundLoopEnd": 1.699
                 },
                 "rcsClockwise": {
                     "texture": "rcs",
                     "offset": {"x": -6, "y": 0},
-                    "frames": [{"duration": 1, "rect": {"top": 0, "left": 108, "width": 36, "height": 48}}]
+                    "frames": [{"duration": 1, "rect": {"top": 0, "left": 108, "width": 36, "height": 48}}],
+                    "soundBuffer": "rcs",
+                    "soundLoopStart": 0.2,
+                    "soundLoopEnd": 1.699
                 },
                 "rcsCounterClockwise": {
                     "texture": "rcs",
                     "offset": {"x": -6, "y": 0},
-                    "frames": [{"duration": 1, "rect": {"top": 0, "left": 144, "width": 36, "height": 48}}]
+                    "frames": [{"duration": 1, "rect": {"top": 0, "left": 144, "width": 36, "height": 48}}],
+                    "soundBuffer": "rcs",
+                    "soundLoopStart": 0.2,
+                    "soundLoopEnd": 1.699
                 },
                 "rcsLeft": {
                     "texture": "rcs",
                     "offset": {"x": -6, "y": 0},
-                    "frames": [{"duration": 1, "rect": {"top": 0, "left": 180, "width": 36, "height": 48}}]
+                    "frames": [{"duration": 1, "rect": {"top": 0, "left": 180, "width": 36, "height": 48}}],
+                    "soundBuffer": "rcs",
+                    "soundLoopStart": 0.2,
+                    "soundLoopEnd": 1.699
                 }
             },
             "body": {

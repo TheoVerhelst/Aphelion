@@ -25,6 +25,7 @@ void loadScene(Scene& scene, const std::string& setupFile,
         const ResourceManager<sf::Font>& fontManager,
         const ResourceManager<sf::Texture>& textureManager,
         const ResourceManager<tgui::Texture>& tguiTextureManager,
+        const ResourceManager<sf::SoundBuffer>& soundBufferManager,
         tgui::BackendGui& gui);
 
 void setupBody(Scene& scene, const nlohmann::json& value, EntityId id,
@@ -34,7 +35,8 @@ void setupConvexBody(Scene& scene, const nlohmann::json& value, EntityId id);
 void setupSprite(Scene& scene, const nlohmann::json& value, EntityId id,
         const ResourceManager<sf::Texture>& textureManager);
 void setupAnimations(Scene& scene, const nlohmann::json& value, EntityId id,
-        const ResourceManager<sf::Texture>& textureManager);
+        const ResourceManager<sf::Texture>& textureManager,
+        const ResourceManager<sf::SoundBuffer>& soundBufferManager);
 void setupCircleShape(Scene& scene, const nlohmann::json& value, EntityId id);
 void setupPlayer(Scene& scene, const nlohmann::json& value, EntityId id);
 void setupLightSource(Scene& scene, const nlohmann::json& value, EntityId id);
