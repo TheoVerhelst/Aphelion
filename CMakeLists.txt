@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.0)
 project(Aphelion)
 
 IF (NOT DEFINED COMPILE_STATIC)
-    set(COMPILE_STATIC FALSE)
+    set(COMPILE_STATIC TRUE)
 endif()
 
 set(SFML_STATIC_LIBRARIES ${COMPILE_STATIC})

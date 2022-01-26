@@ -53,7 +53,7 @@ ChildWindow.controlsPanel {
         TextSize = 20;
         Renderer = {
             Texture = "resources/gui/previous.png";
-            TextureHover = "resources/gui/previous_hover.png";
+            TextureHover = "resources/gui/previousHover.png";
         }
         Size = (40, 40);
     }
@@ -64,7 +64,7 @@ ChildWindow.controlsPanel {
         TextSize = 20;
         Renderer = {
             Texture = "resources/gui/pause.png";
-            TextureHover = "resources/gui/pause_hover.png";
+            TextureHover = "resources/gui/pauseHover.png";
         }
     }
 
@@ -73,7 +73,7 @@ ChildWindow.controlsPanel {
         TextSize = 20;
         Renderer = {
             Texture = "resources/gui/next.png";
-            TextureHover = "resources/gui/next_hover.png";
+            TextureHover = "resources/gui/nextHover.png";
         }
         Size = (40, 40);
     }
