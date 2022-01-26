@@ -1,7 +1,8 @@
-#include <format.hpp>
 #include <iomanip>
 #include <sstream>
 #include <cmath>
+#include <SFML/System/Time.hpp>
+#include <format.hpp>
 
 std::string formatTime(float seconds) {
     float sec{std::fmod(seconds, 60.f)};

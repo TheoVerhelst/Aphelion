@@ -1,12 +1,15 @@
 #ifndef PHYSICSSYSTEM_HPP
 #define PHYSICSSYSTEM_HPP
 
-#include <cstddef>
+#include <cstdint>
 #include <SFML/System/Time.hpp>
-#include <Scene.hpp>
-#include <components.hpp>
 #include <vector.hpp>
 #include <Observer.hpp>
+
+// Forward declarations
+class Scene;
+typedef std::uint32_t EntityId;
+
 
 class PhysicsSystem : public Observer<const sf::Time&> {
 public:

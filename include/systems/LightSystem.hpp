@@ -1,15 +1,22 @@
 #ifndef LIGHTSYSTEM_HPP
 #define LIGHTSYSTEM_HPP
 
-#include <SFML/System/Time.hpp>
-#include <SFML/Graphics/RenderTarget.hpp>
-#include <SFML/Graphics/Image.hpp>
-#include <SFML/Graphics/Texture.hpp>
-#include <SFML/Graphics/Sprite.hpp>
+#include <array>
+#include <vector>
+#include <cstddef>
 #include <SFML/Graphics/RenderTexture.hpp>
-#include <Scene.hpp>
 #include <vector.hpp>
 #include <Observer.hpp>
+
+// Forward declarations
+namespace sf {
+    class Time;
+    class Shader;
+    class RenderTarget;
+    class ConvexShape;
+}
+class Scene;
+
 
 class LightSystem : public Observer<const sf::Time&> {
 public:

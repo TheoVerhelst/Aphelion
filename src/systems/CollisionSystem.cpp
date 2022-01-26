@@ -1,5 +1,8 @@
 #include <stdexcept>
+#include <SFML/System/Time.hpp>
 #include <systems/CollisionSystem.hpp>
+#include <Scene.hpp>
+#include <components.hpp>
 
 using namespace std::placeholders;
 

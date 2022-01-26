@@ -3,18 +3,23 @@
 
 #include <string>
 #include <vector>
-#include <SFML/Graphics/Font.hpp>
-#include <SFML/Graphics/Texture.hpp>
+#include <cstddef>
 #include <json.hpp>
-#include <vector.hpp>
-#include <components.hpp>
-#include <Scene.hpp>
-#include <ResourceManager.hpp>
 
+// Forward declarations
+namespace sf {
+    class Texture;
+    class Font;
+}
 namespace tgui {
     class BackendGui;
     class Texture;
 }
+class Scene;
+typedef std::uint32_t EntityId;
+template <typename T>
+class ResourceManager;
+
 
 void loadScene(Scene& scene, const std::string& setupFile,
         const ResourceManager<sf::Font>& fontManager,

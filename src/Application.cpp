@@ -1,5 +1,6 @@
 #include <Application.hpp>
 #include <components.hpp>
+#include <DebugInfo.hpp>
 #include <SceneLoader.hpp>
 
 Application::Application(const std::string& setupFile):

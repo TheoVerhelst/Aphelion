@@ -1,4 +1,6 @@
 #include <systems/GameplaySystem.hpp>
+#include <Action.hpp>
+#include <Scene.hpp>
 #include <Animation.hpp>
 #include <components.hpp>
 

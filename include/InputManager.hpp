@@ -3,9 +3,16 @@
 
 #include <map>
 #include <SFML/Window/Keyboard.hpp>
-#include <SFML/Window/Event.hpp>
 #include <Action.hpp>
 #include <Observer.hpp>
+
+// Forward declarations
+namespace sf {
+    class Time;
+    class Event;
+}
+class Scene;
+
 
 class InputManager : public EventSource<const ContinuousAction&>, public EventSource<const TriggerAction&>, public Observer<const sf::Time&>{
 public:

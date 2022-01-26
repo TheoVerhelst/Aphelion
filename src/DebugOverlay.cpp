@@ -1,4 +1,12 @@
+#include <TGUI/TGUI.hpp>
+#include <SFML/Window/Event.hpp>
+#include <SFML/Graphics/RenderTarget.hpp>
+#include <systems/PhysicsSystem.hpp>
+#include <Scene.hpp>
+#include <ResourceManager.hpp>
 #include <DebugOverlay.hpp>
+#include <DebugInfo.hpp>
+#include <components.hpp>
 #include <format.hpp>
 
 DebugOverlay::DebugOverlay(tgui::BackendGui& gui, PhysicsSystem& physicsSystem,

@@ -1,6 +1,7 @@
 #include <algorithm>
 #include <SFML/Graphics/RenderTarget.hpp>
 #include <components.hpp>
+#include <Scene.hpp>
 
 Vector2f Body::localToWorld(const Vector2f& point) const {
     return rotate(point, rotation) + position;

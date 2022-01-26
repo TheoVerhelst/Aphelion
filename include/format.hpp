@@ -2,7 +2,12 @@
 #define FORMAT_HPP
 
 #include <string>
-#include <SFML/System/Time.hpp>
+
+// Forward declarations
+namespace sf {
+    class Time;
+}
+
 
 std::string formatTime(float seconds);
 std::string formatTime(const sf::Time& time);

@@ -2,13 +2,18 @@
 #define MUSICMANAGER_HPP
 
 #include <string>
-#include <cstdint>
+#include <cstddef>
 #include <vector>
 #include <memory>
-#include <SFML/Audio/Music.hpp>
 #include <SFML/System/Clock.hpp>
 #include <SFML/System/Time.hpp>
 #include <Observer.hpp>
+
+// Forward declarations
+namespace sf {
+    class Music;
+}
+
 
 class MusicManager : public Observer<const sf::Time&> {
 public:

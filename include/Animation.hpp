@@ -2,7 +2,6 @@
 #define ANIMATION_HPP
 
 #include <vector>
-#include <map>
 #include <SFML/Graphics/Sprite.hpp>
 #include <SFML/Graphics/Texture.hpp>
 #include <SFML/Graphics/Drawable.hpp>

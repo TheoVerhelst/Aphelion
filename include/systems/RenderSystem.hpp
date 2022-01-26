@@ -1,12 +1,20 @@
 #ifndef RENDERSYSTEM_HPP
 #define RENDERSYSTEM_HPP
 
+#include <cstdint>
 #include <SFML/Graphics/Drawable.hpp>
-#include <SFML/System/Time.hpp>
-#include <SFML/Graphics/Shader.hpp>
-#include <ResourceManager.hpp>
-#include <Scene.hpp>
 #include <Observer.hpp>
+#include <Scene.hpp>
+
+// Forward declarations
+namespace sf {
+    class Time;
+    class Shader;
+    class Transformable;
+}
+template <typename T>
+class ResourceManager;
+
 
 class RenderSystem : public sf::Drawable, public Observer<const sf::Time&> {
 public:

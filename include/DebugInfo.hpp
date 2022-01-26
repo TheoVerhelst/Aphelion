@@ -1,9 +1,18 @@
 #ifndef DEBUGINFO_HPP
 #define DEBUGINFO_HPP
 
-#include <SFML/Graphics.hpp>
-#include <components.hpp>
+#include <SFML/Graphics/Drawable.hpp>
+#include <SFML/Graphics/CircleShape.hpp>
+#include <SFML/Graphics/Text.hpp>
+#include <SFML/Graphics/VertexArray.hpp>
 #include <vector.hpp>
+
+namespace sf {
+    class Color;
+    class Font;
+}
+struct Body;
+
 
 class DebugInfo : public sf::Drawable {
 public:

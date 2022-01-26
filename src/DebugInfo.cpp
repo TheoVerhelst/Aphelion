@@ -1,6 +1,7 @@
 #include <cmath>
-#include <limits>
+#include <SFML/Graphics/RenderTarget.hpp>
 #include <DebugInfo.hpp>
+#include <components.hpp>
 
 DebugInfo::DebugInfo(const sf::Font& font) {
     _position.setOrigin(_position.getRadius(), _position.getRadius());

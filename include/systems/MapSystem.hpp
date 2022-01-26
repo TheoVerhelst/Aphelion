@@ -1,12 +1,19 @@
 #ifndef MAPSYSTEM_HPP
 #define MAPSYSTEM_HPP
 
-#include <SFML/Graphics/RenderTarget.hpp>
-#include <SFML/System/Time.hpp>
 #include <Observer.hpp>
-#include <Action.hpp>
-#include <Scene.hpp>
 #include <vector.hpp>
+
+// Forward declarations
+namespace sf {
+    class Time;
+    class RenderTarget;
+}
+enum class Action;
+typedef std::pair<Action, bool> TriggerAction;
+typedef std::pair<Action, sf::Time> ContinuousAction;
+class Scene;
+
 
 class MapSystem : public Observer<const TriggerAction&>, public Observer<const ContinuousAction&>, public Observer<const sf::Time&> {
 public:
@@ -28,7 +35,7 @@ private:
     Vector2f _mapViewSize{68300.f, 38400.f};
     bool _mapView{false};
 
-    sf::Vector2f clampVector(sf::Vector2f v, const sf::Vector2f& min, const sf::Vector2f& max);
+    Vector2f clampVector(Vector2f v, const Vector2f& min, const Vector2f& max);
 };
 
 #endif // MAPSYSTEM_HPP

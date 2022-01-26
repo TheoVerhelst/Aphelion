@@ -4,11 +4,17 @@
 #include <vector>
 #include <cstddef>
 #include <functional>
-#include <SFML/System/Time.hpp>
 #include <vector.hpp>
-#include <Scene.hpp>
-#include <components.hpp>
 #include <Observer.hpp>
+
+// Forward declarations
+namespace sf {
+	class Time;
+}
+class Scene;
+struct Body;
+struct CircleBody;
+class SupportFunction;
 
 
 class CollisionSystem : public Observer<const sf::Time&> {

@@ -1,6 +1,10 @@
 #include <cmath>
+#include <SFML/Graphics/RenderTarget.hpp>
+#include <SFML/System/Time.hpp>
 #include <TGUI/TGUI.hpp>
 #include <systems/MapSystem.hpp>
+#include <Action.hpp>
+#include <Scene.hpp>
 #include <components.hpp>
 
 MapSystem::MapSystem(Scene& scene, sf::RenderTarget& renderTarget):
@@ -109,7 +113,7 @@ void MapSystem::update(const sf::Time&) {
     _renderTarget.setView(playerView);
 }
 
-sf::Vector2f MapSystem::clampVector(sf::Vector2f v, const sf::Vector2f& min, const sf::Vector2f& max) {
+Vector2f MapSystem::clampVector(Vector2f v, const Vector2f& min, const Vector2f& max) {
     const float aspectRatio{v.x / v.y};
     if (v.x > max.x) {
         v = {max.x, max.x / aspectRatio};

@@ -1,4 +1,5 @@
 #include <stdexcept>
+#include <SFML/Audio/Music.hpp>
 #include <MusicManager.hpp>
 
 void MusicManager::openFromFile(const std::string& filename) {

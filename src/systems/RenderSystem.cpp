@@ -1,9 +1,8 @@
-#include <memory>
-#include <cmath>
-#include <cassert>
+#include <SFML/System/Time.hpp>
 #include <SFML/Graphics.hpp>
 #include <TGUI/Widgets/Picture.hpp>
 #include <systems/RenderSystem.hpp>
+#include <ResourceManager.hpp>
 #include <components.hpp>
 #include <Animation.hpp>
 

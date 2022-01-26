@@ -2,13 +2,22 @@
 #define DEBUGOVERLAY_HPP
 
 #include <SFML/Graphics/Drawable.hpp>
-#include <TGUI/TGUI.hpp>
-#include <systems/PhysicsSystem.hpp>
-#include <Scene.hpp>
-#include <ResourceManager.hpp>
-#include <DebugInfo.hpp>
-#include <components.hpp>
 #include <Observer.hpp>
+
+// Forward declarations
+namespace sf {
+    class Time;
+    class Texture;
+    class Event;
+}
+namespace tgui {
+    class BackendGui;
+}
+template <typename T>
+class ResourceManager;
+class PhysicsSystem;
+class Scene;
+
 
 class DebugOverlay : public sf::Drawable, public Observer<const sf::Time&> {
 public:

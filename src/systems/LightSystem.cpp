@@ -1,7 +1,10 @@
-#include <algorithm>
-#include <stdexcept>
-#include <SFML/Graphics.hpp>
+#include <utility>
+#include <SFML/System/Time.hpp>
+#include <SFML/Graphics/Shader.hpp>
+#include <SFML/Graphics/RenderTarget.hpp>
+#include <SFML/Graphics/ConvexShape.hpp>
 #include <systems/LightSystem.hpp>
+#include <Scene.hpp>
 #include <components.hpp>
 
 LightSystem::LightSystem(Scene& scene, const sf::RenderTarget& renderTarget):

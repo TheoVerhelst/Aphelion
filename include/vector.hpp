@@ -43,7 +43,7 @@ T angle(const sf::Vector2<T>& vector) {
 	return std::atan2(vector.y, vector.x);
 }
 
-// Vertical component of the cross product of the vector. We return a scalar
+// Vertical component of the cross product of two 2D vectors. We return a scalar
 // instead of a Vector3 because we need only its norm.
 template <typename T>
 constexpr T cross(const sf::Vector2<T>& a, const sf::Vector2<T>& b) {
@@ -81,7 +81,7 @@ sf::Vector2<T> rotate(const sf::Vector2<T>& v, T angle) {
 
 // Compute the intersection P between the line AB and CD. The result is the
 // barycentric coordinate u, v of P on the line AB and CD. It is such that
-// P = A + u * (B - A) = C + v * (D - C). So when 0 < u < 1, P is located,
+// P = A + u * (B - A) = C + v * (D - C). So when 0 < u < 1, P is located
 // between A and B, and when 0 < v < 1, P is located between C and D
 template <std::floating_point T>
 constexpr std::pair<T, T> intersection(const sf::Vector2<T>& A, const sf::Vector2<T>& B,

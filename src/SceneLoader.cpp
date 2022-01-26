@@ -3,12 +3,18 @@
 #include <functional>
 #include <cmath>
 #include <stdexcept>
-#include <SFML/Graphics.hpp>
+#include <SFML/Graphics/Font.hpp>
+#include <SFML/Graphics/Texture.hpp>
+#include <SFML/Graphics/Sprite.hpp>
+#include <SFML/Graphics/CircleShape.hpp>
 #include <TGUI/TGUI.hpp>
-#include <serializers.hpp>
+#include <ResourceManager.hpp>
+#include <Scene.hpp>
+#include <components.hpp>
+#include <SceneLoader.hpp>
+#include <SceneLoader.hpp>
 #include <Animation.hpp>
 #include <DebugInfo.hpp>
-#include <SceneLoader.hpp>
 
 using nlohmann::json;
 using namespace std::placeholders;

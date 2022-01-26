@@ -2,8 +2,9 @@
 #define COMPONENTS_HPP
 
 #include <vector>
-#include <utility>
 #include <map>
+#include <utility>
+#include <cstdint>
 #include <SFML/Graphics/Drawable.hpp>
 #include <TGUI/Widgets/Picture.hpp>
 #include <json.hpp>
@@ -11,7 +12,10 @@
 #include <Animation.hpp>
 #include <Action.hpp>
 #include <vector.hpp>
-#include <Scene.hpp>
+
+// Forward declarations
+class Scene;
+typedef uint32_t EntityId;
 
 enum class BodyType {
 	Circle,
