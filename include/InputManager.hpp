@@ -29,7 +29,9 @@ private:
         {sf::Keyboard::E, Action::RcsClockwise},
         {sf::Keyboard::Space, Action::Engine},
         {sf::Keyboard::LShift, Action::ZoomIn},
+        {sf::Keyboard::RShift, Action::ZoomIn},
         {sf::Keyboard::LControl, Action::ZoomOut},
+        {sf::Keyboard::RControl, Action::ZoomOut},
         {sf::Keyboard::M, Action::ToggleMap},
         {sf::Keyboard::LAlt, Action::RotateView}
     };
