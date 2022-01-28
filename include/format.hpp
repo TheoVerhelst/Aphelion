@@ -10,6 +10,6 @@ namespace sf {
 
 
 std::string formatTime(float seconds);
-std::string formatTime(const sf::Time& time);
+std::string formatTime(sf::Time time);
 
 #endif // FORMAT_HPP

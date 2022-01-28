@@ -6,11 +6,9 @@
 #include <cstddef>
 #include <SFML/Graphics/RenderTexture.hpp>
 #include <vector.hpp>
-#include <Observer.hpp>
 
 // Forward declarations
 namespace sf {
-    class Time;
     class Shader;
     class RenderTarget;
     class ConvexShape;
@@ -18,16 +16,15 @@ namespace sf {
 class Scene;
 
 
-class LightSystem : public Observer<const sf::Time&> {
+class LightSystem {
 public:
-    LightSystem(Scene& scene, const sf::RenderTarget& renderTarget);
-    void setShader(sf::Shader& shader);
-    virtual void update(const sf::Time& dt) override;
+    LightSystem(Scene& scene, const sf::RenderTarget& renderTarget, sf::Shader& shader);
+    void update();
 
 private:
     Scene& _scene;
     const sf::RenderTarget& _renderTarget;
-    sf::Shader* _shader;
+    sf::Shader& _shader;
     sf::RenderTexture _renderTexture;
     // Limited because we cannot pass variable size array to the shader
     static constexpr std::size_t _maxLightSources{16};

@@ -1,5 +1,3 @@
-#include <stdexcept>
-#include <SFML/System/Time.hpp>
 #include <systems/CollisionSystem.hpp>
 #include <Scene.hpp>
 #include <components.hpp>
@@ -10,7 +8,7 @@ CollisionSystem::CollisionSystem(Scene& scene):
     _scene{scene} {
 }
 
-void CollisionSystem::update(const sf::Time&) {
+void CollisionSystem::update() {
     std::vector<EntityId> colliderView{_scene.view<Body, Collider>()};
     std::vector<EntityId> circleView{_scene.view<Body, CircleBody>()};
 

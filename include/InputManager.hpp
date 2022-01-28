@@ -2,22 +2,20 @@
 #define INPUTMANAGER_HPP
 
 #include <map>
+#include <vector>
 #include <SFML/Window/Keyboard.hpp>
 #include <Action.hpp>
-#include <Observer.hpp>
 
 // Forward declarations
 namespace sf {
-    class Time;
     class Event;
 }
-class Scene;
 
 
-class InputManager : public EventSource<const ContinuousAction&>, public EventSource<const TriggerAction&>, public Observer<const sf::Time&>{
+class InputManager {
 public:
-    bool handleEvent(const sf::Event& event);
-    virtual void update(const sf::Time& dt) override;
+    std::vector<TriggerAction> getTriggerActions(const sf::Event& event);
+    std::vector<Action> getContinuousActions();
 
 private:
     const std::map<sf::Keyboard::Key, Action> _mapping{

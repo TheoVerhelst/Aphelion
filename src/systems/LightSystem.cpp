@@ -7,17 +7,14 @@
 #include <Scene.hpp>
 #include <components.hpp>
 
-LightSystem::LightSystem(Scene& scene, const sf::RenderTarget& renderTarget):
+LightSystem::LightSystem(Scene& scene, const sf::RenderTarget& renderTarget, sf::Shader& shader):
     _scene{scene},
-    _renderTarget{renderTarget} {
+    _renderTarget{renderTarget},
+    _shader{shader} {
     _renderTexture.create(1, 1);
 }
 
-void LightSystem::setShader(sf::Shader& shader) {
-    _shader = &shader;
-}
-
-void LightSystem::update(const sf::Time&) {
+void LightSystem::update() {
     const Vector2u uScreenSize(_renderTarget.getSize());
     _screenSize = static_cast<Vector2f>(uScreenSize);
 
@@ -35,13 +32,13 @@ void LightSystem::update(const sf::Time&) {
     }
     _renderTexture.display();
 
-    _shader->setUniform("texture", sf::Shader::CurrentTexture);
-    _shader->setUniform("shadowTexture", _renderTexture.getTexture());
-    _shader->setUniformArray("lightPositions", _lightPositions.data(), _maxLightSources);
-    _shader->setUniformArray("lightBrightnesses", _lightBrightnesses.data(), _maxLightSources);
-    _shader->setUniform("numberLightSources", _numberLightSources);
-    _shader->setUniform("viewMatrix", sf::Glsl::Mat3(_renderTarget.getView().getInverseTransform()));
-    _shader->setUniform("screenSize", _screenSize);
+    _shader.setUniform("texture", sf::Shader::CurrentTexture);
+    _shader.setUniform("shadowTexture", _renderTexture.getTexture());
+    _shader.setUniformArray("lightPositions", _lightPositions.data(), _maxLightSources);
+    _shader.setUniformArray("lightBrightnesses", _lightBrightnesses.data(), _maxLightSources);
+    _shader.setUniform("numberLightSources", _numberLightSources);
+    _shader.setUniform("viewMatrix", sf::Glsl::Mat3(_renderTarget.getView().getInverseTransform()));
+    _shader.setUniform("screenSize", _screenSize);
 }
 
 void LightSystem::updateLightSources() {

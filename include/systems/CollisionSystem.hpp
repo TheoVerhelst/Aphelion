@@ -5,22 +5,18 @@
 #include <cstddef>
 #include <functional>
 #include <vector.hpp>
-#include <Observer.hpp>
 
 // Forward declarations
-namespace sf {
-	class Time;
-}
 class Scene;
 struct Body;
 struct CircleBody;
 class SupportFunction;
 
 
-class CollisionSystem : public Observer<const sf::Time&> {
+class CollisionSystem {
 public:
 	CollisionSystem(Scene& scene);
-	virtual void update(const sf::Time& dt) override;
+	void update();
 
 private:
 	typedef std::function<Vector2f(const Vector2f&)> SupportFunction;

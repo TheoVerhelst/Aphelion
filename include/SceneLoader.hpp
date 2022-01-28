@@ -10,9 +10,9 @@
 namespace sf {
     class Texture;
     class Font;
+    class SoundBuffer;
 }
 namespace tgui {
-    class BackendGui;
     class Texture;
 }
 class Scene;
@@ -21,12 +21,11 @@ template <typename T>
 class ResourceManager;
 
 
-void loadScene(Scene& scene, const std::string& setupFile,
+void loadScene(Scene& scene, const std::string& saveFile,
         const ResourceManager<sf::Font>& fontManager,
         const ResourceManager<sf::Texture>& textureManager,
         const ResourceManager<tgui::Texture>& tguiTextureManager,
-        const ResourceManager<sf::SoundBuffer>& soundBufferManager,
-        tgui::BackendGui& gui);
+        const ResourceManager<sf::SoundBuffer>& soundBufferManager);
 
 void setupBody(Scene& scene, const nlohmann::json& value, EntityId id,
         const ResourceManager<sf::Font>& fontManager);
@@ -41,6 +40,6 @@ void setupCircleShape(Scene& scene, const nlohmann::json& value, EntityId id);
 void setupPlayer(Scene& scene, const nlohmann::json& value, EntityId id);
 void setupLightSource(Scene& scene, const nlohmann::json& value, EntityId id);
 void setupMapElement(Scene& scene, const nlohmann::json& value, EntityId id,
-        const ResourceManager<tgui::Texture>& tguiTextureManager, tgui::BackendGui& gui);
+        const ResourceManager<tgui::Texture>& tguiTextureManager);
 
 #endif // SCENELOADER_HPP

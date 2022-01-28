@@ -6,18 +6,10 @@
 #include <SFML/Audio/SoundBuffer.hpp>
 #include <TGUI/TGUI.hpp>
 #include <TGUI/Backend/SFML-Graphics.hpp>
-#include <Scene.hpp>
-#include <systems/CollisionSystem.hpp>
-#include <systems/GameplaySystem.hpp>
-#include <systems/LightSystem.hpp>
-#include <systems/MapSystem.hpp>
-#include <systems/PhysicsSystem.hpp>
-#include <systems/RenderSystem.hpp>
-#include <DebugOverlay.hpp>
+#include <states/StateStack.hpp>
 #include <InputManager.hpp>
-#include <ResourceManager.hpp>
 #include <MusicManager.hpp>
-#include <Observer.hpp>
+#include <ResourceManager.hpp>
 
 class Application {
 public:
@@ -28,19 +20,8 @@ private:
     // Main objects
     sf::RenderWindow _window;
     tgui::Gui _gui;
-    Scene _scene;
-    tgui::CanvasSFML::Ptr _sceneCanvas;
-
-    // Systems
-    CollisionSystem _collisionSystem;
-    GameplaySystem _gameplaySystem;
-    LightSystem _lightSystem;
-    MapSystem _mapSystem;
-    PhysicsSystem _physicsSystem;
-    RenderSystem _renderSystem;
-    DebugOverlay _debugOverlay;
+    StateStack _stack;
     InputManager _inputManager;
-    EventSource<const sf::Time&> _timeEventSource;
 
     // Resource managers
     ResourceManager<sf::Font> _fontManager;
@@ -50,16 +31,7 @@ private:
     ResourceManager<sf::SoundBuffer> _soundBufferManager;
     MusicManager _musicManager;
 
-    // Others
-    const std::string _guiFile{"gui.txt"};
-    const std::string _saveFile{"save.json"};
-    sf::Sprite _backgroundSprite;
-    Vector2u _currentWindowSize;
-
-    void registerComponents();
-    void registerObservers();
     void loadResources();
-    void updateView();
 };
 
 #endif // APPLICATION_HPP

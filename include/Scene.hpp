@@ -2,10 +2,12 @@
 #define SCENE_HPP
 
 #include <cstddef>
+#include <cstdint>
 #include <vector>
 #include <queue>
 #include <memory>
 #include <map>
+#include <unordered_map>
 #include <cassert>
 #include <typeindex>
 #include <functional>

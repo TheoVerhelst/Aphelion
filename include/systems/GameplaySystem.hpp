@@ -2,7 +2,6 @@
 #define GAMEPLAYSYSTEM_HPP
 
 #include <utility>
-#include <Observer.hpp>
 
 // Forward declarations
 namespace sf {
@@ -10,15 +9,14 @@ namespace sf {
 }
 enum class Action;
 typedef std::pair<Action, bool> TriggerAction;
-typedef std::pair<Action, sf::Time> ContinuousAction;
 class Scene;
 
 
-class GameplaySystem : public Observer<const TriggerAction&>, public Observer<const ContinuousAction&> {
+class GameplaySystem {
 public:
     GameplaySystem(Scene& scene);
-    virtual void update(const TriggerAction& action) override;
-    virtual void update(const ContinuousAction& action) override;
+    bool handleTriggerAction(const TriggerAction& action);
+    bool handleContinuousAction(const Action& action, sf::Time dt);
 
 private:
     Scene& _scene;

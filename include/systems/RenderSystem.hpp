@@ -1,30 +1,25 @@
 #ifndef RENDERSYSTEM_HPP
 #define RENDERSYSTEM_HPP
 
-#include <cstdint>
 #include <SFML/Graphics/Drawable.hpp>
-#include <Observer.hpp>
+#include <SFML/Graphics/RenderTarget.hpp>
 #include <Scene.hpp>
 
 // Forward declarations
 namespace sf {
-    class Time;
-    class Shader;
     class Transformable;
+    class Time;
 }
-template <typename T>
-class ResourceManager;
 
 
-class RenderSystem : public sf::Drawable, public Observer<const sf::Time&> {
+class RenderSystem : public sf::Drawable {
 public:
-    RenderSystem(Scene& scene, ResourceManager<sf::Shader>& shaderManager);
+    RenderSystem(Scene& scene);
     virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
-    virtual void update(const sf::Time& dt) override;
+    void update(sf::Time dt);
 
 private:
     Scene& _scene;
-    ResourceManager<sf::Shader>& _shaderManager;
 
     template <typename T>
     void drawComponent(sf::RenderTarget& target, sf::RenderStates states) const {

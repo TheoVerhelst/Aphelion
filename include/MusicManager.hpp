@@ -7,7 +7,6 @@
 #include <memory>
 #include <SFML/System/Clock.hpp>
 #include <SFML/System/Time.hpp>
-#include <Observer.hpp>
 
 // Forward declarations
 namespace sf {
@@ -15,10 +14,10 @@ namespace sf {
 }
 
 
-class MusicManager : public Observer<const sf::Time&> {
+class MusicManager {
 public:
     void openFromFile(const std::string& filename);
-    virtual void update(const sf::Time& dt) override;
+    void update();
 
 private:
     std::vector<std::shared_ptr<sf::Music>> _musics;

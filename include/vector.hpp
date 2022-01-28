@@ -125,6 +125,25 @@ bool boxContains(const std::array<sf::Vector2<T>, 4>& box, const sf::Vector2<T>&
 	return dot(AB, AP) > 0 and dot(AB, BP) < 0 and dot(AD, AP) > 0 and dot(AD, DP) < 0;
 }
 
+
+template <std::floating_point T>
+sf::Vector2<T> clampVector(sf::Vector2<T> v, const sf::Vector2<T>& min, const sf::Vector2<T>& max) {
+	const T aspectRatio{v.x / v.y};
+    if (v.x > max.x) {
+        v = {max.x, max.x / aspectRatio};
+    }
+    if (v.y > max.y) {
+        v = {max.y * aspectRatio, min.y};
+    }
+    if (v.x < min.x) {
+        v = {min.x, min.x / aspectRatio};
+    }
+    if (v.y < min.y) {
+        v = {min.y * aspectRatio, min.y};
+    }
+    return v;
+}
+
 template <typename T>
 std::ostream& operator<<(std::ostream& os, sf::Vector2<T> v) {
   return os << "(" << v.x << ", " << v.y << ")";

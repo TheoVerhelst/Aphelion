@@ -7,7 +7,7 @@ PhysicsSystem::PhysicsSystem(Scene& scene):
     _scene{scene} {
 }
 
-void PhysicsSystem::update(const sf::Time& dt) {
+void PhysicsSystem::update(sf::Time dt) {
 	// Skip physics update until we waited for enough time (which is _timeStep)
 	// We take into account the time scale here. If it is negative, we proceed
 	// as if it was positive but we specify to the update function to go

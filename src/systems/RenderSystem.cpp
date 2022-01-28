@@ -1,16 +1,13 @@
 #include <SFML/System/Time.hpp>
 #include <SFML/Graphics/RenderTarget.hpp>
 #include <SFML/Graphics/Sprite.hpp>
-#include <TGUI/Widgets/Picture.hpp>
 #include <systems/RenderSystem.hpp>
-#include <ResourceManager.hpp>
 #include <components.hpp>
 #include <Animation.hpp>
 #include <vector.hpp>
 
-RenderSystem::RenderSystem(Scene& scene, ResourceManager<sf::Shader>& shaderManager):
-    _scene{scene},
-    _shaderManager{shaderManager} {
+RenderSystem::RenderSystem(Scene& scene):
+    _scene{scene} {
 }
 
 void RenderSystem::draw(sf::RenderTarget& target, sf::RenderStates states) const {
@@ -18,7 +15,7 @@ void RenderSystem::draw(sf::RenderTarget& target, sf::RenderStates states) const
     drawComponent<AnimationComponent>(target, states);
 }
 
-void RenderSystem::update(const sf::Time& dt) {
+void RenderSystem::update(sf::Time dt) {
     for (EntityId id : _scene.view<Body, sf::Sprite>()) {
         updateTransformable(_scene.getComponent<sf::Sprite>(id), id);
     }

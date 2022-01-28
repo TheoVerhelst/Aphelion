@@ -35,7 +35,7 @@ sf::Sprite& Animation::getSprite() {
     return _sprite;
 }
 
-void Animation::update(const sf::Time& dt) {
+void Animation::update(sf::Time dt) {
     _sound.update();
     if (not _stopped) {
         // Update the animation timer

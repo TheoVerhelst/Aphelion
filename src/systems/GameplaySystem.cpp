@@ -8,7 +8,7 @@ GameplaySystem::GameplaySystem(Scene& scene):
     _scene{scene} {
 }
 
-void GameplaySystem::update(const TriggerAction& actionPair) {
+bool GameplaySystem::handleTriggerAction(const TriggerAction& actionPair) {
     const EntityId playerId{_scene.findUnique<Player>()};
     auto& [action, start] = actionPair;
     // Play the player animations
@@ -20,17 +20,19 @@ void GameplaySystem::update(const TriggerAction& actionPair) {
         } else {
             animationIt->second.stop();
         }
+        return true;
     }
+    return false;
 }
 
-void GameplaySystem::update(const ContinuousAction& actionPair) {
+bool GameplaySystem::handleContinuousAction(const Action& action, sf::Time dt) {
     const EntityId playerId{_scene.findUnique<Player>()};
-    auto& [action, dt] = actionPair;
     Vector2f dv{0, 0};
     float dw{0};
     const float engineAccel{200};
     const float rcsLinearAccel{50};
     const float rcsCircularAccel{10};
+    bool consumedAction{true};
     switch (action) {
         case Action::Engine:
             dv += {0, -engineAccel};
@@ -54,9 +56,11 @@ void GameplaySystem::update(const ContinuousAction& actionPair) {
             dw -= rcsCircularAccel;
             break;
         default:
+            consumedAction = false;
             break;
     }
     Body& body{_scene.getComponent<Body>(playerId)};
     body.velocity += rotate(dv, body.rotation) * dt.asSeconds();
     body.angularVelocity += dw * dt.asSeconds();
+    return consumedAction;
 }

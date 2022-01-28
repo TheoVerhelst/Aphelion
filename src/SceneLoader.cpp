@@ -20,18 +20,17 @@
 using nlohmann::json;
 using namespace std::placeholders;
 
-void loadScene(Scene& scene, const std::string& setupFile,
+void loadScene(Scene& scene, const std::string& saveFile,
         const ResourceManager<sf::Font>& fontManager,
         const ResourceManager<sf::Texture>& textureManager,
         const ResourceManager<tgui::Texture>& tguiTextureManager,
-        const ResourceManager<sf::SoundBuffer>& soundBufferManager,
-        tgui::BackendGui& gui) {
-    std::ifstream file{setupFile};
+        const ResourceManager<sf::SoundBuffer>& soundBufferManager) {
+    std::ifstream file{saveFile};
 	json j;
 	try	{
 	    j = json::parse(file);
 	} catch (json::parse_error& ex) {
-	    std::cerr << "parse error in " << setupFile << " at byte " << ex.byte << std::endl;
+	    std::cerr << "parse error in " << saveFile << " at byte " << ex.byte << std::endl;
 	}
 
     std::vector<std::pair<std::string, std::function<void(Scene&, const json&,  EntityId)>>> setupFunctions{
@@ -43,7 +42,7 @@ void loadScene(Scene& scene, const std::string& setupFile,
         {"circleShape", setupCircleShape},
         {"player", setupPlayer},
         {"lightSource", setupLightSource},
-        {"mapElement", std::bind(setupMapElement, _1, _2, _3, std::cref(tguiTextureManager), std::ref(gui))}
+        {"mapElement", std::bind(setupMapElement, _1, _2, _3, std::cref(tguiTextureManager))}
     };
 
 	for (json& components : j.at("entities")) {
@@ -161,15 +160,12 @@ void setupLightSource(Scene& scene, const json& value, EntityId id) {
     value.at("brightness").get_to(lightSource.brightness);
 }
 
-void setupMapElement(Scene& scene, const json& value, EntityId id, const ResourceManager<tgui::Texture>& tguiTextureManager, tgui::BackendGui& gui) {
+void setupMapElement(Scene& scene, const json& value, EntityId id, const ResourceManager<tgui::Texture>& tguiTextureManager) {
     MapElement& mapElement{scene.assignComponent<MapElement>(id)};
     value.at("type").get_to(mapElement.type);
     std::string textureName{value.at("texture").get<std::string>()};
     mapElement.icon = tgui::Picture::create(tguiTextureManager.get(textureName));
-    gui.add(mapElement.icon);
-    mapElement.icon->setVisible(false);
     mapElement.icon->setOrigin(0.5, 0.5);
-    mapElement.icon->moveToFront();
     if (mapElement.type == MapElementType::CelestialBody) {
         mapElement.icon->setScale(2.f);
     }

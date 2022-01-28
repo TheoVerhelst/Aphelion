@@ -4,17 +4,16 @@
 #include <cstdint>
 #include <SFML/System/Time.hpp>
 #include <vector.hpp>
-#include <Observer.hpp>
 
 // Forward declarations
 class Scene;
 typedef std::uint32_t EntityId;
 
 
-class PhysicsSystem : public Observer<const sf::Time&> {
+class PhysicsSystem {
 public:
 	PhysicsSystem(Scene& scene);
-    virtual void update(const sf::Time& dt) override;
+    void update(sf::Time dt);
 	void updateSteps(int steps);
 	void setTimeScale(float timeScale);
 	long long int getStepCounter() const;

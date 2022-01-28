@@ -37,7 +37,7 @@ namespace nlohmann {
 
     template<>
     struct adl_serializer<sf::Time> {
-        static void to_json(json& j, const sf::Time& time) {
+        static void to_json(json& j, sf::Time time) {
             j = time.asSeconds();
         }
 

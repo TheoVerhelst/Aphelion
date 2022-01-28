@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.0)
 project(Aphelion)
 
 IF (NOT DEFINED COMPILE_STATIC)
-    set(COMPILE_STATIC TRUE)
+    set(COMPILE_STATIC FALSE)
 endif()
 
 set(SFML_STATIC_LIBRARIES ${COMPILE_STATIC})
@@ -36,7 +36,7 @@ if (CMAKE_COMPILER_IS_GNUCC)
 -Wstrict-overflow -Wstring-compare -Wstringop-truncation -Wsuggest-final-methods \
 -Wsuggest-final-types -Wsuggest-override -Wswitch-default -Wsynth \
 -Wtrampolines -Wundef -Wunreachable-code -Wunsafe-loop-optimizations \
--Wunused-macros -Wuseless-cast -Wvector-operation-performance -Wvla -Wvolatile \
+-Wuseless-cast -Wvector-operation-performance -Wvla -Wvolatile \
 -Wwrite-strings -Wzero-as-null-pointer-constant")
 endif()
 if (MSVC)
@@ -50,17 +50,19 @@ endif()
 
 # List all source files
 set(SOURCE_FILES
+    src/states/AbstractState.cpp
+    src/states/GameState.cpp
+    src/states/MapState.cpp
+    src/states/StateStack.cpp
 	src/systems/CollisionSystem.cpp
 	src/systems/GameplaySystem.cpp
 	src/systems/LightSystem.cpp
-	src/systems/MapSystem.cpp
 	src/systems/PhysicsSystem.cpp
 	src/systems/RenderSystem.cpp
 	src/Animation.cpp
 	src/Application.cpp
 	src/components.cpp
 	src/DebugInfo.cpp
-	src/DebugOverlay.cpp
 	src/format.cpp
 	src/InputManager.cpp
 	src/LoopedSound.cpp

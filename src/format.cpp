@@ -19,6 +19,6 @@ std::string formatTime(float seconds) {
     return ss.str();
 }
 
-std::string formatTime(const sf::Time& t) {
+std::string formatTime(sf::Time t) {
     return formatTime(t.asSeconds());
 }
