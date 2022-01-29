@@ -7,9 +7,8 @@
 #include <Action.hpp>
 #include <SoundSettings.hpp>
 
-PauseState::PauseState(StateStack& stack, SoundSettings& soundSettings):
-    AbstractState{stack},
-    _soundSettings{soundSettings} {
+PauseState::PauseState(StateStack& stack):
+    AbstractState{stack} {
 }
 
 tgui::Widget::Ptr PauseState::buildGui() {
@@ -32,7 +31,7 @@ tgui::Widget::Ptr PauseState::buildGui() {
     layout->addSpace(0.1f);
 
     tgui::Button::Ptr settingsButton{tgui::Button::create("Settings")};
-    settingsButton->onPress([this]{_stack.pushState(new SettingsState(_stack, _soundSettings));});
+    settingsButton->onPress([this]{_stack.pushState<SettingsState>();});
     settingsButton->setTextSize(18);
     layout->add(settingsButton);
     layout->addSpace(0.1f);

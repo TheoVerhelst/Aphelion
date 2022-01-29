@@ -34,6 +34,7 @@ private:
     MusicManager _musicManager;
 
     void loadResources();
+    void registerStateBuilders();
 };
 
 #endif // APPLICATION_HPP

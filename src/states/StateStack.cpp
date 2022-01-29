@@ -1,18 +1,8 @@
-#include <algorithm>
-#include <TGUI/Backend/Window/BackendGui.hpp>
-#include <states/AbstractState.hpp>
 #include <states/StateStack.hpp>
 
 
 StateStack::StateStack(tgui::BackendGui& gui) :
     _gui{gui} {
-}
-
-void StateStack::pushState(AbstractState* state) {
-    tgui::Widget::Ptr widget{state->buildGui()};
-    _gui.add(widget);
-    // TODO maybe use brace-init for the state shared_ptr
-    _stack.emplace_back(widget, std::shared_ptr<AbstractState>(state));
 }
 
 void StateStack::popState() {

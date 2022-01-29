@@ -63,10 +63,10 @@ bool GameState::handleTriggerAction(const TriggerAction& actionPair) {
     if (start) {
         switch (action) {
             case Action::ToggleMap:
-                _stack.pushState(new MapState(_stack, _scene, _tguiTextureManager));
+                _stack.pushState<MapState>(_scene);
                 return true;
             case Action::Exit:
-                _stack.pushState(new PauseState(_stack, _soundSettings));
+                _stack.pushState<PauseState>();
                 return true;
             default:
                 break;

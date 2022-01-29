@@ -1,58 +1,57 @@
 Button {
-    Texture         = "pixelTheme.png" Part(75, 55, 30, 30) Middle(10, 10) NoSmooth;
-    TextureHover    = "pixelTheme.png" Part(60, 85, 30, 30) Middle(10, 10) NoSmooth;
-    TextureDown     = "pixelTheme.png" Part(0, 85, 30, 30) Middle(10, 10) NoSmooth;
-    TextureFocused  = "pixelTheme.png" Part(30, 85, 30, 30) Middle(10, 10) NoSmooth;
+    Texture         = "pixelTheme.png" Part(155, 20, 30, 30) Middle(10, 10) NoSmooth;
+    TextureHover    = "pixelTheme.png" Part(0, 50, 30, 30) Middle(10, 10) NoSmooth;
+    TextureDown     = "pixelTheme.png" Part(185, 20, 30, 30) Middle(10, 10) NoSmooth;
+    TextureFocused  = "pixelTheme.png" Part(215, 20, 30, 30) Middle(10, 10) NoSmooth;
     TextColor       = Black;
     TextColorHover  = Black;
     TextOutlineThickness = 4;
 }
 
 ChatBox {
-    TextureBackground = "pixelTheme.png" Part(20, 403, 48, 48) Middle(16) NoSmooth;
+    TextureBackground = "pixelTheme.png" Part(130, 194, 48, 48) Middle(16) NoSmooth;
     Scrollbar         = &Scrollbar;
     Padding           = (3, 3, 3, 3);
 }
 
 CheckBox {
-    TextureUnchecked        = "pixelTheme.png" Part(96, 115, 32, 32) NoSmooth;
-    TextureChecked          = "pixelTheme.png" Part(0, 115, 32, 32) NoSmooth;
-    TextureUncheckedHover   = "pixelTheme.png" Part(32, 147, 32, 32) NoSmooth;
-    TextureCheckedHover     = "pixelTheme.png" Part(64, 115, 32, 32) NoSmooth;
-    TextureUncheckedFocused = "pixelTheme.png" Part(0, 147, 32, 32) NoSmooth;
-    TextureCheckedFocused   = "pixelTheme.png" Part(32, 115, 32, 32) NoSmooth;
+    TextureUnchecked        = "pixelTheme.png" Part(156, 50, 32, 32) NoSmooth;
+    TextureChecked          = "pixelTheme.png" Part(60, 50, 32, 32) NoSmooth;
+    TextureUncheckedHover   = "pixelTheme.png" Part(220, 50, 32, 32) NoSmooth;
+    TextureCheckedHover     = "pixelTheme.png" Part(124, 50, 32, 32) NoSmooth;
+    TextureUncheckedFocused = "pixelTheme.png" Part(188, 50, 32, 32) NoSmooth;
+    TextureCheckedFocused   = "pixelTheme.png" Part(92, 50, 32, 32) NoSmooth;
     TextColor = Black;
     TextColorHover = Black;
 }
 
 ChildWindow {
-    TextureTitleBar        = "pixelTheme.png" Part(0, 55, 75, 25) Middle(25, 0) NoSmooth;
-    TitleColor             = rgb(190, 190, 190);
-    BackgroundColor        = rgb( 80,  80,  80);
-    BorderColor            = Black;
-    Borders                = (1, 1, 1, 1);
-    DistanceToSide         = 5;
+    TextureTitleBar        = "pixelTheme.png" Part(80, 20, 75, 25) Middle(25, 0) NoSmooth;
+    TitleColor             = Black;
+    TextureBackground      = "pixelTheme.png" Part(120, 114, 75, 35) Middle(25, 5, 25, 15);
+    Borders                = (0);
+    DistanceToSide         = 7;
     PaddingBetweenButtons  = 2;
     ShowTextOnTitleButtons = false;
     CloseButton = {
         Texture       = "pixelTheme.png" Part(24, 0, 15, 15) NoSmooth;
-        TextureHover  = "pixelTheme.png" Part(54, 0, 15, 15) NoSmooth;
-        TextureDown   = "pixelTheme.png" Part(39, 0, 15, 15) NoSmooth;
+        TextureHover  = "pixelTheme.png" Part(54, 0, 15, 16) NoSmooth;
+        TextureDown   = "pixelTheme.png" Part(39, 0, 15, 16) NoSmooth;
     };
     MaximizeButton = {
-        Texture       = "pixelTheme.png" Part(69, 0, 15, 15) NoSmooth;
-        TextureHover  = "pixelTheme.png" Part(99, 0, 15, 15) NoSmooth;
-        TextureDown   = "pixelTheme.png" Part(84, 0, 15, 15) NoSmooth;
+        Texture       = "pixelTheme.png" Part(69, 0, 15, 16) NoSmooth;
+        TextureHover  = "pixelTheme.png" Part(99, 0, 15, 16) NoSmooth;
+        TextureDown   = "pixelTheme.png" Part(84, 0, 15, 16) NoSmooth;
     };
     MinimizeButton = {
-        Texture       = "pixelTheme.png" Part(0, 15, 15, 15) NoSmooth;
-        TextureHover  = "pixelTheme.png" Part(30, 15, 15, 15) NoSmooth;
-        TextureDown   = "pixelTheme.png" Part(15, 15, 15, 15) NoSmooth;
+        Texture       = "pixelTheme.png" Part(114, 0, 15, 16) NoSmooth;
+        TextureHover  = "pixelTheme.png" Part(144, 0, 15, 16) NoSmooth;
+        TextureDown   = "pixelTheme.png" Part(129, 0, 15, 16) NoSmooth;
     };
 }
 
 ColorPicker {
-    TextureTitleBar        = "pixelTheme.png" Part(0, 55, 75, 25) Middle(25, 0) NoSmooth;
+    TextureTitleBar        = "pixelTheme.png" Part(80, 20, 75, 25) Middle(25, 0) NoSmooth;
     TitleColor             = rgb(190, 190, 190);
     BackgroundColor        = rgb( 80,  80,  80);
     BorderColor            = Black;
@@ -62,34 +61,34 @@ ColorPicker {
     ShowTextOnTitleButtons = false;
     CloseButton = {
         Texture       = "pixelTheme.png" Part(24, 0, 15, 15) NoSmooth;
-        TextureHover  = "pixelTheme.png" Part(54, 0, 15, 15) NoSmooth;
-        TextureDown   = "pixelTheme.png" Part(39, 0, 15, 15) NoSmooth;
+        TextureHover  = "pixelTheme.png" Part(54, 0, 15, 16) NoSmooth;
+        TextureDown   = "pixelTheme.png" Part(39, 0, 15, 16) NoSmooth;
     };
     MaximizeButton = {
-        Texture       = "pixelTheme.png" Part(69, 0, 15, 15) NoSmooth;
-        TextureHover  = "pixelTheme.png" Part(99, 0, 15, 15) NoSmooth;
-        TextureDown   = "pixelTheme.png" Part(84, 0, 15, 15) NoSmooth;
+        Texture       = "pixelTheme.png" Part(69, 0, 15, 16) NoSmooth;
+        TextureHover  = "pixelTheme.png" Part(99, 0, 15, 16) NoSmooth;
+        TextureDown   = "pixelTheme.png" Part(84, 0, 15, 16) NoSmooth;
     };
     MinimizeButton = {
-        Texture       = "pixelTheme.png" Part(0, 15, 15, 15) NoSmooth;
-        TextureHover  = "pixelTheme.png" Part(30, 15, 15, 15) NoSmooth;
-        TextureDown   = "pixelTheme.png" Part(15, 15, 15, 15) NoSmooth;
+        Texture       = "pixelTheme.png" Part(114, 0, 15, 16) NoSmooth;
+        TextureHover  = "pixelTheme.png" Part(144, 0, 15, 16) NoSmooth;
+        TextureDown   = "pixelTheme.png" Part(129, 0, 15, 16) NoSmooth;
     };
 }
 
 ComboBox {
-    TextureBackground     = "pixelTheme.png" Part(20, 403, 48, 48) Middle(16) NoSmooth;
-    TextureArrow          = "pixelTheme.png" Part(64, 147, 32, 32) NoSmooth;
-    TextureArrowHover     = "pixelTheme.png" Part(96, 147, 32, 32) NoSmooth;
+    TextureBackground     = "pixelTheme.png" Part(130, 194, 48, 48) Middle(16) NoSmooth;
+    TextureArrow          = "pixelTheme.png" Part(0, 82, 32, 32) NoSmooth;
+    TextureArrowHover     = "pixelTheme.png" Part(32, 82, 32, 32) NoSmooth;
     TextColor = Black;
     Padding               = (3, 3, 3, 3);
     ListBox               = &ListBox;
 }
 
 EditBox {
-    Texture        = "pixelTheme.png" Part(60, 243, 60, 40) Middle(15, 0) NoSmooth;
-    TextureHover   = "pixelTheme.png" Part(60, 283, 60, 40) Middle(15, 0) NoSmooth;
-    TextureFocused = "pixelTheme.png" Part(0, 283, 60, 40) Middle(15, 0) NoSmooth;
+    Texture        = "pixelTheme.png" Part(195, 114, 60, 40) Middle(15, 0) NoSmooth;
+    TextureHover   = "pixelTheme.png" Part(60, 154, 60, 40) Middle(15, 0) NoSmooth;
+    TextureFocused = "pixelTheme.png" Part(0, 154, 60, 40) Middle(15, 0) NoSmooth;
 
     TextColor = Black;
     SelectedTextColor           = White;
@@ -100,7 +99,7 @@ EditBox {
 }
 
 FileDialog {
-    TextureTitleBar        = "pixelTheme.png" Part(0, 55, 75, 25) Middle(25, 0) NoSmooth;
+    TextureTitleBar        = "pixelTheme.png" Part(80, 20, 75, 25) Middle(25, 0) NoSmooth;
     TitleColor             = rgb(190, 190, 190);
     BackgroundColor        = rgb( 80,  80,  80);
     BorderColor            = Black;
@@ -110,18 +109,18 @@ FileDialog {
     ShowTextOnTitleButtons = false;
     CloseButton = {
         Texture       = "pixelTheme.png" Part(24, 0, 15, 15) NoSmooth;
-        TextureHover  = "pixelTheme.png" Part(54, 0, 15, 15) NoSmooth;
-        TextureDown   = "pixelTheme.png" Part(39, 0, 15, 15) NoSmooth;
+        TextureHover  = "pixelTheme.png" Part(54, 0, 15, 16) NoSmooth;
+        TextureDown   = "pixelTheme.png" Part(39, 0, 15, 16) NoSmooth;
     };
     MaximizeButton = {
-        Texture       = "pixelTheme.png" Part(69, 0, 15, 15) NoSmooth;
-        TextureHover  = "pixelTheme.png" Part(99, 0, 15, 15) NoSmooth;
-        TextureDown   = "pixelTheme.png" Part(84, 0, 15, 15) NoSmooth;
+        Texture       = "pixelTheme.png" Part(69, 0, 15, 16) NoSmooth;
+        TextureHover  = "pixelTheme.png" Part(99, 0, 15, 16) NoSmooth;
+        TextureDown   = "pixelTheme.png" Part(84, 0, 15, 16) NoSmooth;
     };
     MinimizeButton = {
-        Texture       = "pixelTheme.png" Part(0, 15, 15, 15) NoSmooth;
-        TextureHover  = "pixelTheme.png" Part(30, 15, 15, 15) NoSmooth;
-        TextureDown   = "pixelTheme.png" Part(15, 15, 15, 15) NoSmooth;
+        Texture       = "pixelTheme.png" Part(114, 0, 15, 16) NoSmooth;
+        TextureHover  = "pixelTheme.png" Part(144, 0, 15, 16) NoSmooth;
+        TextureDown   = "pixelTheme.png" Part(129, 0, 15, 16) NoSmooth;
     };
     Button = &Button;
     EditBox = &EditBox;
@@ -136,7 +135,7 @@ Label {
 }
 
 ListBox {
-    TextureBackground            = "pixelTheme.png" Part(20, 403, 48, 48) Middle(16) NoSmooth;
+    TextureBackground            = "pixelTheme.png" Part(130, 194, 48, 48) Middle(16) NoSmooth;
     TextColor = Black;
     TextColorHover = Black;
     BackgroundColorHover         = rgb(100, 100, 100);
@@ -173,7 +172,7 @@ MessageBox {
     TextColor = Black;
     Button          = &Button;
 
-    TextureTitleBar = "pixelTheme.png" Part(0, 55, 75, 25) Middle(25, 0) NoSmooth;
+    TextureTitleBar = "pixelTheme.png" Part(80, 20, 75, 25) Middle(25, 0) NoSmooth;
     TitleColor      = rgb(190, 190, 190);
     BackgroundColor = rgb( 80,  80,  80);
     BorderColor     = Black;
@@ -181,8 +180,8 @@ MessageBox {
     DistanceToSide  = 5;
     CloseButton     = {
                         Texture       = "pixelTheme.png" Part(24, 0, 15, 15) NoSmooth;
-                        TextureHover  = "pixelTheme.png" Part(54, 0, 15, 15) NoSmooth;
-                        TextureDown   = "pixelTheme.png" Part(39, 0, 15, 15) NoSmooth;
+                        TextureHover  = "pixelTheme.png" Part(54, 0, 15, 16) NoSmooth;
+                        TextureDown   = "pixelTheme.png" Part(39, 0, 15, 16) NoSmooth;
                       };
 }
 
@@ -191,58 +190,58 @@ Panel {
 }
 
 ProgressBar {
-    TextureBackground = "pixelTheme.png" Part(0, 323, 90, 40) Middle(20, 0) NoSmooth;
-    TextureFill       = "pixelTheme.png" Part(0, 363, 90, 40) Middle(16, 0) NoSmooth;
+    TextureBackground = "pixelTheme.png" Part(120, 154, 90, 40) Middle(20, 0) NoSmooth;
+    TextureFill       = "pixelTheme.png" Part(0, 194, 90, 40) Middle(16, 0) NoSmooth;
     TextColor = Black;
     TextColorFilled   = rgb(250, 250, 250);
 }
 
 RadioButton {
-    TextureUnchecked        = "pixelTheme.png" Part(96, 179, 32, 32) NoSmooth;
-    TextureChecked          = "pixelTheme.png" Part(0, 179, 32, 32) NoSmooth;
-    TextureUncheckedHover   = "pixelTheme.png" Part(32, 211, 32, 32) NoSmooth;
-    TextureCheckedHover     = "pixelTheme.png" Part(64, 179, 32, 32) NoSmooth;
-    TextureUncheckedFocused = "pixelTheme.png" Part(0, 211, 32, 32) NoSmooth;
-    TextureCheckedFocused   = "pixelTheme.png" Part(32, 179, 32, 32) NoSmooth;
+    TextureUnchecked        = "pixelTheme.png" Part(160, 82, 32, 32) NoSmooth;
+    TextureChecked          = "pixelTheme.png" Part(64, 82, 32, 32) NoSmooth;
+    TextureUncheckedHover   = "pixelTheme.png" Part(224, 82, 32, 32) NoSmooth;
+    TextureCheckedHover     = "pixelTheme.png" Part(128, 82, 32, 32) NoSmooth;
+    TextureUncheckedFocused = "pixelTheme.png" Part(192, 82, 32, 32) NoSmooth;
+    TextureCheckedFocused   = "pixelTheme.png" Part(96, 82, 32, 32) NoSmooth;
     TextColor = Black;
     TextColorHover = Black;
 }
 
 Scrollbar {
-    TextureTrack          = "pixelTheme.png" Part(40, 35, 20, 20) NoSmooth;
-    TextureTrackHover     = "pixelTheme.png" Part(60, 35, 20, 20) NoSmooth;
-    TextureThumb          = "pixelTheme.png" Part(0, 35, 20, 20) NoSmooth;
-    TextureThumbHover     = "pixelTheme.png" Part(20, 35, 20, 20) NoSmooth;
-    TextureArrowUp        = "pixelTheme.png" Part(85, 15, 20, 20) Middle(0, 0, 20, 19) NoSmooth;
-    TextureArrowUpHover   = "pixelTheme.png" Part(105, 15, 20, 20) Middle(0, 0, 20, 19) NoSmooth;
-    TextureArrowDown      = "pixelTheme.png" Part(45, 15, 20, 20) Middle(0, 1, 20, 19) NoSmooth;
-    TextureArrowDownHover = "pixelTheme.png" Part(65, 15, 20, 20) Middle(0, 1, 20, 19) NoSmooth;
+    TextureTrack          = "pixelTheme.png" Part(40, 20, 20, 20) NoSmooth;
+    TextureTrackHover     = "pixelTheme.png" Part(60, 20, 20, 20) NoSmooth;
+    TextureThumb          = "pixelTheme.png" Part(0, 20, 20, 20) NoSmooth;
+    TextureThumbHover     = "pixelTheme.png" Part(20, 20, 20, 20) NoSmooth;
+    TextureArrowUp        = "pixelTheme.png" Part(199, 0, 20, 20) Middle(0, 0, 20, 19) NoSmooth;
+    TextureArrowUpHover   = "pixelTheme.png" Part(219, 0, 20, 20) Middle(0, 0, 20, 19) NoSmooth;
+    TextureArrowDown      = "pixelTheme.png" Part(159, 0, 20, 20) Middle(0, 1, 20, 19) NoSmooth;
+    TextureArrowDownHover = "pixelTheme.png" Part(179, 0, 20, 20) Middle(0, 1, 20, 19) NoSmooth;
 }
 
 Slider {
-    TextureTrack      = "pixelTheme.png" Part(90, 363, 20, 40) Middle(0, 15) NoSmooth;
-    TextureTrackHover = "pixelTheme.png" Part(0, 403, 20, 40) Middle(0, 15) NoSmooth;
-    TextureThumb      = "pixelTheme.png" Part(90, 85, 30, 30) NoSmooth;
+    TextureTrack      = "pixelTheme.png" Part(90, 194, 20, 40) Middle(0, 15) NoSmooth;
+    TextureTrackHover = "pixelTheme.png" Part(110, 194, 20, 40) Middle(0, 15) NoSmooth;
+    TextureThumb      = "pixelTheme.png" Part(30, 50, 30, 30) Smooth;
 }
 
 SpinButton {
-    TextureArrowUp        = "pixelTheme.png" Part(85, 15, 20, 20) Middle(0, 0, 20, 19) NoSmooth;
-    TextureArrowUpHover   = "pixelTheme.png" Part(105, 15, 20, 20) Middle(0, 0, 20, 19) NoSmooth;
-    TextureArrowDown      = "pixelTheme.png" Part(45, 15, 20, 20) Middle(0, 1, 20, 19) NoSmooth;
-    TextureArrowDownHover = "pixelTheme.png" Part(65, 15, 20, 20) Middle(0, 1, 20, 19) NoSmooth;
+    TextureArrowUp        = "pixelTheme.png" Part(199, 0, 20, 20) Middle(0, 0, 20, 19) NoSmooth;
+    TextureArrowUpHover   = "pixelTheme.png" Part(219, 0, 20, 20) Middle(0, 0, 20, 19) NoSmooth;
+    TextureArrowDown      = "pixelTheme.png" Part(159, 0, 20, 20) Middle(0, 1, 20, 19) NoSmooth;
+    TextureArrowDownHover = "pixelTheme.png" Part(179, 0, 20, 20) Middle(0, 1, 20, 19) NoSmooth;
     BorderBetweenArrows    = 0;
 }
 
 Tabs {
-    TextureTab         = "pixelTheme.png" Part(64, 211, 60, 32) Middle(16, 0) NoSmooth;
-    TextureSelectedTab = "pixelTheme.png" Part(0, 243, 60, 32) Middle(16, 0) NoSmooth;
+    TextureTab         = "pixelTheme.png" Part(0, 114, 60, 32) Middle(16, 0) NoSmooth;
+    TextureSelectedTab = "pixelTheme.png" Part(60, 114, 60, 32) Middle(16, 0) NoSmooth;
     TextColor = Black;
     SelectedTextColor  = White;
     DistanceToSide     = 8;
 }
 
 TextArea {
-    TextureBackground           = "pixelTheme.png" Part(20, 403, 48, 48) Middle(16) NoSmooth;
+    TextureBackground           = "pixelTheme.png" Part(130, 194, 48, 48) Middle(16) NoSmooth;
     TextColor = Black;
     SelectedTextColor           = White;
     SelectedTextBackgroundColor = rgb( 10, 110, 255);

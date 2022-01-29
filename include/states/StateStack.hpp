@@ -4,23 +4,40 @@
 #include <vector>
 #include <memory>
 #include <utility>
+#include <functional>
 #include <TGUI/Widget.hpp>
+#include <TGUI/Backend/Window/BackendGui.hpp>
+#include <states/AbstractState.hpp>
 
 // Forward declarations
 namespace sf {
     class Time;
 }
-namespace tgui {
-    class BackendGui;
-}
 enum class Action;
 typedef std::pair<Action, bool> TriggerAction;
-class AbstractState;
+
 
 class StateStack {
 public:
+    template <typename... Args>
+    using StateBuilder = std::function<AbstractState*(Args&...)>;
+
     StateStack(tgui::BackendGui& gui);
-    void pushState(AbstractState* state);
+
+    template <typename T, typename... Args>
+    void registerStateBuilder(const StateBuilder<Args...>& builder) {
+        getStateBuilder<T, Args...>(builder);
+    }
+
+    template <typename T, typename... Args>
+    void pushState(Args&... args) {
+        AbstractState* state{getStateBuilder<T, Args...>()(args...)};
+        tgui::Widget::Ptr widget{state->buildGui()};
+        _gui.add(widget);
+        // TODO maybe use brace-init for the state shared_ptr
+        _stack.emplace_back(widget, std::shared_ptr<AbstractState>(state));
+    }
+
     void popState();
     void update(sf::Time dt);
     void handleTriggerAction(const TriggerAction& action);
@@ -37,6 +54,13 @@ private:
     // Number of states to pop at the next update. We delay the removal to avoid
     // running code of deleted states when they call StateStack::popState.
     int _popQueue{0};
+
+
+    template <typename T, typename... Args>
+    const StateBuilder<Args...>& getStateBuilder(const StateBuilder<Args...>& init = StateBuilder<Args...>()) {
+        static StateBuilder<Args...> builder{init};
+        return builder;
+    }
 };
 
 #endif // STATESTACK_HPP

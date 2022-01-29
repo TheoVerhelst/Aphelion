@@ -1,4 +1,7 @@
 #include <states/GameState.hpp>
+#include <states/MapState.hpp>
+#include <states/PauseState.hpp>
+#include <states/SettingsState.hpp>
 #include <Application.hpp>
 
 Application::Application():
@@ -13,8 +16,8 @@ Application::Application():
     tgui::Font font{"resources/fonts/Ipixelu.ttf"};
     font.setSmooth(false);
     tgui::Font::setGlobalFont(font);
-    _stack.pushState(new GameState(_stack, _fontManager, _textureManager,
-            _tguiTextureManager, _shaderManager, _soundBufferManager, _soundSettings));
+    registerStateBuilders();
+    _stack.pushState<GameState>();
 }
 
 void Application::run() {
@@ -82,4 +85,20 @@ void Application::loadResources() {
     _soundBufferManager.loadFromFile("resources/sounds/rcs.wav", "rcs");
     _soundBufferManager.loadFromFile("resources/sounds/landing.wav", "landing");
     _musicManager.openFromFile("resources/musics/Aphelion.ogg");
+}
+
+void Application::registerStateBuilders() {
+    _stack.registerStateBuilder<GameState>(StateStack::StateBuilder<>([this] {
+        return new GameState(_stack, _fontManager, _textureManager,
+            _tguiTextureManager, _shaderManager, _soundBufferManager, _soundSettings);
+    }));
+    _stack.registerStateBuilder<MapState>(StateStack::StateBuilder<Scene&>([this] (Scene& scene) {
+        return new MapState(_stack, scene, _tguiTextureManager);
+    }));
+    _stack.registerStateBuilder<PauseState>(StateStack::StateBuilder<>([this] {
+        return new PauseState(_stack);
+    }));
+    _stack.registerStateBuilder<SettingsState>(StateStack::StateBuilder<>([this] {
+        return new SettingsState(_stack, _soundSettings);
+    }));
 }
