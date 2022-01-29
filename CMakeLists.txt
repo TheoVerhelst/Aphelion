@@ -52,6 +52,7 @@ endif()
 set(SOURCE_FILES
     src/states/AbstractState.cpp
     src/states/GameState.cpp
+    src/states/MainMenuState.cpp
     src/states/MapState.cpp
     src/states/PauseState.cpp
     src/states/SettingsState.cpp

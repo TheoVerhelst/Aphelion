@@ -6,15 +6,16 @@ StateStack::StateStack(tgui::BackendGui& gui) :
 }
 
 void StateStack::popState() {
-    _popQueue++;
+    _actionQueue.push([this] {
+        _gui.remove(_stack.back().widget);
+        _stack.pop_back();
+    });
 }
 
 void StateStack::update(sf::Time dt) {
-    // Remove states that asked to be removed
-    while (_popQueue > 0) {
-        _gui.remove(_stack.back().widget);
-        _stack.pop_back();
-        _popQueue--;
+    while (not _actionQueue.empty()) {
+        _actionQueue.front()();
+        _actionQueue.pop();
     }
     for (auto it = _stack.rbegin(); it != _stack.rend(); ++it) {
         if (it->state->update(dt)) {

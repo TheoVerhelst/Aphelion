@@ -1,4 +1,5 @@
 #include <states/GameState.hpp>
+#include <states/MainMenuState.hpp>
 #include <states/MapState.hpp>
 #include <states/PauseState.hpp>
 #include <states/SettingsState.hpp>
@@ -17,7 +18,7 @@ Application::Application():
     font.setSmooth(false);
     tgui::Font::setGlobalFont(font);
     registerStateBuilders();
-    _stack.pushState<GameState>();
+    _stack.pushState<MainMenuState>();
 }
 
 void Application::run() {
@@ -91,6 +92,9 @@ void Application::registerStateBuilders() {
     _stack.registerStateBuilder<GameState>(StateStack::StateBuilder<>([this] {
         return new GameState(_stack, _fontManager, _textureManager,
             _tguiTextureManager, _shaderManager, _soundBufferManager, _soundSettings);
+    }));
+    _stack.registerStateBuilder<MainMenuState>(StateStack::StateBuilder<>([this] {
+        return new MainMenuState(_stack, _tguiTextureManager);
     }));
     _stack.registerStateBuilder<MapState>(StateStack::StateBuilder<Scene&>([this] (Scene& scene) {
         return new MapState(_stack, scene, _tguiTextureManager);

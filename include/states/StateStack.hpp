@@ -2,6 +2,7 @@
 #define STATESTACK_HPP
 
 #include <vector>
+#include <queue>
 #include <memory>
 #include <utility>
 #include <functional>
@@ -20,7 +21,7 @@ typedef std::pair<Action, bool> TriggerAction;
 class StateStack {
 public:
     template <typename... Args>
-    using StateBuilder = std::function<AbstractState*(Args&...)>;
+    using StateBuilder = std::function<AbstractState*(Args...)>;
 
     StateStack(tgui::BackendGui& gui);
 
@@ -30,12 +31,13 @@ public:
     }
 
     template <typename T, typename... Args>
-    void pushState(Args&... args) {
-        AbstractState* state{getStateBuilder<T, Args...>()(args...)};
-        tgui::Widget::Ptr widget{state->buildGui()};
-        _gui.add(widget);
-        // TODO maybe use brace-init for the state shared_ptr
-        _stack.emplace_back(widget, std::shared_ptr<AbstractState>(state));
+    void pushState(Args&&... args) {
+        AbstractState* state{getStateBuilder<T, Args...>()(std::forward<Args>(args)...)};
+        _actionQueue.push([this, state] {
+            tgui::Widget::Ptr widget{state->buildGui()};
+            _gui.add(widget);
+            _stack.emplace_back(widget, std::shared_ptr<AbstractState>(state));
+        });
     }
 
     void popState();
@@ -51,13 +53,11 @@ private:
     };
     std::vector<StatePair> _stack;
     tgui::BackendGui& _gui;
-    // Number of states to pop at the next update. We delay the removal to avoid
-    // running code of deleted states when they call StateStack::popState.
-    int _popQueue{0};
-
+    std::queue<std::function<void()>> _actionQueue;
 
     template <typename T, typename... Args>
-    const StateBuilder<Args...>& getStateBuilder(const StateBuilder<Args...>& init = StateBuilder<Args...>()) {
+    const StateBuilder<Args...>& getStateBuilder(
+            const StateBuilder<Args...>& init = [](Args...){assert(false);return nullptr;}) {
         static StateBuilder<Args...> builder{init};
         return builder;
     }

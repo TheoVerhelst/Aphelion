@@ -3,6 +3,7 @@
 #include <TGUI/Widgets/VerticalLayout.hpp>
 #include <states/StateStack.hpp>
 #include <states/PauseState.hpp>
+#include <states/MainMenuState.hpp>
 #include <states/SettingsState.hpp>
 #include <Action.hpp>
 #include <SoundSettings.hpp>
@@ -37,13 +38,20 @@ tgui::Widget::Ptr PauseState::buildGui() {
     layout->addSpace(0.1f);
 
     tgui::Button::Ptr mainMenuButton{tgui::Button::create("Main menu")};
-    mainMenuButton->onPress([this]{_stack.popState();_stack.popState();});
+    mainMenuButton->onPress([this]{
+        _stack.popState();
+        _stack.popState();
+        _stack.pushState<MainMenuState>();
+    });
     mainMenuButton->setTextSize(18);
     layout->add(mainMenuButton);
     layout->addSpace(0.1f);
 
     tgui::Button::Ptr exitGameButton{tgui::Button::create("Exit game")};
-    exitGameButton->onPress([this]{_stack.popState();_stack.popState();});
+    exitGameButton->onPress([this]{
+        _stack.popState();
+        _stack.popState();
+    });
     exitGameButton->setTextSize(18);
     layout->add(exitGameButton);
 
