@@ -4,11 +4,17 @@
 Application::Application():
     _window{sf::VideoMode::getDesktopMode(), "Aphelion",  sf::Style::Fullscreen},
     _gui{_window},
-    _stack{_gui} {
+    _stack{_gui},
+    _soundSettings{100, 50, 70},
+    _musicManager{_soundSettings} {
     _window.setKeyRepeatEnabled(false);
     loadResources();
+    tgui::Theme::setDefault("resources/gui/pixelTheme.txt");
+    tgui::Font font{"resources/fonts/Ipixelu.ttf"};
+    font.setSmooth(false);
+    tgui::Font::setGlobalFont(font);
     _stack.pushState(new GameState(_stack, _fontManager, _textureManager,
-            _tguiTextureManager, _shaderManager, _soundBufferManager));
+            _tguiTextureManager, _shaderManager, _soundBufferManager, _soundSettings));
 }
 
 void Application::run() {
@@ -42,6 +48,10 @@ void Application::run() {
         _window.clear(sf::Color::Black);
         _gui.draw();
         _window.display();
+
+        if (_stack.isEmpty()) {
+            _window.close();
+        }
     }
 }
 
@@ -59,6 +69,7 @@ void Application::loadResources() {
     _tguiTextureManager.loadFromFile("resources/gui/marsIcon.png", "marsIcon");
     _tguiTextureManager.loadFromFile("resources/gui/shipIcon.png", "shipIcon");
     _tguiTextureManager.loadFromFile("resources/textures/background.png", "background");
+    _tguiTextureManager.loadFromFile("resources/textures/mapBackground.png", "mapBackground");
     _textureManager.loadFromFile("resources/textures/ship.png", "ship");
     _textureManager.loadFromFile("resources/textures/sun.png", "sun");
     _textureManager.loadFromFile("resources/textures/mercury.png", "mercury");

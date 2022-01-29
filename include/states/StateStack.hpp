@@ -25,6 +25,7 @@ public:
     void update(sf::Time dt);
     void handleTriggerAction(const TriggerAction& action);
     void handleContinuousAction(const Action& action, sf::Time dt);
+    bool isEmpty() const;
 
 private:
     struct StatePair {

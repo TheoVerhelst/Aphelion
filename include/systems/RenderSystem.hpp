@@ -10,16 +10,18 @@ namespace sf {
     class Transformable;
     class Time;
 }
+struct SoundSettings;
 
 
 class RenderSystem : public sf::Drawable {
 public:
-    RenderSystem(Scene& scene);
+    RenderSystem(Scene& scene, const SoundSettings& soundSettings);
     virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
     void update(sf::Time dt);
 
 private:
     Scene& _scene;
+    const SoundSettings& _soundSettings;
 
     template <typename T>
     void drawComponent(sf::RenderTarget& target, sf::RenderStates states) const {

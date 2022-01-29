@@ -25,6 +25,7 @@ public:
     bool isStopped() const;
     sf::Sprite& getSprite();
     void update(sf::Time dt);
+    void setVolume(float volume);
 	virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 
 private:

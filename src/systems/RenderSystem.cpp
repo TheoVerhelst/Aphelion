@@ -4,10 +4,12 @@
 #include <systems/RenderSystem.hpp>
 #include <components.hpp>
 #include <Animation.hpp>
+#include <SoundSettings.hpp>
 #include <vector.hpp>
 
-RenderSystem::RenderSystem(Scene& scene):
-    _scene{scene} {
+RenderSystem::RenderSystem(Scene& scene, const SoundSettings& soundSettings):
+    _scene{scene},
+    _soundSettings{soundSettings} {
 }
 
 void RenderSystem::draw(sf::RenderTarget& target, sf::RenderStates states) const {
@@ -22,6 +24,7 @@ void RenderSystem::update(sf::Time dt) {
     for (EntityId id : _scene.view<Body, AnimationComponent>()) {
         auto& animations{_scene.getComponent<AnimationComponent>(id).animations};
         for (auto& [action, animation] : animations) {
+            animation.setVolume(_soundSettings.mainVolume * _soundSettings.effectsVolume / 100);
             updateTransformable(animation.getSprite(), id);
             if (not animation.isStopped()) {
                 animation.update(dt);

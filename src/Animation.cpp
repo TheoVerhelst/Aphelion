@@ -9,7 +9,6 @@ Animation::Animation(const sf::Texture& texture, const std::vector<AnimationFram
     for (auto& frame : _frames) {
         _totalDuration += frame.duration;
     }
-    _sound.setVolume(50);
 }
 
 void Animation::start() {
@@ -55,6 +54,10 @@ void Animation::update(sf::Time dt) {
             frameTime += frame.duration;
         }
     }
+}
+
+void Animation::setVolume(float volume) {
+    _sound.setVolume(volume);
 }
 
 void Animation::draw(sf::RenderTarget& target, sf::RenderStates states) const {

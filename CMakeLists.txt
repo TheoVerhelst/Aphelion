@@ -28,7 +28,7 @@ if (CMAKE_COMPILER_IS_GNUCC)
 -Wduplicated-cond -Wextra-semi -Wfloat-equal -Wformat -Wformat-signedness \
 -Winline -Winvalid-imported-macros -Winvalid-pch -Wlogical-op -Wmismatched-tags \
 -Wmissing-declarations -Wmissing-format-attribute -Wmissing-include-dirs \
--Wmissing-noreturn -Wmultichar -Wnoexcept -Wnoexcept-type -Wnon-virtual-dtor \
+-Wmissing-noreturn -Wmultichar -Wnon-virtual-dtor \
 -Wnull-dereference -Wold-style-cast -Woverloaded-virtual -Wpacked \
 -Wpacked-bitfield-compat -Wpessimizing-move -Wplacement-new=2 -Wredundant-decls \
 -Wredundant-tags -Wregister -Wrestrict -Wshadow -Wshift-negative-value \
@@ -53,6 +53,8 @@ set(SOURCE_FILES
     src/states/AbstractState.cpp
     src/states/GameState.cpp
     src/states/MapState.cpp
+    src/states/PauseState.cpp
+    src/states/SettingsState.cpp
     src/states/StateStack.cpp
 	src/systems/CollisionSystem.cpp
 	src/systems/GameplaySystem.cpp

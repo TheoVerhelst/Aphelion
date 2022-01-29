@@ -18,7 +18,8 @@ enum class Action {
     ZoomIn,
     ZoomOut,
     RotateView,
-    ToggleMap
+    ToggleMap,
+    Exit
 };
 
 typedef std::pair<Action, bool> TriggerAction;

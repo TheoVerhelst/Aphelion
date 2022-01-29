@@ -1,12 +1,15 @@
 #include <TGUI/Widgets/Button.hpp>
+#include <TGUI/Texture.hpp>
 #include <states/StateStack.hpp>
 #include <states/MapState.hpp>
 #include <Scene.hpp>
+#include <ResourceManager.hpp>
 #include <components.hpp>
 
-MapState::MapState(StateStack& stack, Scene& scene):
+MapState::MapState(StateStack& stack, Scene& scene, const ResourceManager<tgui::Texture>& tguiTextureManager):
     AbstractState{stack},
-    _scene{scene} {
+    _scene{scene},
+    _background{tgui::Picture::create(tguiTextureManager.get("mapBackground"))} {
 }
 
 tgui::Widget::Ptr MapState::buildGui() {
@@ -16,10 +19,13 @@ tgui::Widget::Ptr MapState::buildGui() {
         icon->setUserData(id);
         _mapIcons->add(icon);
     }
-    return _mapIcons;
+    tgui::Group::Ptr group{tgui::Group::create()};
+    group->add(_background);
+    group->add(_mapIcons);
+    return group;
 }
 
-void MapState::update(sf::Time) {
+bool MapState::update(sf::Time) {
     const Body& playerBody{_scene.getComponent<Body>(_scene.findUnique<Player>())};
     const Vector2f playerPos{playerBody.position};
     const Vector2f mapSize{_mapIcons->getSize()};
@@ -38,6 +44,7 @@ void MapState::update(sf::Time) {
             icon->setRotation(radToDeg(body.rotation));
         }
     }
+    return false;
 }
 
 bool MapState::handleTriggerAction(const TriggerAction& actionPair) {

@@ -27,7 +27,9 @@ void StateStack::update(sf::Time dt) {
         _popQueue--;
     }
     for (auto it = _stack.rbegin(); it != _stack.rend(); ++it) {
-        it->state->update(dt);
+        if (it->state->update(dt)) {
+            break;
+        }
     }
 }
 
@@ -45,4 +47,8 @@ void StateStack::handleContinuousAction(const Action& action, sf::Time dt) {
             break;
         }
     }
+}
+
+bool StateStack::isEmpty() const {
+    return _stack.empty();
 }

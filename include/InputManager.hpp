@@ -31,7 +31,8 @@ private:
         {sf::Keyboard::LControl, Action::ZoomOut},
         {sf::Keyboard::RControl, Action::ZoomOut},
         {sf::Keyboard::M, Action::ToggleMap},
-        {sf::Keyboard::LAlt, Action::RotateView}
+        {sf::Keyboard::LAlt, Action::RotateView},
+        {sf::Keyboard::Escape, Action::Exit},
     };
 };
 

@@ -4,6 +4,7 @@
 #include <SFML/Audio/SoundBuffer.hpp>
 #include <TGUI/Texture.hpp>
 #include <states/GameState.hpp>
+#include <states/PauseState.hpp>
 #include <states/StateStack.hpp>
 #include <states/MapState.hpp>
 #include <ResourceManager.hpp>
@@ -17,16 +18,19 @@ GameState::GameState(StateStack& stack,
         const ResourceManager<sf::Texture>& textureManager,
         const ResourceManager<tgui::Texture>& tguiTextureManager,
         ResourceManager<sf::Shader>& shaderManager,
-        const ResourceManager<sf::SoundBuffer>& soundBufferManager):
+        const ResourceManager<sf::SoundBuffer>& soundBufferManager,
+        SoundSettings& soundSettings):
     AbstractState{stack},
     _canvas{tgui::CanvasSFML::create()},
     _shaderManager{shaderManager},
+    _tguiTextureManager{tguiTextureManager},
+    _soundSettings{soundSettings},
     _background{tgui::Picture::create(tguiTextureManager.get("background"))},
     _collisionSystem{_scene},
     _gameplaySystem{_scene},
     _lightSystem{_scene, _canvas->getRenderTexture(), shaderManager.get("light")},
     _physicsSystem{_scene},
-    _renderSystem{_scene} {
+    _renderSystem{_scene, _soundSettings} {
     registerComponents();
     loadScene(_scene, _saveFile, fontManager, textureManager, tguiTextureManager, soundBufferManager);
 }
@@ -39,7 +43,7 @@ tgui::Widget::Ptr GameState::buildGui() {
     return group;
 }
 
-void GameState::update(sf::Time dt) {
+bool GameState::update(sf::Time dt) {
     // Update systems
     _collisionSystem.update();
     _lightSystem.update();
@@ -51,19 +55,22 @@ void GameState::update(sf::Time dt) {
     _canvas->clear(sf::Color::Transparent);
     _canvas->draw(_renderSystem, &_shaderManager.get("light"));
     _canvas->display();
+    return false;
 }
 
 bool GameState::handleTriggerAction(const TriggerAction& actionPair) {
     auto& [action, start] = actionPair;
-    switch (action) {
-        case Action::ToggleMap:
-            if (start) {
-                _stack.pushState(new MapState(_stack, _scene));
+    if (start) {
+        switch (action) {
+            case Action::ToggleMap:
+                _stack.pushState(new MapState(_stack, _scene, _tguiTextureManager));
                 return true;
-            }
-            break;
-        default:
-            break;
+            case Action::Exit:
+                _stack.pushState(new PauseState(_stack, _soundSettings));
+                return true;
+            default:
+                break;
+        }
     }
     return _gameplaySystem.handleTriggerAction(actionPair);
 }

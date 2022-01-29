@@ -8,6 +8,7 @@
 #include <TGUI/Backend/SFML-Graphics.hpp>
 #include <states/StateStack.hpp>
 #include <InputManager.hpp>
+#include <SoundSettings.hpp>
 #include <MusicManager.hpp>
 #include <ResourceManager.hpp>
 
@@ -29,6 +30,7 @@ private:
     ResourceManager<tgui::Texture> _tguiTextureManager;
     ResourceManager<sf::Shader> _shaderManager;
     ResourceManager<sf::SoundBuffer> _soundBufferManager;
+    SoundSettings _soundSettings;
     MusicManager _musicManager;
 
     void loadResources();

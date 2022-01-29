@@ -13,7 +13,6 @@
 
 // Forward declarations
 namespace sf {
-    class Time;
     class Font;
     class Texture;
     class Shader;
@@ -24,7 +23,7 @@ namespace tgui {
 }
 template <typename T>
 class ResourceManager;
-class StateStack;
+struct SoundSettings;
 
 class GameState : public AbstractState {
 public:
@@ -33,10 +32,11 @@ public:
         const ResourceManager<sf::Texture>& textureManager,
         const ResourceManager<tgui::Texture>& tguiTextureManager,
         ResourceManager<sf::Shader>& shaderManager,
-        const ResourceManager<sf::SoundBuffer>& soundBufferManager);
+        const ResourceManager<sf::SoundBuffer>& soundBufferManager,
+        SoundSettings& soundSettings);
 
     virtual tgui::Widget::Ptr buildGui() override;
-    virtual void update(sf::Time dt) override;
+    virtual bool update(sf::Time dt) override;
     virtual bool handleTriggerAction(const TriggerAction& action) override;
     virtual bool handleContinuousAction(const Action& action, sf::Time dt) override;
 
@@ -44,6 +44,8 @@ private:
     Scene _scene;
     tgui::CanvasSFML::Ptr _canvas;
     const ResourceManager<sf::Shader>& _shaderManager;
+    const ResourceManager<tgui::Texture>& _tguiTextureManager;
+    SoundSettings& _soundSettings;
     tgui::Picture::Ptr _background;
     const std::string _saveFile{"save.json"};
     CollisionSystem _collisionSystem;
