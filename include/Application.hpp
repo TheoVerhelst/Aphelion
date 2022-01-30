@@ -25,7 +25,6 @@ private:
     InputManager _inputManager;
 
     // Resource managers
-    ResourceManager<sf::Font> _fontManager;
     ResourceManager<sf::Texture> _textureManager;
     ResourceManager<tgui::Texture> _tguiTextureManager;
     ResourceManager<sf::Shader> _shaderManager;

@@ -1,0 +1,177 @@
+{
+    "sun" : {
+        "circleBody": {
+            "radius": 1024
+        },
+        "sprite": {
+            "texture": "sun"
+        },
+        "mapElement": {
+            "texture": "sunIcon",
+            "type": "celestialBody"
+        },
+        "lightSource": {
+            "brightness": 800000000
+        },
+        "body": {
+            "mass": 3803400000000000.0,
+            "restitution": 0.9,
+            "friction": 0.5
+        }
+    },
+    "mercury": {
+        "circleBody": {
+            "radius": 229.791
+        },
+        "sprite": {
+            "texture": "mercury"
+        },
+        "mapElement": {
+            "texture": "mercuryIcon",
+            "type": "celestialBody"
+        },
+        "body": {
+            "mass": 299620000000.0,
+            "restitution": 0.9,
+            "friction": 0.5
+        }
+    },
+    "venus": {
+        "circleBody": {
+            "radius": 569.863
+        },
+        "sprite": {
+            "texture": "venus"
+        },
+        "mapElement": {
+            "texture": "venusIcon",
+            "type": "celestialBody"
+        },
+        "body": {
+            "mass": 4417700000000.0,
+            "restitution": 0.9,
+            "friction": 0.5
+        }
+    },
+    "earth": {
+        "circleBody": {
+            "radius": 600.0
+        },
+        "sprite": {
+            "texture": "earth",
+            "offset": {"x": -100, "y": -100}
+        },
+        "mapElement": {
+            "texture": "earthIcon",
+            "type": "celestialBody"
+        },
+        "body": {
+            "mass": 5419100000000.0,
+            "restitution": 0.9,
+            "friction": 0.5
+        }
+    },
+    "mars": {
+        "circleBody": {
+            "radius": 319.251
+        },
+        "sprite": {
+            "texture": "mars"
+        },
+        "mapElement": {
+            "texture": "marsIcon",
+            "type": "celestialBody"
+        },
+        "body": {
+            "mass": 582290000000.0,
+            "restitution": 0.9,
+            "friction": 0.5
+        }
+    },
+    "ship": {
+        "convexBody": {
+            "vertices": [
+                {"x": 3, "y": 7},
+                {"x": 10, "y": 0},
+                {"x": 13, "y": 0},
+                {"x": 20, "y": 7},
+                {"x": 20, "y": 34},
+                {"x": 3, "y": 34}
+        ]},
+        "sprite": {
+            "texture": "ship",
+            "rect": {"top": 0, "left": 96, "width": 24, "height": 48}
+        },
+        "mapElement": {
+            "texture": "shipIcon",
+            "type": "ship"
+        },
+        "animations": {
+            "engine": {
+                "texture": "ship",
+                "frames": [
+                    {"duration": 0.1, "rect": {"top": 0, "left": 0, "width": 24, "height": 48}},
+                    {"duration": 0.1, "rect": {"top": 0, "left": 24, "width": 24, "height": 48}},
+                    {"duration": 0.1, "rect": {"top": 0, "left": 48, "width": 24, "height": 48}},
+                    {"duration": 0.1, "rect": {"top": 0, "left": 72, "width": 24, "height": 48}}
+                ],
+                "soundBuffer": "mainEngine",
+                "soundLoopStart": 0.3,
+                "soundLoopEnd": 1.699
+            },
+            "rcsDown": {
+                "texture": "rcs",
+                "offset": {"x": -6, "y": 0},
+                "frames": [{"duration": 1, "rect": {"top": 0, "left": 0, "width": 36, "height": 48}}],
+                "soundBuffer": "rcs",
+                "soundLoopStart": 0.2,
+                "soundLoopEnd": 1.699
+            },
+            "rcsUp": {
+                "texture": "rcs",
+                "offset": {"x": -6, "y": 0},
+                "frames": [{"duration": 1, "rect": {"top": 0, "left": 36, "width": 36, "height": 48}}],
+                "soundBuffer": "rcs",
+                "soundLoopStart": 0.2,
+                "soundLoopEnd": 1.699
+            },
+            "rcsRight": {
+                "texture": "rcs",
+                "offset": {"x": -6, "y": 0},
+                "frames": [{"duration": 1, "rect": {"top": 0, "left": 72, "width": 36, "height": 48}}],
+                "soundBuffer": "rcs",
+                "soundLoopStart": 0.2,
+                "soundLoopEnd": 1.699
+            },
+            "rcsClockwise": {
+                "texture": "rcs",
+                "offset": {"x": -6, "y": 0},
+                "frames": [{"duration": 1, "rect": {"top": 0, "left": 108, "width": 36, "height": 48}}],
+                "soundBuffer": "rcs",
+                "soundLoopStart": 0.2,
+                "soundLoopEnd": 1.699
+            },
+            "rcsCounterClockwise": {
+                "texture": "rcs",
+                "offset": {"x": -6, "y": 0},
+                "frames": [{"duration": 1, "rect": {"top": 0, "left": 144, "width": 36, "height": 48}}],
+                "soundBuffer": "rcs",
+                "soundLoopStart": 0.2,
+                "soundLoopEnd": 1.699
+            },
+            "rcsLeft": {
+                "texture": "rcs",
+                "offset": {"x": -6, "y": 0},
+                "frames": [{"duration": 1, "rect": {"top": 0, "left": 180, "width": 36, "height": 48}}],
+                "soundBuffer": "rcs",
+                "soundLoopStart": 0.2,
+                "soundLoopEnd": 1.699
+            }
+        },
+        "body": {
+            "mass": 10000,
+            "restitution": 0.3,
+            "friction": 0.5
+        }
+    }
+}

@@ -13,7 +13,6 @@
 
 // Forward declarations
 namespace sf {
-    class Font;
     class Texture;
     class Shader;
     class SoundBuffer;
@@ -28,7 +27,6 @@ struct SoundSettings;
 class GameState : public AbstractState {
 public:
     GameState(StateStack& stack,
-        const ResourceManager<sf::Font>& fontManager,
         const ResourceManager<sf::Texture>& textureManager,
         const ResourceManager<tgui::Texture>& tguiTextureManager,
         ResourceManager<sf::Shader>& shaderManager,
@@ -47,7 +45,6 @@ private:
     const ResourceManager<tgui::Texture>& _tguiTextureManager;
     SoundSettings& _soundSettings;
     tgui::Picture::Ptr _background;
-    const std::string _saveFile{"save.json"};
     CollisionSystem _collisionSystem;
     GameplaySystem _gameplaySystem;
     LightSystem _lightSystem;

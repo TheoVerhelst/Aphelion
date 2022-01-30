@@ -65,14 +65,13 @@ set(SOURCE_FILES
 	src/Animation.cpp
 	src/Application.cpp
 	src/components.cpp
-	src/DebugInfo.cpp
 	src/format.cpp
 	src/InputManager.cpp
 	src/LoopedSound.cpp
 	src/main.cpp
 	src/MusicManager.cpp
 	src/Scene.cpp
-	src/SceneLoader.cpp
+	src/SceneSerializer.cpp
 )
 
 # Create the main executable

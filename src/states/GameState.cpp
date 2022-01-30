@@ -1,4 +1,3 @@
-#include <SFML/Graphics/Font.hpp>
 #include <SFML/Graphics/Texture.hpp>
 #include <SFML/Graphics/Shader.hpp>
 #include <SFML/Audio/SoundBuffer.hpp>
@@ -8,13 +7,11 @@
 #include <states/StateStack.hpp>
 #include <states/MapState.hpp>
 #include <ResourceManager.hpp>
-#include <SceneLoader.hpp>
+#include <SceneSerializer.hpp>
 #include <Action.hpp>
 #include <components.hpp>
-#include <DebugInfo.hpp>
 
 GameState::GameState(StateStack& stack,
-        const ResourceManager<sf::Font>& fontManager,
         const ResourceManager<sf::Texture>& textureManager,
         const ResourceManager<tgui::Texture>& tguiTextureManager,
         ResourceManager<sf::Shader>& shaderManager,
@@ -32,7 +29,9 @@ GameState::GameState(StateStack& stack,
     _physicsSystem{_scene},
     _renderSystem{_scene, _soundSettings} {
     registerComponents();
-    loadScene(_scene, _saveFile, fontManager, textureManager, tguiTextureManager, soundBufferManager);
+    // TODO Display a message when the save is invalid (e.g. JSON error), rather than crashing
+    SceneSerializer serializer(_scene, textureManager, tguiTextureManager, soundBufferManager);
+    serializer.load("saves/save.json");
 }
 
 
@@ -106,7 +105,6 @@ void GameState::registerComponents() {
     _scene.registerComponent<LightSource>();
     _scene.registerComponent<Shadow>();
     _scene.registerComponent<Player>();
-    _scene.registerComponent<DebugInfo>();
     _scene.registerComponent<MapElement>();
     _scene.registerComponent<sf::Sprite>();
 }

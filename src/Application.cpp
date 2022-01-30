@@ -6,7 +6,7 @@
 #include <Application.hpp>
 
 Application::Application():
-    _window{sf::VideoMode::getDesktopMode(), "Aphelion",  sf::Style::Fullscreen},
+    _window{sf::VideoMode::getDesktopMode(), "Aphelion", sf::Style::Fullscreen},
     _gui{_window},
     _stack{_gui},
     _soundSettings{100, 50, 70},
@@ -61,7 +61,6 @@ void Application::run() {
 
 void Application::loadResources() {
     tgui::Texture::setDefaultSmooth(false);
-    _fontManager.loadFromFile("resources/fonts/FreeSans.ttf", "debugFont");
     _tguiTextureManager.loadFromFile("resources/gui/play.png", "playButton");
     _tguiTextureManager.loadFromFile("resources/gui/playHover.png", "playHoverButton");
     _tguiTextureManager.loadFromFile("resources/gui/pause.png", "pauseButton");
@@ -90,7 +89,7 @@ void Application::loadResources() {
 
 void Application::registerStateBuilders() {
     _stack.registerStateBuilder<GameState>(StateStack::StateBuilder<>([this] {
-        return new GameState(_stack, _fontManager, _textureManager,
+        return new GameState(_stack, _textureManager,
             _tguiTextureManager, _shaderManager, _soundBufferManager, _soundSettings);
     }));
     _stack.registerStateBuilder<MainMenuState>(StateStack::StateBuilder<>([this] {

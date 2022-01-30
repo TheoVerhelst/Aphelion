@@ -24,6 +24,8 @@ void RenderSystem::update(sf::Time dt) {
     for (EntityId id : _scene.view<Body, AnimationComponent>()) {
         auto& animations{_scene.getComponent<AnimationComponent>(id).animations};
         for (auto& [action, animation] : animations) {
+            // TODO it's probably not the RenderSystem which should update
+            // the animations volume
             animation.setVolume(_soundSettings.mainVolume * _soundSettings.effectsVolume / 100);
             updateTransformable(animation.getSprite(), id);
             if (not animation.isStopped()) {

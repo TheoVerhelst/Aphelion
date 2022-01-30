@@ -18,6 +18,7 @@ tgui::Widget::Ptr PauseState::buildGui() {
     window->setPosition("50%", "50%");
     window->setOrigin(0.5f, 0.5f);
     window->onClose([this]{_stack.popState();});
+    // TODO focus the window
 
     tgui::VerticalLayout::Ptr layout{tgui::VerticalLayout::create()};
     layout->setSize("80%", "80%");

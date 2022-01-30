@@ -1,0 +1,93 @@
+[
+    {
+        "class": "sun",
+        "body": {
+            "position": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "velocity": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "rotation": 0.0,
+            "angularVelocity": 0.0
+        }
+    },
+    {
+        "class": "mercury",
+        "body": {
+            "position": {
+                "x": 9793.542,
+                "y": -2410.171
+            },
+            "velocity": {
+                "x": -410.655,
+                "y": -1002.817
+            },
+            "rotation": 0.0,
+            "angularVelocity": 0.0
+        }
+    },
+    {
+        "class": "venus",
+        "body": {
+            "position": {
+                "x": -4753.994,
+                "y": -21444.586
+            },
+            "velocity": {
+                "x": -717.83,
+                "y": 154.639
+            },
+            "rotation": 0.0,
+            "angularVelocity": -0.1
+        }
+    },
+    {
+        "class": "earth",
+        "body": {
+            "position": {
+                "x": -7635.07,
+                "y": -29012.165
+            },
+            "velocity": {
+                "x": -608.849,
+                "y": 155.197
+            },
+            "rotation": 0.0,
+            "angularVelocity": 0.01
+        }
+    },
+    {
+        "class": "mars",
+        "body": {
+            "position": {
+                "x": -25078.099,
+                "y": 39186.316
+            },
+            "velocity": {
+                "x": 449.878,
+                "y": 228.423
+            },
+            "rotation": 0.0,
+            "angularVelocity": 0.01
+        }
+    },
+    {
+        "class": "ship",
+        "body": {
+            "position": {
+                "x": -7635.07,
+                "y": -29762.165
+            },
+            "velocity": {
+                "x": -608.849,
+                "y": 155.197
+            },
+            "rotation": 0,
+            "angularVelocity": 0
+        },
+        "player": true
+    }
+]
