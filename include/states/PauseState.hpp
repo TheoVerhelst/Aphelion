@@ -3,7 +3,6 @@
 
 #include <states/AbstractState.hpp>
 
-
 class PauseState : public AbstractState {
 public:
     PauseState(StateStack& stack);

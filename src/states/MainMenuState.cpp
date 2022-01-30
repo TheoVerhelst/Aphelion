@@ -3,8 +3,9 @@
 #include <TGUI/Texture.hpp>
 #include <TGUI/Widgets/Label.hpp>
 #include <states/StateStack.hpp>
-#include <states/MainMenuState.hpp>
 #include <states/GameState.hpp>
+#include <states/LoadGameState.hpp>
+#include <states/MainMenuState.hpp>
 #include <states/SettingsState.hpp>
 #include <ResourceManager.hpp>
 #include <Action.hpp>
@@ -37,7 +38,7 @@ tgui::Widget::Ptr MainMenuState::buildGui() {
     tgui::Button::Ptr newGameButton{tgui::Button::create("New game")};
     newGameButton->onPress([this] {
         _stack.popState();
-        _stack.pushState<GameState>();
+        _stack.pushState<GameState, const std::filesystem::path&>("saves/save.json");
     });
     newGameButton->setTextSize(30);
     layout->add(newGameButton);
@@ -45,8 +46,7 @@ tgui::Widget::Ptr MainMenuState::buildGui() {
 
     tgui::Button::Ptr continueButton{tgui::Button::create("Continue")};
     continueButton->onPress([this]{
-        _stack.popState();
-        _stack.pushState<GameState>();
+        _stack.pushState<LoadGameState>();
     });
     continueButton->setTextSize(30);
     layout->add(continueButton);

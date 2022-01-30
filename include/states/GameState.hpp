@@ -1,6 +1,8 @@
 #ifndef GAMESTATE_HPP
 #define GAMESTATE_HPP
 
+#include <string>
+#include <filesystem>
 #include <TGUI/Backend/Renderer/SFML-Graphics/CanvasSFML.hpp>
 #include <TGUI/Widgets/Picture.hpp>
 #include <states/AbstractState.hpp>
@@ -33,7 +35,8 @@ public:
         const ResourceManager<tgui::Texture>& tguiTextureManager,
         ResourceManager<sf::Shader>& shaderManager,
         const ResourceManager<sf::SoundBuffer>& soundBufferManager,
-        SoundSettings& soundSettings);
+        SoundSettings& soundSettings,
+        const std::filesystem::path& savePath);
 
     virtual tgui::Widget::Ptr buildGui() override;
     virtual bool update(sf::Time dt) override;

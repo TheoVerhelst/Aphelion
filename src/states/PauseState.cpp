@@ -4,6 +4,7 @@
 #include <states/StateStack.hpp>
 #include <states/PauseState.hpp>
 #include <states/MainMenuState.hpp>
+#include <states/LoadGameState.hpp>
 #include <states/SettingsState.hpp>
 #include <Action.hpp>
 #include <SoundSettings.hpp>
@@ -32,6 +33,18 @@ tgui::Widget::Ptr PauseState::buildGui() {
     layout->add(continueButton);
     layout->addSpace(0.1f);
 
+    tgui::Button::Ptr saveButton{tgui::Button::create("Save game")};
+    saveButton->onPress([this]{_stack.pushState<LoadGameState>();});
+    saveButton->setTextSize(18);
+    layout->add(saveButton);
+    layout->addSpace(0.1f);
+
+    tgui::Button::Ptr loadButton{tgui::Button::create("Load game")};
+    loadButton->onPress([this]{_stack.pushState<LoadGameState>();});
+    loadButton->setTextSize(18);
+    layout->add(loadButton);
+    layout->addSpace(0.1f);
+
     tgui::Button::Ptr settingsButton{tgui::Button::create("Settings")};
     settingsButton->onPress([this]{_stack.pushState<SettingsState>();});
     settingsButton->setTextSize(18);
@@ -47,14 +60,6 @@ tgui::Widget::Ptr PauseState::buildGui() {
     mainMenuButton->setTextSize(18);
     layout->add(mainMenuButton);
     layout->addSpace(0.1f);
-
-    tgui::Button::Ptr exitGameButton{tgui::Button::create("Exit game")};
-    exitGameButton->onPress([this]{
-        _stack.popState();
-        _stack.popState();
-    });
-    exitGameButton->setTextSize(18);
-    layout->add(exitGameButton);
 
     return window;
 }

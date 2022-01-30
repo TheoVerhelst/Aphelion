@@ -15,7 +15,8 @@ GameState::GameState(StateStack& stack,
         const ResourceManager<tgui::Texture>& tguiTextureManager,
         ResourceManager<sf::Shader>& shaderManager,
         const ResourceManager<sf::SoundBuffer>& soundBufferManager,
-        SoundSettings& soundSettings):
+        SoundSettings& soundSettings,
+        const std::filesystem::path& savePath):
     AbstractState{stack},
     _canvas{tgui::CanvasSFML::create()},
     _shaderManager{shaderManager},
@@ -29,9 +30,8 @@ GameState::GameState(StateStack& stack,
     _serializer{_scene, textureManager, tguiTextureManager, soundBufferManager} {
     registerComponents();
     // TODO Display a message when the save is invalid (e.g. JSON error), rather than crashing
-    _serializer.load("saves/save.json");
+    _serializer.load(savePath);
 }
-
 
 tgui::Widget::Ptr GameState::buildGui() {
     tgui::Group::Ptr group{tgui::Group::create()};
@@ -60,15 +60,15 @@ bool GameState::handleTriggerAction(const TriggerAction& actionPair) {
     auto& [action, start] = actionPair;
     if (start) {
         switch (action) {
-            case Action::ToggleMap:
-                _stack.pushState<MapState>(_scene);
-                return true;
-            case Action::Exit:
-                _stack.pushState<PauseState>();
-                _serializer.save("saves/test.json");
-                return true;
-            default:
-                break;
+        case Action::ToggleMap:
+            _stack.pushState<MapState>(_scene);
+            return true;
+        case Action::Exit:
+            _stack.pushState<PauseState>();
+            _serializer.save("saves/test.json");
+            return true;
+        default:
+            break;
         }
     }
     return _animationSystem.handleTriggerAction(actionPair);

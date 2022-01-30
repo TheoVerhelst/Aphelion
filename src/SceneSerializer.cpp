@@ -28,7 +28,7 @@ SceneSerializer::SceneSerializer(Scene& scene,
     _entityClasses(json::parse(std::ifstream("resources/entities/entities.json"))) {
 }
 
-void SceneSerializer::load(const std::string& filename) {
+void SceneSerializer::load(const std::filesystem::path& path) {
     std::vector<std::pair<std::string, std::function<void(SceneSerializer*, const json&,  EntityId)>>> loadFunctions{
         {"body", &SceneSerializer::loadBody},
         {"circleBody", &SceneSerializer::loadCircleBody},
@@ -42,7 +42,7 @@ void SceneSerializer::load(const std::string& filename) {
 
     // We use parenthesis init rather than brace init, otherwise the json value
     // is wrapped in a JSON array
-    json j(json::parse(std::ifstream(filename)));
+    json j(json::parse(std::ifstream(path)));
 	for (json& components : j) {
         EntityId id{_scene.createEntity()};
         if (components.contains("class")) {
@@ -61,7 +61,7 @@ void SceneSerializer::load(const std::string& filename) {
     }
 }
 
-void SceneSerializer::save(const std::string& filename) const {
+void SceneSerializer::save(const std::filesystem::path& path) const {
     json j;
     for (EntityId id : _scene.allEntities()) {
         json entityValue;
@@ -82,7 +82,7 @@ void SceneSerializer::save(const std::string& filename) const {
 
         j.push_back(entityValue);
     }
-    std::ofstream file{filename};
+    std::ofstream file{path};
     file << std::setw(4) << j << std::endl;
 }
 

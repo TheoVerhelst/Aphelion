@@ -12,6 +12,15 @@ void StateStack::popState() {
     });
 }
 
+void StateStack::clear() {
+    _actionQueue.push([this] {
+        while (not _stack.empty()) {
+            _gui.remove(_stack.back().widget);
+            _stack.pop_back();
+        }
+    });
+}
+
 void StateStack::update(sf::Time dt) {
     while (not _actionQueue.empty()) {
         _actionQueue.front()();

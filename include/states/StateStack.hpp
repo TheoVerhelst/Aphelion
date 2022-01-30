@@ -34,6 +34,7 @@ public:
     }
 
     void popState();
+    void clear();
     void update(sf::Time dt);
     void handleTriggerAction(const TriggerAction& action);
     void handleContinuousAction(const Action& action, sf::Time dt);

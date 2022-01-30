@@ -1,4 +1,5 @@
 #include <states/GameState.hpp>
+#include <states/LoadGameState.hpp>
 #include <states/MainMenuState.hpp>
 #include <states/MapState.hpp>
 #include <states/PauseState.hpp>
@@ -88,20 +89,36 @@ void Application::loadResources() {
 }
 
 void Application::registerStateBuilders() {
-    _stack.registerStateBuilder<GameState>(StateStack::StateBuilder<>([this] {
-        return new GameState(_stack, _textureManager,
-            _tguiTextureManager, _shaderManager, _soundBufferManager, _soundSettings);
-    }));
-    _stack.registerStateBuilder<MainMenuState>(StateStack::StateBuilder<>([this] {
-        return new MainMenuState(_stack, _tguiTextureManager);
-    }));
-    _stack.registerStateBuilder<MapState>(StateStack::StateBuilder<Scene&>([this] (Scene& scene) {
-        return new MapState(_stack, scene, _tguiTextureManager);
-    }));
-    _stack.registerStateBuilder<PauseState>(StateStack::StateBuilder<>([this] {
-        return new PauseState(_stack);
-    }));
-    _stack.registerStateBuilder<SettingsState>(StateStack::StateBuilder<>([this] {
-        return new SettingsState(_stack, _soundSettings);
-    }));
+    _stack.registerStateBuilder<GameState>(
+        StateStack::StateBuilder<const std::filesystem::path&>([this] (const std::filesystem::path& path) {
+            return new GameState(_stack, _textureManager,
+                _tguiTextureManager, _shaderManager, _soundBufferManager,
+                _soundSettings, path);
+        })
+    );
+    _stack.registerStateBuilder<LoadGameState>(
+        StateStack::StateBuilder<>([this] {
+            return new LoadGameState(_stack);
+        })
+    );
+    _stack.registerStateBuilder<MainMenuState>(
+        StateStack::StateBuilder<>([this] {
+            return new MainMenuState(_stack, _tguiTextureManager);
+        })
+    );
+    _stack.registerStateBuilder<MapState>(
+        StateStack::StateBuilder<Scene&>([this] (Scene& scene) {
+            return new MapState(_stack, scene, _tguiTextureManager);
+        })
+    );
+    _stack.registerStateBuilder<PauseState>(
+        StateStack::StateBuilder<>([this] {
+            return new PauseState(_stack);
+        })
+    );
+    _stack.registerStateBuilder<SettingsState>(
+        StateStack::StateBuilder<>([this] {
+            return new SettingsState(_stack, _soundSettings);
+        })
+    );
 }

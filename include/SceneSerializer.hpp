@@ -3,6 +3,7 @@
 
 #include <string>
 #include <cstddef>
+#include <filesystem>
 #include <json.hpp>
 #include <Scene.hpp>
 
@@ -25,8 +26,8 @@ public:
             const ResourceManager<tgui::Texture>& tguiTextureManager,
             const ResourceManager<sf::SoundBuffer>& soundBufferManager);
 
-    void load(const std::string& filename);
-    void save(const std::string& filename) const;
+    void load(const std::filesystem::path& path);
+    void save(const std::filesystem::path& path) const;
 
 private:
     Scene& _scene;
