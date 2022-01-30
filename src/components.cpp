@@ -124,10 +124,17 @@ std::pair<Vector2f, Vector2f> Shadow::convexShadow(const Vector2f& lightSource, 
             *(worldV.begin() + std::distance(angles.begin(), pair.second))};
 }
 
-void AnimationComponent::draw(sf::RenderTarget& target, sf::RenderStates states) const {
-    for (auto& [acion, animation] : animations) {
-        if(not animation.isStopped()) {
-            target.draw(animation, states);
-        }
-    }
+void to_json(nlohmann::json& j, const Animations& animations) {
+    for (auto& [action, animationData] : animations) {
+		nlohmann::json key(action);
+		j[key.get<std::string>()] = animationData;
+	}
+}
+
+void from_json(const nlohmann::json& j, Animations& animations) {
+    for (auto& [actionValue, animationDataValue] : j.items()) {
+		Action action;
+		nlohmann::json(actionValue).get_to(action);
+		animationDataValue.get_to(animations[action]);
+	}
 }

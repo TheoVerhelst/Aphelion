@@ -1,11 +1,14 @@
+#include <iostream>
 #include <SFML/Graphics/RenderTarget.hpp>
 #include <Animation.hpp>
 
 Animation::Animation(const sf::Texture& texture, const std::vector<AnimationFrame>& frames,
-        const sf::SoundBuffer& soundBuffer, sf::Time loopStart, sf::Time loopEnd):
+        const sf::SoundBuffer& soundBuffer, sf::Time soundLoopStart, sf::Time soundLoopEnd):
     _frames{frames},
     _sprite{texture, frames.at(0).rect},
-    _sound{soundBuffer, loopStart, loopEnd} {
+    _sound{soundBuffer},
+    _soundLoopStart{soundLoopStart},
+    _soundLoopEnd{soundLoopEnd} {
     for (auto& frame : _frames) {
         _totalDuration += frame.duration;
     }
@@ -23,7 +26,8 @@ void Animation::stop() {
     _elapsedTime = sf::Time::Zero;
     // We don't stop the sound, instead we allow it to finish playing until the
     // end
-    _sound.stopLoop();
+    _sound.setPlayingOffset(_soundLoopEnd);
+    _sound.setLoop(false);
 }
 
 bool Animation::isStopped() const {
@@ -35,8 +39,12 @@ sf::Sprite& Animation::getSprite() {
 }
 
 void Animation::update(sf::Time dt) {
-    _sound.update();
     if (not _stopped) {
+        // Loop back the sound if needed
+        if (_sound.getStatus() == sf::SoundSource::Playing
+                and _sound.getLoop() and _sound.getPlayingOffset() > _soundLoopEnd) {
+            _sound.setPlayingOffset(_soundLoopStart);
+        }
         // Update the animation timer
         _elapsedTime += dt;
         while (_elapsedTime > _totalDuration) {
@@ -58,10 +66,4 @@ void Animation::update(sf::Time dt) {
 
 void Animation::setVolume(float volume) {
     _sound.setVolume(volume);
-}
-
-void Animation::draw(sf::RenderTarget& target, sf::RenderStates states) const {
-    if (not _stopped) {
-        target.draw(_sprite, states);
-    }
 }

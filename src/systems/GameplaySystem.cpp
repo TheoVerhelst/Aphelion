@@ -1,28 +1,10 @@
 #include <systems/GameplaySystem.hpp>
 #include <Action.hpp>
 #include <Scene.hpp>
-#include <Animation.hpp>
 #include <components.hpp>
 
 GameplaySystem::GameplaySystem(Scene& scene):
     _scene{scene} {
-}
-
-bool GameplaySystem::handleTriggerAction(const TriggerAction& actionPair) {
-    const EntityId playerId{_scene.findUnique<Player>()};
-    auto& [action, start] = actionPair;
-    // Play the player animations
-    auto& animations{_scene.getComponent<AnimationComponent>(playerId).animations};
-    auto animationIt = animations.find(action);
-    if (animationIt != animations.end()) {
-        if (start) {
-            animationIt->second.start();
-        } else {
-            animationIt->second.stop();
-        }
-        return true;
-    }
-    return false;
 }
 
 bool GameplaySystem::handleContinuousAction(const Action& action, sf::Time dt) {

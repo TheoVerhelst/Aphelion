@@ -20,14 +20,13 @@ GameState::GameState(StateStack& stack,
     AbstractState{stack},
     _canvas{tgui::CanvasSFML::create()},
     _shaderManager{shaderManager},
-    _tguiTextureManager{tguiTextureManager},
-    _soundSettings{soundSettings},
     _background{tgui::Picture::create(tguiTextureManager.get("background"))},
+    _animationSystem{_scene, soundSettings},
     _collisionSystem{_scene},
     _gameplaySystem{_scene},
     _lightSystem{_scene, _canvas->getRenderTexture(), shaderManager.get("light")},
     _physicsSystem{_scene},
-    _renderSystem{_scene, _soundSettings} {
+    _renderSystem{_scene} {
     registerComponents();
     // TODO Display a message when the save is invalid (e.g. JSON error), rather than crashing
     SceneSerializer serializer(_scene, textureManager, tguiTextureManager, soundBufferManager);
@@ -46,8 +45,9 @@ bool GameState::update(sf::Time dt) {
     // Update systems
     _collisionSystem.update();
     _lightSystem.update();
+    _animationSystem.update(dt);
     _physicsSystem.update(dt);
-    _renderSystem.update(dt);
+    _renderSystem.update();
     // Update the view
     updateView(1.f, false, dt);
     // Draw on the canvas
@@ -71,7 +71,7 @@ bool GameState::handleTriggerAction(const TriggerAction& actionPair) {
                 break;
         }
     }
-    return _gameplaySystem.handleTriggerAction(actionPair);
+    return _animationSystem.handleTriggerAction(actionPair);
 }
 
 bool GameState::handleContinuousAction(const Action& action, sf::Time dt) {
@@ -101,12 +101,12 @@ void GameState::registerComponents() {
     _scene.registerComponent<CircleBody>();
     _scene.registerComponent<ConvexBody>();
     _scene.registerComponent<Collider>();
-    _scene.registerComponent<AnimationComponent>();
+    _scene.registerComponent<Animations>();
     _scene.registerComponent<LightSource>();
     _scene.registerComponent<Shadow>();
     _scene.registerComponent<Player>();
     _scene.registerComponent<MapElement>();
-    _scene.registerComponent<sf::Sprite>();
+    _scene.registerComponent<Sprite>();
 }
 
 void GameState::updateView(float zoom, bool rotate, sf::Time dt) {

@@ -9,15 +9,13 @@
 MapState::MapState(StateStack& stack, Scene& scene, const ResourceManager<tgui::Texture>& tguiTextureManager):
     AbstractState{stack},
     _scene{scene},
-    _background{tgui::Picture::create(tguiTextureManager.get("mapBackground"))} {
+    _tguiTextureManager{tguiTextureManager},
+    _background{tgui::Picture::create(_tguiTextureManager.get("mapBackground"))} {
 }
 
 tgui::Widget::Ptr MapState::buildGui() {
     for (EntityId id : _scene.view<MapElement>()) {
-        MapElement& mapElement{_scene.getComponent<MapElement>(id)};
-        tgui::Picture::Ptr icon{tgui::Picture::copy(mapElement.icon)};
-        icon->setUserData(id);
-        _mapIcons->add(icon);
+        _mapIcons->add(_scene.getComponent<MapElement>(id).icon);
     }
     tgui::Group::Ptr group{tgui::Group::create()};
     group->add(_background);
@@ -30,18 +28,17 @@ bool MapState::update(sf::Time) {
     const Vector2f playerPos{playerBody.position};
     const Vector2f mapSize{_mapIcons->getSize()};
 
-    for (tgui::Widget::Ptr icon : _mapIcons->getWidgets()) {
-        EntityId id{icon->getUserData<EntityId>()};
+    for (EntityId id : _scene.view<Body, MapElement>()) {
         const Body& body{_scene.getComponent<Body>(id)};
         MapElement& mapElement{_scene.getComponent<MapElement>(id)};
         // Compute the position of the map element on the screen. Note that we
         // don't rotate the map icon.
         Vector2f screenPos{(body.position - playerPos) / _scale};
         screenPos += mapSize / 2.f;
-        icon->setPosition(static_cast<tgui::Vector2f>(screenPos));
+        mapElement.icon->setPosition(static_cast<tgui::Vector2f>(screenPos));
         // Except for ship icons
         if (mapElement.type == MapElementType::Ship) {
-            icon->setRotation(radToDeg(body.rotation));
+            mapElement.icon->setRotation(radToDeg(body.rotation));
         }
     }
     return false;

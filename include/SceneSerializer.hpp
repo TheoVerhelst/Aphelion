@@ -34,6 +34,7 @@ private:
     const ResourceManager<tgui::Texture>& _tguiTextureManager;
     const ResourceManager<sf::SoundBuffer>& _soundBufferManager;
     const nlohmann::json _entityClasses;
+    std::map<EntityId, std::string> _loadedClasses;
 
     void loadBody(const nlohmann::json& value, EntityId id);
     void loadCircleBody(const nlohmann::json& value, EntityId id);

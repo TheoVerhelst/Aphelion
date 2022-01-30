@@ -3,8 +3,7 @@
 EntityId Scene::createEntity() {
     EntityId id;
     if (not _freeIds.empty()) {
-        id = _freeIds.top();
-        _freeIds.pop();
+        id = _freeIds.extract(0).value();
     } else {
         id = _maxEntityId++;
     }
@@ -15,5 +14,5 @@ void Scene::removeEntity(EntityId id) {
     for (auto& [type, array] : _arrays) {
         array->erase(id);
     }
-    _freeIds.push(id);
+    _freeIds.insert(id);
 }

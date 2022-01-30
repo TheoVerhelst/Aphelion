@@ -1,11 +1,13 @@
 #ifndef COMPONENTS_HPP
 #define COMPONENTS_HPP
 
+#include <string>
 #include <vector>
 #include <map>
 #include <utility>
 #include <cstdint>
-#include <SFML/Graphics/Drawable.hpp>
+#include <SFML/Graphics/Sprite.hpp>
+#include <SFML/Graphics/Rect.hpp>
 #include <TGUI/Widgets/Picture.hpp>
 #include <json.hpp>
 #include <serializers.hpp>
@@ -30,6 +32,7 @@ struct Body {
 	float angularVelocity;
 	float restitution;
 	float friction;
+
 	// The center of mass is used here only in the reference frame of the drawable shapes.
 	// For example, for a sf::CircleShape, this is {radius, radius}.
 	// The position vector is otherwise already pointing to the center of mass.
@@ -58,20 +61,14 @@ struct ConvexBody {
 };
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(ConvexBody, vertices)
 
+struct Sprite {
+	std::string texture;
+	Vector2f offset;
+	sf::IntRect rect;
 
-struct Collider {
-	Vector2f supportFunction(const Vector2f& direction, const Scene& scene, EntityId id) const;
+	sf::Sprite sprite;
 };
-
-// The shadow function returns two points that indicate the start of the shadow
-// cast by the body, located onto the body. Returns world coordinates.
-struct Shadow {
-	std::pair<Vector2f, Vector2f> shadowFunction(const Vector2f& lightSource, const Scene& scene, EntityId id) const;
-
-private:
-	std::pair<Vector2f, Vector2f> circleShadow(const Vector2f& lightSource, const Body& body, const CircleBody& circle) const;
-	std::pair<Vector2f, Vector2f> convexShadow(const Vector2f& lightSource, const Body& body, const ConvexBody& convex) const;
-};
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(Sprite, texture, offset, rect)
 
 // A light source is supposed to emit light from the COM of the body.
 // This might change in the future. Shadows are computre with CircleBody and
@@ -79,12 +76,25 @@ private:
 struct LightSource {
 	float brightness;
 };
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(LightSource, brightness)
 
-struct AnimationComponent : public sf::Drawable  {
-	std::map<Action, Animation> animations;
-
-	virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
+struct AnimationData {
+	std::string texture;
+	Vector2f offset;
+	std::vector<AnimationFrame> frames;
+	std::string soundBuffer;
+	sf::Time soundLoopStart;
+	sf::Time soundLoopEnd;
+	Animation animation;
 };
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(AnimationData, texture, offset, frames, soundBuffer, soundLoopStart, soundLoopEnd)
+
+typedef std::map<Action, AnimationData> Animations;
+
+// We have to define the serialization manually, otherwise the Action keys get
+// converted to int, and the map is converted to an JSON array
+void to_json(nlohmann::json& j, const Animations& animations);
+void from_json(const nlohmann::json& j, Animations& animations);
 
 enum class MapElementType {
 	CelestialBody,
@@ -96,12 +106,33 @@ NLOHMANN_JSON_SERIALIZE_ENUM(MapElementType, {
 })
 
 struct MapElement {
-	tgui::Picture::Ptr icon;
 	MapElementType type;
+	std::string tguiTexture;
+	tgui::Picture::Ptr icon;
+};
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(MapElement, type, tguiTexture)
+
+// Tag component, it has no data but it used to find which entity is the player.
+// The placeholder member is just used to make serialization easier.
+struct Player {
+	bool placeholder;
+};
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(Player, placeholder)
+
+
+struct Collider {
+	Vector2f supportFunction(const Vector2f& direction, const Scene& scene, EntityId id) const;
 };
 
-// Tag component, it has no data but it used to find which entity is the player
-struct Player {
+// The shadow function returns two points that indicate the start of the shadow
+// cast by the body, located onto the body. Returns world coordinates.
+// TODO return a std::vector<Vector2f> to allow arbitrary shadow edges
+struct Shadow {
+	std::pair<Vector2f, Vector2f> shadowFunction(const Vector2f& lightSource, const Scene& scene, EntityId id) const;
+
+private:
+	std::pair<Vector2f, Vector2f> circleShadow(const Vector2f& lightSource, const Body& body, const CircleBody& circle) const;
+	std::pair<Vector2f, Vector2f> convexShadow(const Vector2f& lightSource, const Body& body, const ConvexBody& convex) const;
 };
 
 #endif // COMPONENTS_HPP

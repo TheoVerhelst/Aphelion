@@ -4,10 +4,12 @@
             "radius": 1024
         },
         "sprite": {
-            "texture": "sun"
+            "texture": "sun",
+            "offset": {"x": 0, "y": 0},
+            "rect": {"top": 0, "left": 0, "width": 0, "height": 0}
         },
         "mapElement": {
-            "texture": "sunIcon",
+            "tguiTexture": "sunIcon",
             "type": "celestialBody"
         },
         "lightSource": {
@@ -24,10 +26,12 @@
             "radius": 229.791
         },
         "sprite": {
-            "texture": "mercury"
+            "texture": "mercury",
+            "offset": {"x": 0, "y": 0},
+            "rect": {"top": 0, "left": 0, "width": 0, "height": 0}
         },
         "mapElement": {
-            "texture": "mercuryIcon",
+            "tguiTexture": "mercuryIcon",
             "type": "celestialBody"
         },
         "body": {
@@ -41,10 +45,12 @@
             "radius": 569.863
         },
         "sprite": {
-            "texture": "venus"
+            "texture": "venus",
+            "offset": {"x": 0, "y": 0},
+            "rect": {"top": 0, "left": 0, "width": 0, "height": 0}
         },
         "mapElement": {
-            "texture": "venusIcon",
+            "tguiTexture": "venusIcon",
             "type": "celestialBody"
         },
         "body": {
@@ -59,10 +65,11 @@
         },
         "sprite": {
             "texture": "earth",
-            "offset": {"x": -100, "y": -100}
+            "offset": {"x": -100, "y": -100},
+            "rect": {"top": 0, "left": 0, "width": 0, "height": 0}
         },
         "mapElement": {
-            "texture": "earthIcon",
+            "tguiTexture": "earthIcon",
             "type": "celestialBody"
         },
         "body": {
@@ -76,10 +83,12 @@
             "radius": 319.251
         },
         "sprite": {
-            "texture": "mars"
+            "texture": "mars",
+            "offset": {"x": 0, "y": 0},
+            "rect": {"top": 0, "left": 0, "width": 0, "height": 0}
         },
         "mapElement": {
-            "texture": "marsIcon",
+            "tguiTexture": "marsIcon",
             "type": "celestialBody"
         },
         "body": {
@@ -100,15 +109,17 @@
         ]},
         "sprite": {
             "texture": "ship",
+            "offset": {"x": 0, "y": 0},
             "rect": {"top": 0, "left": 96, "width": 24, "height": 48}
         },
         "mapElement": {
-            "texture": "shipIcon",
+            "tguiTexture": "shipIcon",
             "type": "ship"
         },
         "animations": {
             "engine": {
                 "texture": "ship",
+                "offset": {"x": 0, "y": 0},
                 "frames": [
                     {"duration": 0.1, "rect": {"top": 0, "left": 0, "width": 24, "height": 48}},
                     {"duration": 0.1, "rect": {"top": 0, "left": 24, "width": 24, "height": 48}},

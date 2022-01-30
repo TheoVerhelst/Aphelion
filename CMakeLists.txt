@@ -57,6 +57,7 @@ set(SOURCE_FILES
     src/states/PauseState.cpp
     src/states/SettingsState.cpp
     src/states/StateStack.cpp
+	src/systems/AnimationSystem.cpp
 	src/systems/CollisionSystem.cpp
 	src/systems/GameplaySystem.cpp
 	src/systems/LightSystem.cpp
@@ -65,9 +66,7 @@ set(SOURCE_FILES
 	src/Animation.cpp
 	src/Application.cpp
 	src/components.cpp
-	src/format.cpp
 	src/InputManager.cpp
-	src/LoopedSound.cpp
 	src/main.cpp
 	src/MusicManager.cpp
 	src/Scene.cpp

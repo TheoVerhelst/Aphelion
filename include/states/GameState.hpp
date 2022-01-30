@@ -4,6 +4,7 @@
 #include <TGUI/Backend/Renderer/SFML-Graphics/CanvasSFML.hpp>
 #include <TGUI/Widgets/Picture.hpp>
 #include <states/AbstractState.hpp>
+#include <systems/AnimationSystem.hpp>
 #include <systems/CollisionSystem.hpp>
 #include <systems/GameplaySystem.hpp>
 #include <systems/LightSystem.hpp>
@@ -42,9 +43,8 @@ private:
     Scene _scene;
     tgui::CanvasSFML::Ptr _canvas;
     const ResourceManager<sf::Shader>& _shaderManager;
-    const ResourceManager<tgui::Texture>& _tguiTextureManager;
-    SoundSettings& _soundSettings;
     tgui::Picture::Ptr _background;
+    AnimationSystem _animationSystem;
     CollisionSystem _collisionSystem;
     GameplaySystem _gameplaySystem;
     LightSystem _lightSystem;

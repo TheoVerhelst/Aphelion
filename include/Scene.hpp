@@ -4,13 +4,14 @@
 #include <cstddef>
 #include <cstdint>
 #include <vector>
-#include <queue>
-#include <memory>
+#include <set>
 #include <map>
 #include <unordered_map>
+#include <memory>
 #include <cassert>
 #include <typeindex>
 #include <functional>
+#include <numeric>
 
 typedef std::uint32_t EntityId;
 
@@ -54,9 +55,8 @@ public:
         std::vector<EntityId> res;
         for (EntityId id{0}; id < _maxEntityId; ++id) {
             // Fold expression, it's equivalent to calling
-            // getArray<T>.contains(id) for every type T in Types and joining
-            // them with "and" operators
-            if ((getArray<Types>().contains(id) and ...)) {
+            // hasComponent<T1>(id) and hasComponent<T2>(id) and... 
+            if ((hasComponent<Types>(id) and ...)) {
                 res.push_back(id);
             }
         }
@@ -68,6 +68,20 @@ public:
         const std::vector<EntityId> ids{view<T>()};
         assert(ids.size() == 1);
         return ids.front();
+    }
+
+    std::vector<EntityId> allEntities() const {
+        std::vector<EntityId> allIds{_maxEntityId};
+        std::iota(allIds.begin(), allIds.end(), 0);
+        std::vector<EntityId> res;
+        std::set_difference(allIds.begin(), allIds.end(),
+                _freeIds.begin(), _freeIds.end(), std::back_inserter(res));
+        return res;
+    }
+
+    template <typename T>
+    bool hasComponent(EntityId id) const {
+        return getArray<T>().contains(id);
     }
 
 private:
@@ -130,7 +144,7 @@ private:
     EntityId _maxEntityId{0};
     // List of entity IDs that can be recycled for new entities. Gives the
     // smallest id first.
-    std::priority_queue<EntityId, std::vector<EntityId>, std::greater<EntityId>> _freeIds;
+    std::set<EntityId> _freeIds;
     // Storage of component arrays, indexed by type_index
     std::unordered_map<std::type_index, std::unique_ptr<ArrayConcept>> _arrays;
 

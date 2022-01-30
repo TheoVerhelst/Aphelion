@@ -24,6 +24,7 @@ public:
 
 private:
     Scene& _scene;
+    const ResourceManager<tgui::Texture>& _tguiTextureManager;
     tgui::Group::Ptr _mapIcons{tgui::Group::create()};
     tgui::Picture::Ptr _background;
     const float _zoomSpeed{15};

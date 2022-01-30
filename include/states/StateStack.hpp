@@ -10,13 +10,6 @@
 #include <TGUI/Backend/Window/BackendGui.hpp>
 #include <states/AbstractState.hpp>
 
-// Forward declarations
-namespace sf {
-    class Time;
-}
-enum class Action;
-typedef std::pair<Action, bool> TriggerAction;
-
 
 class StateStack {
 public:
