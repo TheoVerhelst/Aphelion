@@ -12,7 +12,7 @@ make -j4
 ```
 
 ## Launch the game
-The files `gui.txt`, `save.json` and the directory `resources/` need to be in the current directory when running the executable.
+The directories `resources/` and `saves/` need to be in the current directory when running the executable.
 
 ## Controls
   - ZQSD for translating up, down, left and right with the RCS
