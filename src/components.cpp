@@ -126,8 +126,7 @@ std::pair<Vector2f, Vector2f> Shadow::convexShadow(const Vector2f& lightSource, 
 
 void to_json(nlohmann::json& j, const Animations& animations) {
     for (auto& [action, animationData] : animations) {
-		nlohmann::json key(action);
-		j[key.get<std::string>()] = animationData;
+		j[nlohmann::json(action).get<std::string>()] = animationData;
 	}
 }
 

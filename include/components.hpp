@@ -32,10 +32,9 @@ struct Body {
 	float angularVelocity;
 	float restitution;
 	float friction;
-
-	// The center of mass is used here only in the reference frame of the drawable shapes.
-	// For example, for a sf::CircleShape, this is {radius, radius}.
-	// The position vector is otherwise already pointing to the center of mass.
+	// The center of mass is in the reference frame of the drawable shapes. For
+	// example, for a sf::CircleShape, this is {radius, radius}. The position
+	// vector, on the other hand, is pointing to the center of mass.
     Vector2f centerOfMass;
     float momentOfInertia;
 	BodyType type;
@@ -65,7 +64,6 @@ struct Sprite {
 	std::string texture;
 	Vector2f offset;
 	sf::IntRect rect;
-
 	sf::Sprite sprite;
 };
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(Sprite, texture, offset, rect)

@@ -7,7 +7,6 @@
 #include <states/StateStack.hpp>
 #include <states/MapState.hpp>
 #include <ResourceManager.hpp>
-#include <SceneSerializer.hpp>
 #include <Action.hpp>
 #include <components.hpp>
 
@@ -26,11 +25,11 @@ GameState::GameState(StateStack& stack,
     _gameplaySystem{_scene},
     _lightSystem{_scene, _canvas->getRenderTexture(), shaderManager.get("light")},
     _physicsSystem{_scene},
-    _renderSystem{_scene} {
+    _renderSystem{_scene},
+    _serializer{_scene, textureManager, tguiTextureManager, soundBufferManager} {
     registerComponents();
     // TODO Display a message when the save is invalid (e.g. JSON error), rather than crashing
-    SceneSerializer serializer(_scene, textureManager, tguiTextureManager, soundBufferManager);
-    serializer.load("saves/save.json");
+    _serializer.load("saves/save.json");
 }
 
 
@@ -66,6 +65,7 @@ bool GameState::handleTriggerAction(const TriggerAction& actionPair) {
                 return true;
             case Action::Exit:
                 _stack.pushState<PauseState>();
+                _serializer.save("saves/test.json");
                 return true;
             default:
                 break;

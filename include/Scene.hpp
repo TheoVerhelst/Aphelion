@@ -55,7 +55,7 @@ public:
         std::vector<EntityId> res;
         for (EntityId id{0}; id < _maxEntityId; ++id) {
             // Fold expression, it's equivalent to calling
-            // hasComponent<T1>(id) and hasComponent<T2>(id) and... 
+            // hasComponent<T1>(id) and hasComponent<T2>(id) and...
             if ((hasComponent<Types>(id) and ...)) {
                 res.push_back(id);
             }
@@ -71,7 +71,7 @@ public:
     }
 
     std::vector<EntityId> allEntities() const {
-        std::vector<EntityId> allIds{_maxEntityId};
+        std::vector<EntityId> allIds(_maxEntityId);
         std::iota(allIds.begin(), allIds.end(), 0);
         std::vector<EntityId> res;
         std::set_difference(allIds.begin(), allIds.end(),

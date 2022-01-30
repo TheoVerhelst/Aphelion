@@ -4,6 +4,7 @@
 #include <string>
 #include <cstddef>
 #include <json.hpp>
+#include <Scene.hpp>
 
 // Forward declarations
 namespace sf {
@@ -13,7 +14,6 @@ namespace sf {
 namespace tgui {
     class Texture;
 }
-class Scene;
 typedef std::uint32_t EntityId;
 template <typename T>
 class ResourceManager;
@@ -44,6 +44,16 @@ private:
     void loadPlayer(const nlohmann::json& value, EntityId id);
     void loadLightSource(const nlohmann::json& value, EntityId id);
     void loadMapElement(const nlohmann::json& value, EntityId id);
+
+    template <typename T>
+    void saveComponent(nlohmann::json& value, EntityId id, const std::string name) const {
+        if (_scene.hasComponent<T>(id)) {
+            value[name] = _scene.getComponent<T>(id);
+        }
+    }
+    void saveConvexBody(nlohmann::json& value, EntityId id, const std::string& name) const;
+    nlohmann::json computeClassPatch(const nlohmann::json& classValue, const nlohmann::json& entityValue) const;
+
 };
 
 #endif // SCENELOADER_HPP

@@ -11,6 +11,7 @@
 #include <systems/PhysicsSystem.hpp>
 #include <systems/RenderSystem.hpp>
 #include <Scene.hpp>
+#include <SceneSerializer.hpp>
 
 // Forward declarations
 namespace sf {
@@ -50,6 +51,7 @@ private:
     LightSystem _lightSystem;
     PhysicsSystem _physicsSystem;
     RenderSystem _renderSystem;
+    SceneSerializer _serializer;
     const float _rotationSpeed{3};
     const float _zoomSpeed{15.f};
     const Vector2f _minViewSize{130.f, 70.f};

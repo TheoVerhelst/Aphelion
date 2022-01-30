@@ -10,7 +10,6 @@
 #include <SFML/Audio/SoundBuffer.hpp>
 #include <TGUI/TGUI.hpp>
 #include <ResourceManager.hpp>
-#include <Scene.hpp>
 #include <components.hpp>
 #include <SceneSerializer.hpp>
 #include <Animation.hpp>
@@ -64,9 +63,59 @@ void SceneSerializer::load(const std::string& filename) {
 
 void SceneSerializer::save(const std::string& filename) const {
     json j;
+    for (EntityId id : _scene.allEntities()) {
+        json entityValue;
+        saveComponent<Body>(entityValue, id, "body");
+        saveComponent<CircleBody>(entityValue, id, "circleBody");
+        saveConvexBody(entityValue, id, "convexBody");
+        saveComponent<Sprite>(entityValue, id, "sprite");
+        saveComponent<Animations>(entityValue, id, "animations");
+        saveComponent<Player>(entityValue, id, "player");
+        saveComponent<LightSource>(entityValue, id, "lightSource");
+        saveComponent<MapElement>(entityValue, id, "mapElement");
 
+        if (_loadedClasses.contains(id)) {
+            const std::string className{_loadedClasses.at(id)};
+            entityValue = computeClassPatch(_entityClasses.at(className), entityValue);
+            entityValue["class"] = className;
+        }
 
-    std::ofstream(filename) << std::setw(4) << j << std::endl;
+        j.push_back(entityValue);
+    }
+    std::ofstream file{filename};
+    file << std::setw(4) << j << std::endl;
+}
+
+void SceneSerializer::saveConvexBody(json& value, EntityId id, const std::string& name) const {
+    if (_scene.hasComponent<ConvexBody>(id)) {
+        // Copy the component
+        ConvexBody convex{_scene.getComponent<ConvexBody>(id)};
+        const Body& body{_scene.getComponent<Body>(id)};
+        for (auto& vertex : convex.vertices) {
+            vertex += body.centerOfMass;
+        }
+        value[name] = convex;
+    }
+}
+
+json SceneSerializer::computeClassPatch(const json& classValue, const json& entityValue) const {
+    // Find what values differ between the class and the actual value
+    const json flatClass(classValue.flatten());
+    json flatEntity(entityValue.flatten());
+    float eps{1e-5f};
+    for (auto& [path, classProperty] : flatClass.items()) {
+        json::json_pointer pointer{path};
+        assert(entityValue.contains(pointer));
+        const json& entityProperty(entityValue[pointer]);
+        if ((classProperty.is_number_float()
+                and std::abs(classProperty.get<float>() - entityProperty.get<float>()) < eps)
+                or classProperty == entityProperty) {
+            // We can't erase from the pointer, so we erase the flat entity
+            // and then we unflatten it
+            flatEntity.erase(path);
+        }
+    }
+    return flatEntity.unflatten();
 }
 
 void SceneSerializer::loadBody(const json& value, EntityId id) {
@@ -78,13 +127,11 @@ void SceneSerializer::loadCircleBody(const json& value, EntityId id) {
     CircleBody& circle{_scene.assignComponent<CircleBody>(id)};
     value.get_to(circle);
     _scene.assignComponent<Shadow>(id);
-
     // Physical constants
     Body& body{_scene.getComponent<Body>(id)};
     body.centerOfMass = circle.computeCenterOfMass();
     body.momentOfInertia =  circle.computeMomentOfInertia(body.mass);
     body.type = BodyType::Circle;
-
 }
 
 void SceneSerializer::loadConvexBody(const json& value, EntityId id) {
@@ -92,7 +139,6 @@ void SceneSerializer::loadConvexBody(const json& value, EntityId id) {
     value.get_to(convex);
     _scene.assignComponent<Collider>(id);
     _scene.assignComponent<Shadow>(id);
-
     // Physical constants
     Body& body{_scene.getComponent<Body>(id)};
     body.centerOfMass = convex.computeCenterOfMass();
@@ -103,7 +149,6 @@ void SceneSerializer::loadConvexBody(const json& value, EntityId id) {
     }
     body.momentOfInertia =  convex.computeMomentOfInertia(body.mass, {0., 0.});
     body.type = BodyType::Convex;
-
 }
 
 void SceneSerializer::loadSprite(const json& value, EntityId id) {
@@ -131,13 +176,14 @@ void SceneSerializer::loadAnimations(const json& value, EntityId id) {
     }
 }
 
-void SceneSerializer::loadPlayer(const json&, EntityId id) {
-    _scene.assignComponent<Player>(id);
+void SceneSerializer::loadPlayer(const json& value, EntityId id) {
+    Player& player{_scene.assignComponent<Player>(id)};
+    value.get_to(player);
 }
 
 void SceneSerializer::loadLightSource(const json& value, EntityId id) {
     LightSource& lightSource{_scene.assignComponent<LightSource>(id)};
-    value.at("brightness").get_to(lightSource.brightness);
+    value.get_to(lightSource);
 }
 
 void SceneSerializer::loadMapElement(const json& value, EntityId id) {
