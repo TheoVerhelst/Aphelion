@@ -91,41 +91,13 @@ void Application::loadResources() {
 }
 
 void Application::registerStateBuilders() {
-    _stack.registerStateBuilder<GameState>(
-        StateStack::StateBuilder<const std::filesystem::path&>([this] (const std::filesystem::path& path) {
-            return new GameState(_stack, _textureManager,
-                _tguiTextureManager, _shaderManager, _soundBufferManager,
-                _soundSettings, path);
-        })
-    );
-    _stack.registerStateBuilder<LoadGameState>(
-        StateStack::StateBuilder<>([this] {
-            return new LoadGameState(_stack);
-        })
-    );
-    _stack.registerStateBuilder<MainMenuState>(
-        StateStack::StateBuilder<>([this] {
-            return new MainMenuState(_stack, _tguiTextureManager);
-        })
-    );
-    _stack.registerStateBuilder<MapState>(
-        StateStack::StateBuilder<Scene&>([this] (Scene& scene) {
-            return new MapState(_stack, scene, _tguiTextureManager);
-        })
-    );
-    _stack.registerStateBuilder<PauseState>(
-        StateStack::StateBuilder<const SceneSerializer&>([this] (const SceneSerializer& serializer) {
-            return new PauseState(_stack, serializer);
-        })
-    );
-    _stack.registerStateBuilder<SaveGameState>(
-        StateStack::StateBuilder<const SceneSerializer&>([this] (const SceneSerializer& serializer) {
-            return new SaveGameState(_stack, serializer);
-        })
-    );
-    _stack.registerStateBuilder<SettingsState>(
-        StateStack::StateBuilder<>([this] {
-            return new SettingsState(_stack, _soundSettings);
-        })
-    );
+    _stack.registerStateBuilder<GameState, const std::filesystem::path&>(_stack,
+            _textureManager, _tguiTextureManager, _shaderManager,
+            _soundBufferManager, _soundSettings);
+    _stack.registerStateBuilder<LoadGameState>(_stack);
+    _stack.registerStateBuilder<MainMenuState>(_stack, _tguiTextureManager);
+    _stack.registerStateBuilder<MapState, Scene&>(_stack, _tguiTextureManager);
+    _stack.registerStateBuilder<PauseState, const SceneSerializer&>(_stack);
+    _stack.registerStateBuilder<SaveGameState, const SceneSerializer&>(_stack);
+    _stack.registerStateBuilder<SettingsState>(_stack, _soundSettings);
 }

@@ -4,6 +4,9 @@
 #include <vector>
 #include <queue>
 #include <memory>
+#include <any>
+#include <typeinfo>
+#include <typeindex>
 #include <utility>
 #include <functional>
 #include <TGUI/Widget.hpp>
@@ -13,19 +16,20 @@
 
 class StateStack {
 public:
-    template <typename... Args>
-    using StateBuilder = std::function<AbstractState*(Args...)>;
-
     StateStack(tgui::BackendGui& gui);
 
-    template <typename T, typename... Args>
-    void registerStateBuilder(const StateBuilder<Args...>& builder) {
-        getStateBuilder<T, Args...>(builder);
+    template <typename T, typename... Remaining, typename... InitArgs>
+    void registerStateBuilder(InitArgs&&... initArgs) {
+        std::function<T*(Remaining...)> stateBuilder{[&initArgs...] (Remaining&&... remaining) {
+            return new T(std::forward<InitArgs>(initArgs)..., std::forward<Remaining>(remaining)...);
+        }};
+        _stateBuilders[std::type_index(typeid(T))] = std::any(stateBuilder);
     }
 
     template <typename T, typename... Args>
     void pushState(Args&&... args) {
-        AbstractState* state{getStateBuilder<T, Args...>()(std::forward<Args>(args)...)};
+        const auto& stateBuilder = std::any_cast<std::function<T*(Args...)>>(_stateBuilders.at(std::type_index(typeid(T))));
+        AbstractState* state{stateBuilder(std::forward<Args>(args)...)};
         _actionQueue.push([this, state] {
             tgui::Widget::Ptr widget{state->buildGui()};
             _gui.add(widget);
@@ -48,16 +52,11 @@ private:
         tgui::Widget::Ptr widget;
         std::shared_ptr<AbstractState> state;
     };
+
     std::vector<StatePair> _stack;
     tgui::BackendGui& _gui;
     std::queue<std::function<void()>> _actionQueue;
-
-    template <typename T, typename... Args>
-    const StateBuilder<Args...>& getStateBuilder(
-            const StateBuilder<Args...>& init = [](Args...){assert(false);return nullptr;}) {
-        static StateBuilder<Args...> builder{init};
-        return builder;
-    }
+    std::map<std::type_index, std::any> _stateBuilders;
 };
 
 #endif // STATESTACK_HPP

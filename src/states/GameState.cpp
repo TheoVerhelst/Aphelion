@@ -64,7 +64,7 @@ bool GameState::handleTriggerAction(const TriggerAction& actionPair) {
             _stack.pushState<MapState>(_scene);
             return true;
         case Action::Exit:
-            _stack.pushState<PauseState>(const_cast<const SceneSerializer&>(_serializer));
+            _stack.pushState<PauseState, const SceneSerializer&>(_serializer);
             return true;
         default:
             break;

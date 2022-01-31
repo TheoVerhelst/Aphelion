@@ -16,15 +16,15 @@ class Scene;
 
 class MapState : public AbstractState {
 public:
-    MapState(StateStack& stack, Scene& scene, const ResourceManager<tgui::Texture>& tguiTextureManager);
+    MapState(StateStack& stack, const ResourceManager<tgui::Texture>& tguiTextureManager, Scene& scene);
     virtual tgui::Widget::Ptr buildGui() override;
     virtual bool update(sf::Time dt) override;
     virtual bool handleTriggerAction(const TriggerAction& action) override;
     virtual bool handleContinuousAction(const Action& action, sf::Time dt) override;
 
 private:
-    Scene& _scene;
     const ResourceManager<tgui::Texture>& _tguiTextureManager;
+    Scene& _scene;
     tgui::Group::Ptr _mapIcons{tgui::Group::create()};
     tgui::Picture::Ptr _background;
     const float _zoomSpeed{15};

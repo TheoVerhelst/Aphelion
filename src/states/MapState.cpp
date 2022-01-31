@@ -6,10 +6,10 @@
 #include <ResourceManager.hpp>
 #include <components.hpp>
 
-MapState::MapState(StateStack& stack, Scene& scene, const ResourceManager<tgui::Texture>& tguiTextureManager):
+MapState::MapState(StateStack& stack, const ResourceManager<tgui::Texture>& tguiTextureManager, Scene& scene):
     AbstractState{stack},
-    _scene{scene},
     _tguiTextureManager{tguiTextureManager},
+    _scene{scene},
     _background{tgui::Picture::create(_tguiTextureManager.get("mapBackground"))} {
 }
 
