@@ -37,7 +37,7 @@ tgui::Widget::Ptr MainMenuState::buildGui() {
 
     tgui::Button::Ptr newGameButton{tgui::Button::create("New game")};
     newGameButton->onPress([this] {
-        _stack.popState();
+        _stack.clearStates();
         _stack.pushState<GameState, const std::filesystem::path&>("saves/save.json");
     });
     newGameButton->setTextSize(30);
@@ -62,7 +62,7 @@ tgui::Widget::Ptr MainMenuState::buildGui() {
 
     tgui::Button::Ptr exitGameButton{tgui::Button::create("Exit game")};
     exitGameButton->onPress([this]{
-        _stack.popState();
+        _stack.clearStates();
     });
     exitGameButton->setTextSize(30);
     layout->add(exitGameButton);
@@ -77,7 +77,7 @@ bool MainMenuState::update(sf::Time) {
 bool MainMenuState::handleTriggerAction(const TriggerAction& actionPair) {
     auto& [action, start] = actionPair;
     if (action == Action::Exit and start) {
-        _stack.popState();
+        _stack.clearStates();
     }
     return true;
 }

@@ -33,8 +33,11 @@ public:
         });
     }
 
-    void popState();
-    void clear();
+    // Removes states from the stack up to and including the given state. The
+    // stack cannot be empty.
+    void popStatesUntil(const AbstractState& state);
+    // Remove all states from the stack, if any.
+    void clearStates();
     void update(sf::Time dt);
     void handleTriggerAction(const TriggerAction& action);
     void handleContinuousAction(const Action& action, sf::Time dt);

@@ -47,7 +47,7 @@ bool MapState::update(sf::Time) {
 bool MapState::handleTriggerAction(const TriggerAction& actionPair) {
     auto& [action, start] = actionPair;
     if (action == Action::ToggleMap and start) {
-        _stack.popState();
+        _stack.popStatesUntil(*this);
         return true;
     }
     return false;

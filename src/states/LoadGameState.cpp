@@ -16,7 +16,9 @@ tgui::Widget::Ptr LoadGameState::buildGui() {
     window->setSize("25%", "50%");
     window->setPosition("50%", "50%");
     window->setOrigin(0.5f, 0.5f);
-    window->onClose([this]{_stack.popState();});
+    window->onClose([this] {
+        _stack.popStatesUntil(*this);
+    });
 
     tgui::Grid::Ptr grid{tgui::Grid::create()};
     grid->setPosition("5%", "5%");
@@ -32,7 +34,7 @@ tgui::Widget::Ptr LoadGameState::buildGui() {
 
         tgui::Button::Ptr loadButton{tgui::Button::create("Load")};
         loadButton->onPress([this, path]() noexcept {
-            _stack.clear();
+            _stack.clearStates();
             _stack.pushState<GameState, const std::filesystem::path&>(path);
         });
         loadButton->setTextSize(20);
@@ -43,7 +45,7 @@ tgui::Widget::Ptr LoadGameState::buildGui() {
 
     tgui::Button::Ptr cancelButton{tgui::Button::create("Cancel")};
     cancelButton->onPress([this] {
-        _stack.popState();
+        _stack.popStatesUntil(*this);
     });
     cancelButton->setTextSize(18);
     cancelButton->setPosition("95%", "95%");
@@ -60,7 +62,7 @@ bool LoadGameState::update(sf::Time) {
 bool LoadGameState::handleTriggerAction(const TriggerAction& actionPair) {
     auto& [action, start] = actionPair;
     if (action == Action::Exit and start) {
-        _stack.popState();
+        _stack.popStatesUntil(*this);
     }
     return true;
 }

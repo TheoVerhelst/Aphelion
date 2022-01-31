@@ -18,7 +18,9 @@ tgui::Widget::Ptr PauseState::buildGui() {
     window->setSize(200, 300);
     window->setPosition("50%", "50%");
     window->setOrigin(0.5f, 0.5f);
-    window->onClose([this]{_stack.popState();});
+    window->onClose([this] {
+        _stack.popStatesUntil(*this);
+    });
     // TODO focus the window
 
     tgui::VerticalLayout::Ptr layout{tgui::VerticalLayout::create()};
@@ -28,33 +30,40 @@ tgui::Widget::Ptr PauseState::buildGui() {
     window->add(layout);
 
     tgui::Button::Ptr continueButton{tgui::Button::create("Continue")};
-    continueButton->onPress([this]{_stack.popState();});
+    continueButton->onPress([this]{
+        _stack.popStatesUntil(*this);
+    });
     continueButton->setTextSize(18);
     layout->add(continueButton);
     layout->addSpace(0.1f);
 
     tgui::Button::Ptr saveButton{tgui::Button::create("Save game")};
-    saveButton->onPress([this]{_stack.pushState<LoadGameState>();});
+    saveButton->onPress([this] {
+        _stack.pushState<LoadGameState>();
+    });
     saveButton->setTextSize(18);
     layout->add(saveButton);
     layout->addSpace(0.1f);
 
     tgui::Button::Ptr loadButton{tgui::Button::create("Load game")};
-    loadButton->onPress([this]{_stack.pushState<LoadGameState>();});
+    loadButton->onPress([this] {
+        _stack.pushState<LoadGameState>();
+    });
     loadButton->setTextSize(18);
     layout->add(loadButton);
     layout->addSpace(0.1f);
 
     tgui::Button::Ptr settingsButton{tgui::Button::create("Settings")};
-    settingsButton->onPress([this]{_stack.pushState<SettingsState>();});
+    settingsButton->onPress([this] {
+        _stack.pushState<SettingsState>();
+    });
     settingsButton->setTextSize(18);
     layout->add(settingsButton);
     layout->addSpace(0.1f);
 
     tgui::Button::Ptr mainMenuButton{tgui::Button::create("Main menu")};
     mainMenuButton->onPress([this]{
-        _stack.popState();
-        _stack.popState();
+        _stack.clearStates();
         _stack.pushState<MainMenuState>();
     });
     mainMenuButton->setTextSize(18);
@@ -71,7 +80,7 @@ bool PauseState::update(sf::Time) {
 bool PauseState::handleTriggerAction(const TriggerAction& actionPair) {
     auto& [action, start] = actionPair;
     if (action == Action::Exit and start) {
-        _stack.popState();
+        _stack.popStatesUntil(*this);
     }
     return true;
 }

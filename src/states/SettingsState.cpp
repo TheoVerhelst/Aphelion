@@ -21,7 +21,10 @@ tgui::Widget::Ptr SettingsState::buildGui() {
     window->setClientSize({350.f, 400.f});
     window->setPosition("50%", "50%");
     window->setOrigin(0.5f, 0.5f);
-    window->onClose([this]{_stack.popState();});
+    window->onClose([this] {
+        _stack.popStatesUntil(*this);
+        // TODO when the PauseState window is closed, we should also pop this state
+    });
 
     tgui::Grid::Ptr grid{tgui::Grid::create()};
     grid->setPosition("5%", "5%");
@@ -65,14 +68,16 @@ tgui::Widget::Ptr SettingsState::buildGui() {
     tgui::Button::Ptr cancelButton{tgui::Button::create("Cancel")};
     cancelButton->onPress([this] {
         _soundSettings = _initialSoundSettings;
-        _stack.popState();
+        _stack.popStatesUntil(*this);
     });
     cancelButton->setTextSize(18);
     bottomLayout->add(cancelButton);
     bottomLayout->addSpace(0.1f);
 
     tgui::Button::Ptr okButton{tgui::Button::create("OK")};
-    okButton->onPress([this]{_stack.popState();});
+    okButton->onPress([this] {
+        _stack.popStatesUntil(*this);
+    });
     okButton->setTextSize(18);
     bottomLayout->add(okButton);
     bottomLayout->addSpace(0.1f);
@@ -87,7 +92,7 @@ bool SettingsState::update(sf::Time) {
 bool SettingsState::handleTriggerAction(const TriggerAction& actionPair) {
     auto& [action, start] = actionPair;
     if (action == Action::Exit and start) {
-        _stack.popState();
+        _stack.popStatesUntil(*this);
     }
     return true;
 }

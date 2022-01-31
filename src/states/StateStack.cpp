@@ -5,14 +5,19 @@ StateStack::StateStack(tgui::BackendGui& gui) :
     _gui{gui} {
 }
 
-void StateStack::popState() {
-    _actionQueue.push([this] {
-        _gui.remove(_stack.back().widget);
-        _stack.pop_back();
+void StateStack::popStatesUntil(const AbstractState& state) {
+    _actionQueue.push([this, &state] {
+        assert(not _stack.empty());
+        bool foundState{false};
+        while (not _stack.empty() and not foundState) {
+            foundState = _stack.back().state.get() == &state;
+            _gui.remove(_stack.back().widget);
+            _stack.pop_back();
+        }
     });
 }
 
-void StateStack::clear() {
+void StateStack::clearStates() {
     _actionQueue.push([this] {
         while (not _stack.empty()) {
             _gui.remove(_stack.back().widget);
