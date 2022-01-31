@@ -1,14 +1,14 @@
-#ifndef PAUSESTATE_HPP
-#define PAUSESTATE_HPP
+#ifndef SAVEGAMESTATE_HPP
+#define SAVEGAMESTATE_HPP
 
 #include <states/AbstractState.hpp>
 
 // Forward declarations
 class SceneSerializer;
 
-class PauseState : public AbstractState {
+class SaveGameState : public AbstractState {
 public:
-    PauseState(StateStack& stack, const SceneSerializer& serializer);
+    SaveGameState(StateStack& stack, const SceneSerializer& serializer);
     virtual tgui::Widget::Ptr buildGui() override;
     virtual bool update(sf::Time dt) override;
     virtual bool handleTriggerAction(const TriggerAction& action) override;
@@ -18,4 +18,4 @@ private:
     const SceneSerializer& _serializer;
 };
 
-#endif // PAUSESTATE_HPP
+#endif // SAVEGAME_HPP

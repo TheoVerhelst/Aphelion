@@ -56,6 +56,7 @@ set(SOURCE_FILES
     src/states/MainMenuState.cpp
     src/states/MapState.cpp
     src/states/PauseState.cpp
+    src/states/SaveGameState.cpp
     src/states/SettingsState.cpp
     src/states/StateStack.cpp
 	src/systems/AnimationSystem.cpp
@@ -70,6 +71,7 @@ set(SOURCE_FILES
 	src/InputManager.cpp
 	src/main.cpp
 	src/MusicManager.cpp
+	src/Paths.cpp
 	src/Scene.cpp
 	src/SceneSerializer.cpp
 )

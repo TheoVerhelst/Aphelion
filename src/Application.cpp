@@ -3,8 +3,10 @@
 #include <states/MainMenuState.hpp>
 #include <states/MapState.hpp>
 #include <states/PauseState.hpp>
+#include <states/SaveGameState.hpp>
 #include <states/SettingsState.hpp>
 #include <Application.hpp>
+#include <SceneSerializer.hpp>
 
 Application::Application():
     _window{sf::VideoMode::getDesktopMode(), "Aphelion", sf::Style::Fullscreen},
@@ -112,8 +114,13 @@ void Application::registerStateBuilders() {
         })
     );
     _stack.registerStateBuilder<PauseState>(
-        StateStack::StateBuilder<>([this] {
-            return new PauseState(_stack);
+        StateStack::StateBuilder<const SceneSerializer&>([this] (const SceneSerializer& serializer) {
+            return new PauseState(_stack, serializer);
+        })
+    );
+    _stack.registerStateBuilder<SaveGameState>(
+        StateStack::StateBuilder<const SceneSerializer&>([this] (const SceneSerializer& serializer) {
+            return new SaveGameState(_stack, serializer);
         })
     );
     _stack.registerStateBuilder<SettingsState>(

@@ -5,12 +5,15 @@
 #include <states/PauseState.hpp>
 #include <states/MainMenuState.hpp>
 #include <states/LoadGameState.hpp>
+#include <states/SaveGameState.hpp>
 #include <states/SettingsState.hpp>
 #include <Action.hpp>
 #include <SoundSettings.hpp>
+#include <SceneSerializer.hpp>
 
-PauseState::PauseState(StateStack& stack):
-    AbstractState{stack} {
+PauseState::PauseState(StateStack& stack, const SceneSerializer& serializer):
+    AbstractState{stack},
+    _serializer{serializer} {
 }
 
 tgui::Widget::Ptr PauseState::buildGui() {
@@ -39,7 +42,7 @@ tgui::Widget::Ptr PauseState::buildGui() {
 
     tgui::Button::Ptr saveButton{tgui::Button::create("Save game")};
     saveButton->onPress([this] {
-        _stack.pushState<LoadGameState>();
+        _stack.pushState<SaveGameState>(_serializer);
     });
     saveButton->setTextSize(18);
     layout->add(saveButton);

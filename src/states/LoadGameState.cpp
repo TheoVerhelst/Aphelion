@@ -5,6 +5,7 @@
 #include <states/StateStack.hpp>
 #include <states/GameState.hpp>
 #include <states/LoadGameState.hpp>
+#include <Paths.hpp>
 #include <Action.hpp>
 
 LoadGameState::LoadGameState(StateStack& stack):
@@ -26,7 +27,7 @@ tgui::Widget::Ptr LoadGameState::buildGui() {
 
     // TODO Use tgui::ScrollablePanel instead of Grid
     std::size_t row{0};
-    for (auto& path : getSaveFilenames()) {
+    for (auto& path : Paths::getSavePaths()) {
         tgui::Label::Ptr label{tgui::Label::create(std::string(path.stem()))};
         label->setTextSize(20);
         label->setSize(tgui::bindInnerWidth(window) * 0.7, 40);
@@ -69,15 +70,4 @@ bool LoadGameState::handleTriggerAction(const TriggerAction& actionPair) {
 
 bool LoadGameState::handleContinuousAction(const Action&, sf::Time) {
     return true;
-}
-
-
-std::vector<std::filesystem::path> LoadGameState::getSaveFilenames() const {
-    std::vector<std::filesystem::path> res;
-    for (auto const& entry : std::filesystem::directory_iterator{_saveDirectory}) {
-        if (entry.is_regular_file()) {
-            res.push_back(entry);
-        }
-    }
-    return res;
 }
