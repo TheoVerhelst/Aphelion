@@ -22,18 +22,18 @@ class ResourceManager;
 class SceneSerializer {
 public:
     SceneSerializer(Scene& scene,
-            const ResourceManager<sf::Texture>& textureManager,
-            const ResourceManager<tgui::Texture>& tguiTextureManager,
-            const ResourceManager<sf::SoundBuffer>& soundBufferManager);
+            ResourceManager<sf::Texture>& textureManager,
+            ResourceManager<tgui::Texture>& tguiTextureManager,
+            ResourceManager<sf::SoundBuffer>& soundBufferManager);
 
     void load(const std::filesystem::path& path);
     void save(const std::filesystem::path& path) const;
 
 private:
     Scene& _scene;
-    const ResourceManager<sf::Texture>& _textureManager;
-    const ResourceManager<tgui::Texture>& _tguiTextureManager;
-    const ResourceManager<sf::SoundBuffer>& _soundBufferManager;
+    ResourceManager<sf::Texture>& _textureManager;
+    ResourceManager<tgui::Texture>& _tguiTextureManager;
+    ResourceManager<sf::SoundBuffer>& _soundBufferManager;
     const nlohmann::json _entityClasses;
     std::map<EntityId, std::string> _loadedClasses;
 

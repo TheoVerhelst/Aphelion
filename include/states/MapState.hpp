@@ -16,14 +16,14 @@ class Scene;
 
 class MapState : public AbstractState {
 public:
-    MapState(StateStack& stack, const ResourceManager<tgui::Texture>& tguiTextureManager, Scene& scene);
+    MapState(StateStack& stack, ResourceManager<tgui::Texture>& tguiTextureManager, Scene& scene);
     virtual tgui::Widget::Ptr buildGui() override;
     virtual bool update(sf::Time dt) override;
     virtual bool handleTriggerAction(const TriggerAction& action) override;
     virtual bool handleContinuousAction(const Action& action, sf::Time dt) override;
 
 private:
-    const ResourceManager<tgui::Texture>& _tguiTextureManager;
+    ResourceManager<tgui::Texture>& _tguiTextureManager;
     Scene& _scene;
     tgui::Group::Ptr _mapIcons{tgui::Group::create()};
     tgui::Picture::Ptr _background;

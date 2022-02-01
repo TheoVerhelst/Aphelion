@@ -11,10 +11,10 @@
 #include <components.hpp>
 
 GameState::GameState(StateStack& stack,
-        const ResourceManager<sf::Texture>& textureManager,
-        const ResourceManager<tgui::Texture>& tguiTextureManager,
+        ResourceManager<sf::Texture>& textureManager,
+        ResourceManager<tgui::Texture>& tguiTextureManager,
         ResourceManager<sf::Shader>& shaderManager,
-        const ResourceManager<sf::SoundBuffer>& soundBufferManager,
+        ResourceManager<sf::SoundBuffer>& soundBufferManager,
         SoundSettings& soundSettings,
         const std::filesystem::path& savePath):
     AbstractState{stack},

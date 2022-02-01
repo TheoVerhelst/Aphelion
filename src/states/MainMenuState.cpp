@@ -10,7 +10,7 @@
 #include <ResourceManager.hpp>
 #include <Action.hpp>
 
-MainMenuState::MainMenuState(StateStack& stack, const ResourceManager<tgui::Texture>& tguiTextureManager):
+MainMenuState::MainMenuState(StateStack& stack, ResourceManager<tgui::Texture>& tguiTextureManager):
     AbstractState{stack},
     _tguiTextureManager{tguiTextureManager} {
 }

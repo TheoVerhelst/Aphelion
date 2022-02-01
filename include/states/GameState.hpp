@@ -31,10 +31,10 @@ struct SoundSettings;
 class GameState : public AbstractState {
 public:
     GameState(StateStack& stack,
-        const ResourceManager<sf::Texture>& textureManager,
-        const ResourceManager<tgui::Texture>& tguiTextureManager,
+        ResourceManager<sf::Texture>& textureManager,
+        ResourceManager<tgui::Texture>& tguiTextureManager,
         ResourceManager<sf::Shader>& shaderManager,
-        const ResourceManager<sf::SoundBuffer>& soundBufferManager,
+        ResourceManager<sf::SoundBuffer>& soundBufferManager,
         SoundSettings& soundSettings,
         const std::filesystem::path& savePath);
 
@@ -46,7 +46,7 @@ public:
 private:
     Scene _scene;
     tgui::CanvasSFML::Ptr _canvas;
-    const ResourceManager<sf::Shader>& _shaderManager;
+    ResourceManager<sf::Shader>& _shaderManager;
     tgui::Picture::Ptr _background;
     AnimationSystem _animationSystem;
     CollisionSystem _collisionSystem;

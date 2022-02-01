@@ -18,9 +18,9 @@ using nlohmann::json;
 using namespace std::placeholders;
 
 SceneSerializer::SceneSerializer(Scene& scene,
-        const ResourceManager<sf::Texture>& textureManager,
-        const ResourceManager<tgui::Texture>& tguiTextureManager,
-        const ResourceManager<sf::SoundBuffer>& soundBufferManager):
+        ResourceManager<sf::Texture>& textureManager,
+        ResourceManager<tgui::Texture>& tguiTextureManager,
+        ResourceManager<sf::SoundBuffer>& soundBufferManager):
     _scene{scene},
     _textureManager{textureManager},
     _tguiTextureManager{tguiTextureManager},

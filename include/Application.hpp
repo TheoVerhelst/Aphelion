@@ -32,7 +32,7 @@ private:
     SoundSettings _soundSettings;
     MusicManager _musicManager;
 
-    void loadResources();
+    void registerResources();
     void registerStateBuilders();
 };
 

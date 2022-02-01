@@ -6,6 +6,7 @@
 #include <states/SaveGameState.hpp>
 #include <states/SettingsState.hpp>
 #include <Application.hpp>
+#include <Paths.hpp>
 #include <SceneSerializer.hpp>
 
 Application::Application():
@@ -15,7 +16,7 @@ Application::Application():
     _soundSettings{100, 50, 70},
     _musicManager{_soundSettings} {
     _window.setKeyRepeatEnabled(false);
-    loadResources();
+    registerResources();
     tgui::Theme::setDefault("resources/gui/pixelTheme.txt");
     tgui::Font font{"resources/fonts/Ipixelu.ttf"};
     font.setSmooth(false);
@@ -62,32 +63,23 @@ void Application::run() {
     }
 }
 
-void Application::loadResources() {
+void Application::registerResources() {
     tgui::Texture::setDefaultSmooth(false);
-    _tguiTextureManager.loadFromFile("resources/gui/play.png", "playButton");
-    _tguiTextureManager.loadFromFile("resources/gui/playHover.png", "playHoverButton");
-    _tguiTextureManager.loadFromFile("resources/gui/pause.png", "pauseButton");
-    _tguiTextureManager.loadFromFile("resources/gui/pauseHover.png", "pauseHoverButton");
-    _tguiTextureManager.loadFromFile("resources/gui/sunIcon.png", "sunIcon");
-    _tguiTextureManager.loadFromFile("resources/gui/mercuryIcon.png", "mercuryIcon");
-    _tguiTextureManager.loadFromFile("resources/gui/venusIcon.png", "venusIcon");
-    _tguiTextureManager.loadFromFile("resources/gui/earthIcon.png", "earthIcon");
-    _tguiTextureManager.loadFromFile("resources/gui/marsIcon.png", "marsIcon");
-    _tguiTextureManager.loadFromFile("resources/gui/shipIcon.png", "shipIcon");
-    _tguiTextureManager.loadFromFile("resources/textures/background.png", "background");
-    _tguiTextureManager.loadFromFile("resources/textures/mapBackground.png", "mapBackground");
-    _textureManager.loadFromFile("resources/textures/ship.png", "ship");
-    _textureManager.loadFromFile("resources/textures/sun.png", "sun");
-    _textureManager.loadFromFile("resources/textures/mercury.png", "mercury");
-    _textureManager.loadFromFile("resources/textures/venus.png", "venus");
-    _textureManager.loadFromFile("resources/textures/earth.png", "earth");
-    _textureManager.loadFromFile("resources/textures/mars.png", "mars");
-    _textureManager.loadFromFile("resources/textures/rcs.png", "rcs");
-    _shaderManager.loadFromFile("resources/shaders/light.frag", "light", sf::Shader::Fragment);
-    _soundBufferManager.loadFromFile("resources/sounds/mainEngine.wav", "mainEngine");
-    _soundBufferManager.loadFromFile("resources/sounds/rcs.wav", "rcs");
-    _soundBufferManager.loadFromFile("resources/sounds/landing.wav", "landing");
-    _musicManager.openFromFile("resources/musics/Aphelion.ogg");
+    for (auto& path : Paths::getTguiTexturePaths()) {
+        _tguiTextureManager.registerFromFile(path, path.stem());
+    }
+    for (auto& path : Paths::getTexturePaths()) {
+        _textureManager.registerFromFile(path, path.stem());
+    }
+    for (auto& path : Paths::getShaderPaths()) {
+        _shaderManager.registerFromFile(path, path.stem(), sf::Shader::Fragment);
+    }
+    for (auto& path : Paths::getSoundsPaths()) {
+        _soundBufferManager.registerFromFile(path, path.stem());
+    }
+    for (auto& path : Paths::getMusicPaths()) {
+        _musicManager.openFromFile(path);
+    }
 }
 
 void Application::registerStateBuilders() {
@@ -99,5 +91,5 @@ void Application::registerStateBuilders() {
     _stack.registerStateBuilder<MapState, Scene&>(_stack, _tguiTextureManager);
     _stack.registerStateBuilder<PauseState, const SceneSerializer&>(_stack);
     _stack.registerStateBuilder<SaveGameState, const SceneSerializer&>(_stack);
-    _stack.registerStateBuilder<SettingsState>(_stack, _soundSettings);
+    _stack.registerStateBuilder<SettingsState>(_stack, _soundSettings, _window);
 }
