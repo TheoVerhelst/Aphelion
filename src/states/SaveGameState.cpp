@@ -63,14 +63,14 @@ tgui::Widget::Ptr SaveGameState::buildGui() {
         row++;
     }
 
-    tgui::Button::Ptr cancelButton{tgui::Button::create("Cancel")};
-    cancelButton->onPress([this] {
+    tgui::Button::Ptr okButton{tgui::Button::create("OK")};
+    okButton->onPress([this] {
         _stack.popStatesUntil(*this);
     });
-    cancelButton->setTextSize(18);
-    cancelButton->setPosition("95%", "95%");
-    cancelButton->setOrigin(1.f, 1.f);
-    window->add(cancelButton);
+    okButton->setTextSize(18);
+    okButton->setPosition("95%", "95%");
+    okButton->setOrigin(1.f, 1.f);
+    window->add(okButton);
 
     return window;
 }

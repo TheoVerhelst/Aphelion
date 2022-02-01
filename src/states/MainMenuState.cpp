@@ -8,6 +8,7 @@
 #include <states/MainMenuState.hpp>
 #include <states/SettingsState.hpp>
 #include <ResourceManager.hpp>
+#include <Paths.hpp>
 #include <Action.hpp>
 
 MainMenuState::MainMenuState(StateStack& stack, ResourceManager<tgui::Texture>& tguiTextureManager):
@@ -38,19 +39,23 @@ tgui::Widget::Ptr MainMenuState::buildGui() {
     tgui::Button::Ptr newGameButton{tgui::Button::create("New game")};
     newGameButton->onPress([this] {
         _stack.clearStates();
-        _stack.pushState<GameState, const std::filesystem::path&>("saves/save.json");
+        _stack.pushState<GameState, const std::filesystem::path&>(Paths::getNewGameSavePath());
     });
     newGameButton->setTextSize(30);
     layout->add(newGameButton);
     layout->addSpace(0.2f);
 
-    tgui::Button::Ptr continueButton{tgui::Button::create("Continue")};
-    continueButton->onPress([this]{
-        _stack.pushState<LoadGameState>();
-    });
-    continueButton->setTextSize(30);
-    layout->add(continueButton);
-    layout->addSpace(0.2f);
+    const std::vector<std::filesystem::path> savePaths{Paths::getSavePaths()};
+    if (not savePaths.empty()) {
+        tgui::Button::Ptr continueButton{tgui::Button::create("Continue")};
+        continueButton->onPress([this] {
+            _stack.clearStates();
+            _stack.pushState<GameState, const std::filesystem::path&>(Paths::getMostRecentSavePath());
+        });
+        continueButton->setTextSize(30);
+        layout->add(continueButton);
+        layout->addSpace(0.2f);
+    }
 
     tgui::Button::Ptr settingsButton{tgui::Button::create("Settings")};
     settingsButton->onPress([this]{
