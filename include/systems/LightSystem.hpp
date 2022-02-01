@@ -35,7 +35,7 @@ private:
 
     void updateLightSources();
     std::vector<sf::ConvexShape> computeShadowShapes();
-    std::vector<Vector2f> computeShadowGeometry(const Vector2f& edgeA, const Vector2f& edgeB,
+    std::vector<Vector2f> computeShadowGeometry(const std::vector<Vector2f>& shadowVertices,
             const Vector2f& lightSource, const std::array<Vector2f, 4>& view);
 };
 

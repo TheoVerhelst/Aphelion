@@ -77,9 +77,9 @@ std::vector<sf::ConvexShape> LightSystem::computeShadowShapes() {
             }
             const Shadow& shadow{_scene.getComponent<Shadow>(shadowId)};
             // Compute the edges of the shadow
-            const auto [A, B] = shadow.shadowFunction(body.position, _scene, shadowId);
+            const std::vector<Vector2f> shadowPoints{shadow.shadowFunction(body.position, _scene, shadowId)};
             // Compute the shadow geometry from the edges and the light source
-            const auto shadowGeometry = computeShadowGeometry(A, B, lightSource, viewArray);
+            const auto shadowGeometry = computeShadowGeometry(shadowPoints, lightSource, viewArray);
             if (shadowGeometry.size() > 2) {
                 // Convert to a sf::ConvexShape
                 shadowShapes.emplace_back(shadowGeometry.size());
@@ -93,8 +93,7 @@ std::vector<sf::ConvexShape> LightSystem::computeShadowShapes() {
     return shadowShapes;
 }
 
-std::vector<Vector2f> LightSystem::computeShadowGeometry(const Vector2f& A,
-    const Vector2f& B, const Vector2f& S, const std::array<Vector2f, 4>& view) {
+std::vector<Vector2f> LightSystem::computeShadowGeometry(const std::vector<Vector2f>& shadowVertices, const Vector2f& S, const std::array<Vector2f, 4>& view) {
     // Schematic representation, where S is the light source, and the box is the
     // occluding object. A and B are respectively the leftmost and the rightmost
     // vertices of the object when seen from the light source.
@@ -104,9 +103,8 @@ std::vector<Vector2f> LightSystem::computeShadowGeometry(const Vector2f& A,
     // S       |      |
     //         B------+
 
-    // Check if A and B are in the view.
-    bool containsA{boxContains(view, A)};
-    bool containsB{boxContains(view, B)};
+    const Vector2f& A{shadowVertices.front()};
+    const Vector2f& B{shadowVertices.back()};
 
     // Iterate on every corner of the view
     std::vector<Vector2f> shadow;
@@ -142,11 +140,11 @@ std::vector<Vector2f> LightSystem::computeShadowGeometry(const Vector2f& A,
                 if (name == "C" and 0 < v and v < 1) {
                     shadow.push_back(P);
                 } else if (name != "C" and v > 1) {
-                    if (name == "A" and containsA) {
+                    if (name == "A" and boxContains(view, A)) {
                         shadow.push_back(A);
                     }
                     shadow.push_back(P);
-                    if (name == "B" and containsB) {
+                    if (name == "B" and boxContains(view, B)) {
                         shadow.push_back(B);
                     }
                 }

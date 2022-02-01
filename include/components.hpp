@@ -4,7 +4,6 @@
 #include <string>
 #include <vector>
 #include <map>
-#include <utility>
 #include <cstdint>
 #include <SFML/Graphics/Sprite.hpp>
 #include <SFML/Graphics/Rect.hpp>
@@ -126,11 +125,11 @@ struct Collider {
 // cast by the body, located onto the body. Returns world coordinates.
 // TODO return a std::vector<Vector2f> to allow arbitrary shadow edges
 struct Shadow {
-	std::pair<Vector2f, Vector2f> shadowFunction(const Vector2f& lightSource, const Scene& scene, EntityId id) const;
+	std::vector<Vector2f> shadowFunction(const Vector2f& lightSource, const Scene& scene, EntityId id) const;
 
 private:
-	std::pair<Vector2f, Vector2f> circleShadow(const Vector2f& lightSource, const Body& body, const CircleBody& circle) const;
-	std::pair<Vector2f, Vector2f> convexShadow(const Vector2f& lightSource, const Body& body, const ConvexBody& convex) const;
+	std::vector<Vector2f> circleShadow(const Vector2f& lightSource, const Body& body, const CircleBody& circle) const;
+	std::vector<Vector2f> convexShadow(const Vector2f& lightSource, const Body& body, const ConvexBody& convex) const;
 };
 
 #endif // COMPONENTS_HPP

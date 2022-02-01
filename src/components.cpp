@@ -85,7 +85,7 @@ Vector2f Collider::supportFunction(const Vector2f& direction, const Scene& scene
     return furthestPoint;
 }
 
-std::pair<Vector2f, Vector2f> Shadow::shadowFunction(const Vector2f& lightSource, const Scene& scene, EntityId id) const {
+std::vector<Vector2f> Shadow::shadowFunction(const Vector2f& lightSource, const Scene& scene, EntityId id) const {
     const Body& body{scene.getComponent<Body>(id)};
     switch(body.type) {
         case BodyType::Circle:
@@ -99,14 +99,14 @@ std::pair<Vector2f, Vector2f> Shadow::shadowFunction(const Vector2f& lightSource
     }
 }
 
-std::pair<Vector2f, Vector2f> Shadow::circleShadow(const Vector2f& lightSource, const Body& body, const CircleBody& circle) const {
-    // Get the left-side orthogonal vector
+std::vector<Vector2f> Shadow::circleShadow(const Vector2f& lightSource, const Body& body, const CircleBody& circle) const {
+    // Get the left-sided normal vector
     Vector2f orthogonal{perpendicular(body.position - lightSource, true)};
     orthogonal /= norm(orthogonal);
     return {body.position + orthogonal * circle.radius, body.position - orthogonal * circle.radius};
 }
 
-std::pair<Vector2f, Vector2f> Shadow::convexShadow(const Vector2f& lightSource, const Body& body, const ConvexBody& convex) const {
+std::vector<Vector2f> Shadow::convexShadow(const Vector2f& lightSource, const Body& body, const ConvexBody& convex) const {
     std::vector<float> angles(convex.vertices.size());
     std::vector<Vector2f> worldV;
     std::transform(convex.vertices.begin(), convex.vertices.end(), std::back_inserter(worldV),
@@ -120,8 +120,19 @@ std::pair<Vector2f, Vector2f> Shadow::convexShadow(const Vector2f& lightSource, 
     // means the rightmost respective to the light source (since the y-axis goes
     // down).
     auto pair = std::minmax_element(angles.begin(), angles.end());
-    return {*(worldV.begin() + std::distance(angles.begin(), pair.first)),
-            *(worldV.begin() + std::distance(angles.begin(), pair.second))};
+    const Vector2f A{*(worldV.begin() + std::distance(angles.begin(), pair.first))};
+    const Vector2f B{*(worldV.begin() + std::distance(angles.begin(), pair.second))};
+    // We make an approximation of the correct list of shadow vertices. Instead
+    // of going along the shape, we just return two points outside of the shape
+    // that result in the correct projected shadow, and such that the terminator
+    // is still perpendicular to the light ray. First, we compute the vector
+    // normal to the light ray.
+    const Vector2f n{perpendicular(body.position - lightSource, true)};
+    // Find the intersection between the normal vector and the light ray going
+    // to A, and then to B
+    auto [u, a] = intersection(body.position, body.position + n, lightSource, A);
+    auto [v, b] = intersection(body.position, body.position + n, lightSource, B);
+    return {body.position + n * u, body.position + n * v};
 }
 
 void to_json(nlohmann::json& j, const Animations& animations) {
