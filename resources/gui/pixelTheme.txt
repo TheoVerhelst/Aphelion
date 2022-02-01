@@ -80,7 +80,9 @@ ComboBox {
     TextureBackground     = "pixelTheme.png" Part(130, 194, 48, 48) Middle(16) NoSmooth;
     TextureArrow          = "pixelTheme.png" Part(0, 82, 32, 32) NoSmooth;
     TextureArrowHover     = "pixelTheme.png" Part(32, 82, 32, 32) NoSmooth;
-    TextColor = Black;
+    TextColor             = Black;
+    Borders               = (1, 1, 1, 1);
+    BorderColor           = (78, 78, 78);
     Padding               = (3, 3, 3, 3);
     ListBox               = &ListBox;
 }
@@ -136,8 +138,10 @@ Label {
 
 ListBox {
     TextureBackground            = "pixelTheme.png" Part(130, 194, 48, 48) Middle(16) NoSmooth;
-    TextColor = Black;
-    TextColorHover = Black;
+    TextColor                    = Black;
+    TextColorHover               = Black;
+    Borders                      = (1, 1, 1, 1);
+    BorderColor                  = (78, 78, 78);
     BackgroundColorHover         = rgb(100, 100, 100);
     SelectedBackgroundColor      = rgb( 10, 110, 255);
     SelectedBackgroundColorHover = rgb(30, 150, 255);

@@ -63,6 +63,10 @@ tgui::Widget::Ptr SettingsState::buildGui() {
     for (auto& modeName : _videoModeOrder) {
         resolutionListBox->addItem(modeName);
     }
+    std::string currentModeName{std::to_string(_initalScreenSize.x) + "x" + std::to_string(_initalScreenSize.y)};
+    if (_videoModes.contains(currentModeName)) {
+        resolutionListBox->setSelectedItem(currentModeName);
+    }
     grid->addWidget(resolutionListBox, row++, 1, tgui::Grid::Alignment::Left);
 
     tgui::Label::Ptr mainVolumeLabel{tgui::Label::create("Main volume")};
