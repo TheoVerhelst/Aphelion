@@ -1,7 +1,9 @@
 #include <SFML/System/Time.hpp>
 #include <SFML/Graphics/RenderTarget.hpp>
 #include <systems/RenderSystem.hpp>
-#include <components.hpp>
+#include <components/Body.hpp>
+#include <components/components.hpp>
+#include <components/Animations.hpp>
 #include <vector.hpp>
 
 RenderSystem::RenderSystem(Scene& scene):

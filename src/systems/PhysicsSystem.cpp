@@ -1,7 +1,7 @@
 #include <cmath>
 #include <systems/PhysicsSystem.hpp>
 #include <Scene.hpp>
-#include <components.hpp>
+#include <components/Body.hpp>
 
 PhysicsSystem::PhysicsSystem(Scene& scene):
     _scene{scene} {

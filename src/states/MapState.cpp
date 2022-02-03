@@ -4,7 +4,9 @@
 #include <states/MapState.hpp>
 #include <Scene.hpp>
 #include <ResourceManager.hpp>
-#include <components.hpp>
+#include <components/Body.hpp>
+#include <components/components.hpp>
+#include <Action.hpp>
 
 MapState::MapState(StateStack& stack, ResourceManager<tgui::Texture>& tguiTextureManager, Scene& scene):
     AbstractState{stack},

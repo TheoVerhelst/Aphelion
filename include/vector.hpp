@@ -4,6 +4,7 @@
 #include <cmath>
 #include <iostream>
 #include <array>
+#include <vector>
 #include <SFML/System/Vector2.hpp>
 
 typedef sf::Vector2<double> Vector2d;
@@ -41,6 +42,12 @@ constexpr T norm2(const sf::Vector2<T>& vector) {
 template <typename T>
 T angle(const sf::Vector2<T>& vector) {
 	return std::atan2(vector.y, vector.x);
+}
+
+template <typename T>
+T angle(const sf::Vector2<T>& A, const sf::Vector2<T>& B, const sf::Vector2<T>& C) {
+	const T res{angle(A - B) - angle(C - B)};
+	return res < 0 ? res + static_cast<T>(2 * pi) : res;
 }
 
 // Vertical component of the cross product of two 2D vectors. We return a scalar
@@ -109,6 +116,18 @@ sf::Vector2<T> closestPoint(const sf::Vector2<T>& A, const sf::Vector2<T>& B,
 	}
 }
 
+template <std::floating_point T>
+bool convexContains(const std::vector<sf::Vector2<T>>& convex, const sf::Vector2<T>& P) {
+	for (std::size_t i{0}; i < convex.size(); ++i) {
+		std::size_t j{(i + 1) % convex.size()};
+		std::size_t k{(i + 2) % convex.size()};
+		if (cross(convex[j] - convex[i], P - convex[i]) * cross(convex[j] - convex[i], convex[k] - convex[i]) < 0) {
+			return false;
+		}
+	}
+	return true;
+}
+
 // Checks if a rectangular box contains the point P. The box may not be aligned
 // with the axes. The corner order in the array is (up left) - (up right) -
 // (down right) (down left).
@@ -145,8 +164,17 @@ sf::Vector2<T> clampVector(sf::Vector2<T> v, const sf::Vector2<T>& min, const sf
 }
 
 template <typename T>
-std::ostream& operator<<(std::ostream& os, sf::Vector2<T> v) {
-  return os << "(" << v.x << ", " << v.y << ")";
+std::ostream& operator<<(std::ostream& os, const sf::Vector2<T>& v) {
+	return os << "(" << v.x << ", " << v.y << ")";
+}
+
+template <typename T>
+std::ostream& operator<<(std::ostream& os, const std::vector<T>& vector) {
+	os << "[";
+	for (std::size_t i{0}; i < vector.size(); ++i) {
+		os << vector[i] << (i < vector.size() - 1 ? ", " : "");
+	}
+	return os << "]";
 }
 
 #endif // VECTOR_HPP

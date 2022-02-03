@@ -50,6 +50,8 @@ endif()
 
 # List all source files
 set(SOURCE_FILES
+    src/components/Body.cpp
+    src/components/Animations.cpp
     src/states/AbstractState.cpp
     src/states/GameState.cpp
     src/states/LoadGameState.cpp
@@ -67,7 +69,6 @@ set(SOURCE_FILES
 	src/systems/RenderSystem.cpp
 	src/Animation.cpp
 	src/Application.cpp
-	src/components.cpp
 	src/InputManager.cpp
 	src/main.cpp
 	src/MusicManager.cpp

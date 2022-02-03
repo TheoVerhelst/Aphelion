@@ -5,7 +5,8 @@
 #include <SFML/Graphics/ConvexShape.hpp>
 #include <systems/LightSystem.hpp>
 #include <Scene.hpp>
-#include <components.hpp>
+#include <components/Body.hpp>
+#include <components/components.hpp>
 
 LightSystem::LightSystem(Scene& scene, const sf::RenderTarget& renderTarget, sf::Shader& shader):
     _scene{scene},
@@ -65,19 +66,19 @@ std::vector<sf::ConvexShape> LightSystem::computeShadowShapes() {
 
     // Fetch the list of shadow entities in advance to avoid repeating the call
     // in the loop
-    std::vector<EntityId> shadowView{_scene.view<Shadow>()};
+    std::vector<EntityId> shadowView{_scene.view<Body>()};
     std::vector<sf::ConvexShape> shadowShapes;
     for (EntityId lightId : _scene.view<Body, LightSource>()) {
-        Body& body{_scene.getComponent<Body>(lightId)};
-        const Vector2f lightSource{body.position};
+        Body& lightBody{_scene.getComponent<Body>(lightId)};
+        const Vector2f lightSource{lightBody.position};
 
         for (EntityId shadowId : shadowView) {
             if (lightId == shadowId) {
                 continue;
             }
-            const Shadow& shadow{_scene.getComponent<Shadow>(shadowId)};
+            const Body& shadowBody{_scene.getComponent<Body>(shadowId)};
             // Compute the edges of the shadow
-            const std::vector<Vector2f> shadowPoints{shadow.shadowFunction(body.position, _scene, shadowId)};
+            const std::vector<Vector2f> shadowPoints{shadowBody.shadowTerminator(lightBody.position, _scene, shadowId)};
             // Compute the shadow geometry from the edges and the light source
             const auto shadowGeometry = computeShadowGeometry(shadowPoints, lightSource, viewArray);
             if (shadowGeometry.size() > 2) {

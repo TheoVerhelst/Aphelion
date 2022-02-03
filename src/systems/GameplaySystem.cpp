@@ -1,7 +1,8 @@
 #include <systems/GameplaySystem.hpp>
 #include <Action.hpp>
 #include <Scene.hpp>
-#include <components.hpp>
+#include <components/Body.hpp>
+#include <components/components.hpp>
 
 GameplaySystem::GameplaySystem(Scene& scene):
     _scene{scene} {

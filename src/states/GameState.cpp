@@ -8,7 +8,9 @@
 #include <states/MapState.hpp>
 #include <ResourceManager.hpp>
 #include <Action.hpp>
-#include <components.hpp>
+#include <components/Body.hpp>
+#include <components/Animations.hpp>
+#include <components/components.hpp>
 
 GameState::GameState(StateStack& stack,
         ResourceManager<sf::Texture>& textureManager,
@@ -98,11 +100,9 @@ bool GameState::handleContinuousAction(const Action& action, sf::Time dt) {
 void GameState::registerComponents() {
     _scene.registerComponent<Body>();
     _scene.registerComponent<CircleBody>();
-    _scene.registerComponent<ConvexBody>();
-    _scene.registerComponent<Collider>();
+    _scene.registerComponent<PolygonBody>();
     _scene.registerComponent<Animations>();
     _scene.registerComponent<LightSource>();
-    _scene.registerComponent<Shadow>();
     _scene.registerComponent<Player>();
     _scene.registerComponent<MapElement>();
     _scene.registerComponent<Sprite>();

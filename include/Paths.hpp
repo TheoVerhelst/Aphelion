@@ -18,7 +18,7 @@ public:
     static std::vector<std::filesystem::path> getTexturePaths();
     static std::vector<std::filesystem::path> getMusicPaths();
     static std::vector<std::filesystem::path> getShaderPaths();
-    static std::vector<std::filesystem::path> getSoundsPaths();
+    static std::vector<std::filesystem::path> getSoundPaths();
 
 private:
     static const std::filesystem::path _saveDirectory;

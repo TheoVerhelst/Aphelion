@@ -39,7 +39,7 @@ private:
 
     void loadBody(const nlohmann::json& value, EntityId id);
     void loadCircleBody(const nlohmann::json& value, EntityId id);
-    void loadConvexBody(const nlohmann::json& value, EntityId id);
+    void loadPolygonBody(const nlohmann::json& value, EntityId id);
     void loadSprite(const nlohmann::json& value, EntityId id);
     void loadAnimations(const nlohmann::json& value, EntityId id);
     void loadPlayer(const nlohmann::json& value, EntityId id);
@@ -52,7 +52,7 @@ private:
             value[name] = _scene.getComponent<T>(id);
         }
     }
-    void saveConvexBody(nlohmann::json& value, EntityId id, const std::string& name) const;
+    
     nlohmann::json computeClassPatch(const nlohmann::json& classValue, const nlohmann::json& entityValue) const;
 
 };

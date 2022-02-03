@@ -16,14 +16,14 @@
             "brightness": 800000000
         },
         "body": {
-            "mass": 3803400000000000.0,
+            "density": 1154575177,
             "restitution": 0.9,
             "friction": 0.5
         }
     },
     "mercury": {
         "circleBody": {
-            "radius": 229.791
+            "radius": 230
         },
         "sprite": {
             "texture": "mercury",
@@ -35,14 +35,14 @@
             "type": "celestialBody"
         },
         "body": {
-            "mass": 299620000000.0,
+            "density": 1802873,
             "restitution": 0.9,
             "friction": 0.5
         }
     },
     "venus": {
         "circleBody": {
-            "radius": 569.863
+            "radius": 570
         },
         "sprite": {
             "texture": "venus",
@@ -54,14 +54,14 @@
             "type": "celestialBody"
         },
         "body": {
-            "mass": 4417700000000.0,
+            "density": 4328094,
             "restitution": 0.9,
             "friction": 0.5
         }
     },
     "earth": {
         "circleBody": {
-            "radius": 600.0
+            "radius": 600
         },
         "sprite": {
             "texture": "earth",
@@ -73,14 +73,14 @@
             "type": "celestialBody"
         },
         "body": {
-            "mass": 5419100000000.0,
+            "density": 4791536,
             "restitution": 0.9,
             "friction": 0.5
         }
     },
     "mars": {
         "circleBody": {
-            "radius": 319.251
+            "radius": 320
         },
         "sprite": {
             "texture": "mars",
@@ -92,13 +92,13 @@
             "type": "celestialBody"
         },
         "body": {
-            "mass": 582290000000.0,
+            "density": 1810046,
             "restitution": 0.9,
             "friction": 0.5
         }
     },
     "ship": {
-        "convexBody": {
+        "polygonBody": {
             "vertices": [
                 {"x": 3, "y": 7},
                 {"x": 10, "y": 0},
@@ -180,7 +180,7 @@
             }
         },
         "body": {
-            "mass": 10000,
+            "density": 20,
             "restitution": 0.3,
             "friction": 0.5
         }

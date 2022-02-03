@@ -4,7 +4,8 @@
 #include <Animation.hpp>
 #include <SoundSettings.hpp>
 #include <Action.hpp>
-#include <components.hpp>
+#include <components/Animations.hpp>
+#include <components/components.hpp>
 
 AnimationSystem::AnimationSystem(Scene& scene, const SoundSettings& soundSettings):
     _scene{scene},

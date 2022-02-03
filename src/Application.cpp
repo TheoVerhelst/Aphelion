@@ -74,7 +74,7 @@ void Application::registerResources() {
     for (auto& path : Paths::getShaderPaths()) {
         _shaderManager.registerFromFile(path, path.stem(), sf::Shader::Fragment);
     }
-    for (auto& path : Paths::getSoundsPaths()) {
+    for (auto& path : Paths::getSoundPaths()) {
         _soundBufferManager.registerFromFile(path, path.stem());
     }
     for (auto& path : Paths::getMusicPaths()) {

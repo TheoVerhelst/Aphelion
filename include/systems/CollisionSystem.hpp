@@ -60,13 +60,13 @@ private:
 		float distance;
 	};
 
-	void collideBodies(const SupportFunction& functionA, const SupportFunction& functionB, Body& bodyA, Body& bodyB);
+	void collideConvexes(const SupportFunction& functionA, const SupportFunction& functionB, Body& bodyA, Body& bodyB);
 
 	// In the special case of two circle, the collision detection and response
 	// is much simpler, so we do both at once here.
 	void collideCircles(const CircleBody& circleA, const CircleBody& circleB, Body& bodyA, Body& bodyB);
 
-	void collideCircleAndBody(const CircleBody& circleA, const SupportFunction& functionB, Body& bodyA, Body& bodyB);
+	void collideCircleAndConvex(const CircleBody& circleA, const SupportFunction& functionB, Body& bodyA, Body& bodyB);
 
 	// Collision response between arbitrary bodies.
 	void collisionResponse(Body& bodyA, Body& bodyB, const ContactInfo& contactInfo);

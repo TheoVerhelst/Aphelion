@@ -10,7 +10,9 @@
 #include <SFML/Audio/SoundBuffer.hpp>
 #include <TGUI/TGUI.hpp>
 #include <ResourceManager.hpp>
-#include <components.hpp>
+#include <components/Animations.hpp>
+#include <components/Body.hpp>
+#include <components/components.hpp>
 #include <SceneSerializer.hpp>
 #include <Animation.hpp>
 
@@ -32,7 +34,7 @@ void SceneSerializer::load(const std::filesystem::path& path) {
     std::vector<std::pair<std::string, std::function<void(SceneSerializer*, const json&,  EntityId)>>> loadFunctions{
         {"body", &SceneSerializer::loadBody},
         {"circleBody", &SceneSerializer::loadCircleBody},
-        {"convexBody", &SceneSerializer::loadConvexBody},
+        {"polygonBody", &SceneSerializer::loadPolygonBody},
         {"sprite", &SceneSerializer::loadSprite},
         {"animations", &SceneSerializer::loadAnimations},
         {"player", &SceneSerializer::loadPlayer},
@@ -67,7 +69,7 @@ void SceneSerializer::save(const std::filesystem::path& path) const {
         json entityValue;
         saveComponent<Body>(entityValue, id, "body");
         saveComponent<CircleBody>(entityValue, id, "circleBody");
-        saveConvexBody(entityValue, id, "convexBody");
+        saveComponent<PolygonBody>(entityValue, id, "polygonBody");
         saveComponent<Sprite>(entityValue, id, "sprite");
         saveComponent<Animations>(entityValue, id, "animations");
         saveComponent<Player>(entityValue, id, "player");
@@ -84,18 +86,6 @@ void SceneSerializer::save(const std::filesystem::path& path) const {
     }
     std::ofstream file{path};
     file << std::setw(4) << j << std::endl;
-}
-
-void SceneSerializer::saveConvexBody(json& value, EntityId id, const std::string& name) const {
-    if (_scene.hasComponent<ConvexBody>(id)) {
-        // Copy the component
-        ConvexBody convex{_scene.getComponent<ConvexBody>(id)};
-        const Body& body{_scene.getComponent<Body>(id)};
-        for (auto& vertex : convex.vertices) {
-            vertex += body.centerOfMass;
-        }
-        value[name] = convex;
-    }
 }
 
 json SceneSerializer::computeClassPatch(const json& classValue, const json& entityValue) const {
@@ -126,29 +116,13 @@ void SceneSerializer::loadBody(const json& value, EntityId id) {
 void SceneSerializer::loadCircleBody(const json& value, EntityId id) {
     CircleBody& circle{_scene.assignComponent<CircleBody>(id)};
     value.get_to(circle);
-    _scene.assignComponent<Shadow>(id);
-    // Physical constants
-    Body& body{_scene.getComponent<Body>(id)};
-    body.centerOfMass = circle.computeCenterOfMass();
-    body.momentOfInertia =  circle.computeMomentOfInertia(body.mass);
-    body.type = BodyType::Circle;
+    circle = CircleBody(_scene.getComponent<Body>(id), circle.radius);
 }
 
-void SceneSerializer::loadConvexBody(const json& value, EntityId id) {
-    ConvexBody& convex{_scene.assignComponent<ConvexBody>(id)};
-    value.get_to(convex);
-    _scene.assignComponent<Collider>(id);
-    _scene.assignComponent<Shadow>(id);
-    // Physical constants
-    Body& body{_scene.getComponent<Body>(id)};
-    body.centerOfMass = convex.computeCenterOfMass();
-    // Shift the vertices so they represent correct local coordinates around the
-    // center of mass
-    for (auto& vertex : convex.vertices) {
-        vertex -= body.centerOfMass;
-    }
-    body.momentOfInertia =  convex.computeMomentOfInertia(body.mass, {0., 0.});
-    body.type = BodyType::Convex;
+void SceneSerializer::loadPolygonBody(const json& value, EntityId id) {
+    PolygonBody& polygon{_scene.assignComponent<PolygonBody>(id)};
+    value.get_to(polygon);
+    polygon = PolygonBody(_scene.getComponent<Body>(id), polygon.vertices);
 }
 
 void SceneSerializer::loadSprite(const json& value, EntityId id) {

@@ -57,7 +57,7 @@ std::vector<fs::path> Paths::getShaderPaths() {
     return getPaths(_resourceDirectory/"shaders", ".frag");
 }
 
-std::vector<fs::path> Paths::getSoundsPaths() {
+std::vector<fs::path> Paths::getSoundPaths() {
     return getPaths(_resourceDirectory/"sounds", ".wav");
 }
 
