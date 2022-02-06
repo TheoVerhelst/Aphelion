@@ -1,8 +1,12 @@
 cmake_minimum_required(VERSION 3.0)
 project(Aphelion)
 
-IF (NOT DEFINED COMPILE_STATIC)
+if (NOT DEFINED COMPILE_STATIC)
     set(COMPILE_STATIC FALSE)
+endif()
+
+if (NOT DEFINED COMPILE_TESTS)
+    set(COMPILE_TESTS FALSE)
 endif()
 
 set(SFML_STATIC_LIBRARIES ${COMPILE_STATIC})
@@ -80,3 +84,13 @@ set(SOURCE_FILES
 # Create the main executable
 add_executable(${CMAKE_PROJECT_NAME} ${SOURCE_FILES})
 target_link_libraries(${CMAKE_PROJECT_NAME} tgui sfml-audio sfml-graphics sfml-window sfml-system)
+
+# Create the test executable
+if (COMPILE_TESTS)
+    set(TEST_FILES
+        test/main.cpp
+        test/vector.cpp
+    )
+    include_directories("${CMAKE_SOURCE_DIR}/test")
+    add_executable(tests ${TEST_FILES})
+endif()

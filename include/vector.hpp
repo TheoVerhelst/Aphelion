@@ -7,10 +7,12 @@
 #include <vector>
 #include <SFML/System/Vector2.hpp>
 
-typedef sf::Vector2<double> Vector2d;
-typedef sf::Vector2<float> Vector2f;
-typedef sf::Vector2<int> Vector2i;
-typedef sf::Vector2<unsigned int> Vector2u;
+template <typename T>
+using Vector2 = sf::Vector2<T>;
+typedef Vector2<double> Vector2d;
+typedef Vector2<float> Vector2f;
+typedef Vector2<int> Vector2i;
+typedef Vector2<unsigned> Vector2u;
 
 const float pi{static_cast<float>(std::acos(-1))};
 
@@ -25,27 +27,27 @@ constexpr T radToDeg(T v) {
 }
 
 template <typename T>
-constexpr T dot(const sf::Vector2<T>& a, const sf::Vector2<T>& b) {
+constexpr T dot(const Vector2<T>& a, const Vector2<T>& b) {
 	return a.x * b.x + a.y * b.y;
 }
 
 template <std::floating_point T>
-T norm(const sf::Vector2<T>& vector) {
+T norm(const Vector2<T>& vector) {
 	return std::hypot(vector.x, vector.y);
 }
 
 template <typename T>
-constexpr T norm2(const sf::Vector2<T>& vector) {
+constexpr T norm2(const Vector2<T>& vector) {
 	return dot(vector, vector);
 }
 
 template <typename T>
-T angle(const sf::Vector2<T>& vector) {
+T angle(const Vector2<T>& vector) {
 	return std::atan2(vector.y, vector.x);
 }
 
 template <typename T>
-T angle(const sf::Vector2<T>& A, const sf::Vector2<T>& B, const sf::Vector2<T>& C) {
+T angle(const Vector2<T>& A, const Vector2<T>& B, const Vector2<T>& C) {
 	const T res{angle(A - B) - angle(C - B)};
 	return res < 0 ? res + static_cast<T>(2 * pi) : res;
 }
@@ -53,27 +55,27 @@ T angle(const sf::Vector2<T>& A, const sf::Vector2<T>& B, const sf::Vector2<T>& 
 // Vertical component of the cross product of two 2D vectors. We return a scalar
 // instead of a Vector3 because we need only its norm.
 template <typename T>
-constexpr T cross(const sf::Vector2<T>& a, const sf::Vector2<T>& b) {
+constexpr T cross(const Vector2<T>& a, const Vector2<T>& b) {
 	return a.x * b.y - a.y * b.x;
 }
 
 // Returns a vector perpendicular to v, with the specified winding. Winding left
 // means that the resulting vector will go to the left of v. For example, the
-// perpendicular of (1, 0) is (0, 1) when winding left, and (0, -1) when winding
-// right. This is assuming the x-axis going left and the y-axis going down.
+// perpendicular of (1, 0) is (0, -1) when winding left, and (0, 1) when winding
+// right. This is assuming the x-axis going right and the y-axis going down.
 template <typename T>
-constexpr sf::Vector2<T> perpendicular(const sf::Vector2<T>& v, bool windLeft) {
-	return windLeft ? sf::Vector2<T>(v.y, -v.x) : sf::Vector2<T>(-v.y, v.x);
+constexpr Vector2<T> perpendicular(const Vector2<T>& v, bool windLeft) {
+	return windLeft ? Vector2<T>(v.y, -v.x) : Vector2<T>(-v.y, v.x);
 }
 
 // Returns a vector perpendicular to v, such that it has a positive dot product
 // with the vector d.
 template <typename T>
-constexpr sf::Vector2<T> perpendicular(const sf::Vector2<T>& v, const sf::Vector2<T>& d) {
+constexpr Vector2<T> perpendicular(const Vector2<T>& v, const Vector2<T>& d) {
 	// We could use the formula (v x d) x v, but this requires three
 	// multiplications, which is not ideal for small vectors. We have a branch
 	// but no number stability issue here.
-	Vector2f res{v.y, -v.x};
+	const Vector2<T> res{v.y, -v.x};
 	if (dot(res, d) < 0) {
 		return -res;
 	} else {
@@ -82,8 +84,9 @@ constexpr sf::Vector2<T> perpendicular(const sf::Vector2<T>& v, const sf::Vector
 }
 
 template <std::floating_point T>
-sf::Vector2<T> rotate(const sf::Vector2<T>& v, T angle) {
-	return {v.x * std::cos(angle) - v.y * std::sin(angle), v.x * std::sin(angle) + v.y * std::cos(angle)};
+Vector2<T> rotate(const Vector2<T>& v, T angle) {
+	return {v.x * std::cos(angle) - v.y * std::sin(angle),
+	        v.x * std::sin(angle) + v.y * std::cos(angle)};
 }
 
 // Compute the intersection P between the line AB and CD. The result is the
@@ -91,11 +94,11 @@ sf::Vector2<T> rotate(const sf::Vector2<T>& v, T angle) {
 // P = A + u * (B - A) = C + v * (D - C). So when 0 < u < 1, P is located
 // between A and B, and when 0 < v < 1, P is located between C and D
 template <std::floating_point T>
-constexpr std::pair<T, T> intersection(const sf::Vector2<T>& A, const sf::Vector2<T>& B,
-		const sf::Vector2<T>& C, const sf::Vector2<T>& D) {
-	const sf::Vector2<T> S{B - A};
-	const sf::Vector2<T> R{D - C};
-	const sf::Vector2<T> CA{A - C};
+constexpr std::pair<T, T> intersection(const Vector2<T>& A, const Vector2<T>& B,
+		const Vector2<T>& C, const Vector2<T>& D) {
+	const Vector2<T> S{B - A};
+	const Vector2<T> R{D - C};
+	const Vector2<T> CA{A - C};
 	const T RxS{cross(R, S)};
 	return {cross(CA, R) / RxS, cross(CA, S) / RxS};
 }
@@ -103,8 +106,8 @@ constexpr std::pair<T, T> intersection(const sf::Vector2<T>& A, const sf::Vector
 
 // Closest point to P on the segment AB.
 template <std::floating_point T>
-sf::Vector2<T> closestPoint(const sf::Vector2<T>& A, const sf::Vector2<T>& B,
-		const sf::Vector2<T>& P) {
+Vector2<T> closestPoint(const Vector2<T>& A, const Vector2<T>& B,
+		const Vector2<T>& P) {
 	const Vector2f AB{B - A};
 	const T c{dot(AB, P - A) / norm2(AB)};
 	if (c < 0) {
@@ -116,12 +119,16 @@ sf::Vector2<T> closestPoint(const sf::Vector2<T>& A, const sf::Vector2<T>& B,
 	}
 }
 
+// Checks if a convex polygon contains a given point by checking if it is on the
+// right side of each edge, going clockwise. The vertices of the polygon have to
+// be in clockwise order.
 template <std::floating_point T>
-bool convexContains(const std::vector<sf::Vector2<T>>& convex, const sf::Vector2<T>& P) {
+bool convexContains(const std::vector<Vector2<T>>& convex, const Vector2<T>& P) {
 	for (std::size_t i{0}; i < convex.size(); ++i) {
-		std::size_t j{(i + 1) % convex.size()};
-		std::size_t k{(i + 2) % convex.size()};
-		if (cross(convex[j] - convex[i], P - convex[i]) * cross(convex[j] - convex[i], convex[k] - convex[i]) < 0) {
+		const std::size_t j{(i + 1) % convex.size()};
+		const std::size_t k{(i + 2) % convex.size()};
+		if (cross(convex[j] - convex[i], P - convex[i])
+		  * cross(convex[j] - convex[i], convex[k] - convex[i]) < 0) {
 			return false;
 		}
 	}
@@ -129,24 +136,25 @@ bool convexContains(const std::vector<sf::Vector2<T>>& convex, const sf::Vector2
 }
 
 // Checks if a rectangular box contains the point P. The box may not be aligned
-// with the axes. The corner order in the array is (up left) - (up right) -
-// (down right) (down left).
+// with the axes. The corner order in the array is clockwise, starting from the
+// top left corner.
 template <std::floating_point T>
-bool boxContains(const std::array<sf::Vector2<T>, 4>& box, const sf::Vector2<T>& P) {
+bool boxContains(const std::array<Vector2<T>, 4>& box, const Vector2<T>& P) {
 	//  A -------- B
 	//  |   P      |
 	//  D -------- C
-	const sf::Vector2<T> AB{box[1] - box[0]};
-	const sf::Vector2<T> AP{P      - box[0]};
-	const sf::Vector2<T> BP{P      - box[1]};
-	const sf::Vector2<T> AD{box[3] - box[0]};
-	const sf::Vector2<T> DP{P      - box[3]};
-	return dot(AB, AP) > 0 and dot(AB, BP) < 0 and dot(AD, AP) > 0 and dot(AD, DP) < 0;
+	const Vector2<T> AB{box[1] - box[0]};
+	const Vector2<T> AP{P      - box[0]};
+	const Vector2<T> BP{P      - box[1]};
+	const Vector2<T> AD{box[3] - box[0]};
+	const Vector2<T> DP{P      - box[3]};
+	return dot(AB, AP) >= 0 and dot(AB, BP) <= 0
+	   and dot(AD, AP) >= 0 and dot(AD, DP) <= 0;
 }
 
 
 template <std::floating_point T>
-sf::Vector2<T> clampVector(sf::Vector2<T> v, const sf::Vector2<T>& min, const sf::Vector2<T>& max) {
+Vector2<T> clampVector(Vector2<T> v, const Vector2<T>& min, const Vector2<T>& max) {
 	const T aspectRatio{v.x / v.y};
     if (v.x > max.x) {
         v = {max.x, max.x / aspectRatio};
@@ -164,7 +172,7 @@ sf::Vector2<T> clampVector(sf::Vector2<T> v, const sf::Vector2<T>& min, const sf
 }
 
 template <typename T>
-std::ostream& operator<<(std::ostream& os, const sf::Vector2<T>& v) {
+std::ostream& operator<<(std::ostream& os, const Vector2<T>& v) {
 	return os << "(" << v.x << ", " << v.y << ")";
 }
 
