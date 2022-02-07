@@ -119,39 +119,6 @@ Vector2<T> closestPoint(const Vector2<T>& A, const Vector2<T>& B,
 	}
 }
 
-// Checks if a convex polygon contains a given point by checking if it is on the
-// right side of each edge, going clockwise. The vertices of the polygon have to
-// be in clockwise order.
-template <std::floating_point T>
-bool convexContains(const std::vector<Vector2<T>>& convex, const Vector2<T>& P) {
-	for (std::size_t i{0}; i < convex.size(); ++i) {
-		const std::size_t j{(i + 1) % convex.size()};
-		const std::size_t k{(i + 2) % convex.size()};
-		if (cross(convex[j] - convex[i], P - convex[i])
-		  * cross(convex[j] - convex[i], convex[k] - convex[i]) < 0) {
-			return false;
-		}
-	}
-	return true;
-}
-
-// Checks if a rectangular box contains the point P. The box may not be aligned
-// with the axes. The corner order in the array is clockwise, starting from the
-// top left corner.
-template <std::floating_point T>
-bool boxContains(const std::array<Vector2<T>, 4>& box, const Vector2<T>& P) {
-	//  A -------- B
-	//  |   P      |
-	//  D -------- C
-	const Vector2<T> AB{box[1] - box[0]};
-	const Vector2<T> AP{P      - box[0]};
-	const Vector2<T> BP{P      - box[1]};
-	const Vector2<T> AD{box[3] - box[0]};
-	const Vector2<T> DP{P      - box[3]};
-	return dot(AB, AP) >= 0 and dot(AB, BP) <= 0
-	   and dot(AD, AP) >= 0 and dot(AD, DP) <= 0;
-}
-
 
 template <std::floating_point T>
 Vector2<T> clampVector(Vector2<T> v, const Vector2<T>& min, const Vector2<T>& max) {
@@ -174,15 +141,6 @@ Vector2<T> clampVector(Vector2<T> v, const Vector2<T>& min, const Vector2<T>& ma
 template <typename T>
 std::ostream& operator<<(std::ostream& os, const Vector2<T>& v) {
 	return os << "(" << v.x << ", " << v.y << ")";
-}
-
-template <typename T>
-std::ostream& operator<<(std::ostream& os, const std::vector<T>& vector) {
-	os << "[";
-	for (std::size_t i{0}; i < vector.size(); ++i) {
-		os << vector[i] << (i < vector.size() - 1 ? ", " : "");
-	}
-	return os << "]";
 }
 
 #endif // VECTOR_HPP

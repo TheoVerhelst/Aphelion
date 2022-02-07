@@ -7,6 +7,7 @@
 #include <json.hpp>
 #include <vector.hpp>
 #include <serializers.hpp>
+#include <polygon.hpp>
 
 class Scene;
 typedef uint32_t EntityId;
@@ -41,38 +42,14 @@ struct CircleBody {
 };
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(CircleBody, radius)
 
-class ConvexComponent {
-public:
-	ConvexComponent(const std::vector<Vector2f>& vertices);
-	float computeMomentOfInertia(float density, const Vector2f& axis) const;
-    Vector2f supportFunction(const Vector2f& direction, const Body& body) const;
-	float getArea() const;
-	Vector2f getCenterOfMass() const;
-	void updateCenterOfMass(const Vector2f& centerOfMass);
-
-private:
-	std::vector<Vector2f> _vertices;
-	float _area;
-	Vector2f _centerOfMass;
-
-	void computeAreaAndCenterOfMass();
-};
-
 struct PolygonBody {
 	std::vector<Vector2f> vertices;
-    std::vector<ConvexComponent> components;
+    std::vector<ConvexPolygon> components;
 
 	PolygonBody() = default;
 	PolygonBody(Body& body, const std::vector<Vector2f>& vertices);
 	std::vector<Vector2f> shadowTerminator(const Vector2f& lightSource, const Body& body) const;
-
-private:
-	Vector2f computeCenterOfMass() const;
-	float computeMomentOfInertia(float mass, const Vector2f& centerOfMass) const;
-	static std::vector<std::vector<std::size_t>> earClipping(const std::vector<Vector2f>& vertices);
-	static std::vector<std::vector<std::size_t>> HertelMehlhorn(
-			const std::vector<Vector2f>& vertices,
-			std::vector<std::vector<std::size_t>> triangulation);
+	static Vector2f supportFunction(const Vector2f& direction, const ConvexPolygon& component, const Body& body);
 };
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(PolygonBody, vertices)
 

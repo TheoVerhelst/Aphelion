@@ -25,8 +25,10 @@ void CollisionSystem::update() {
         for (std::size_t j{0}; j < polygonView.size(); ++j) {
             Body& bodyB{_scene.getComponent<Body>(polygonView[j])};
             const PolygonBody& polygonB{_scene.getComponent<PolygonBody>(polygonView[j])};
-            for (const ConvexComponent& componentB : polygonB.components) {
-                SupportFunction functionB{std::bind(&ConvexComponent::supportFunction, &componentB, _1, std::cref(bodyB))};
+            for (const ConvexPolygon& componentB : polygonB.components) {
+                SupportFunction functionB{std::bind(
+                    &PolygonBody::supportFunction,
+                    _1, std::cref(componentB), std::cref(bodyB))};
                 collideCircleAndConvex(circleA, functionB, bodyA, bodyB);
             }
         }
@@ -39,10 +41,14 @@ void CollisionSystem::update() {
         for (std::size_t j{i + 1}; j < polygonView.size(); ++j) {
             Body& bodyB{_scene.getComponent<Body>(polygonView[j])};
             const PolygonBody& polygonB{_scene.getComponent<PolygonBody>(polygonView[j])};
-            for (const ConvexComponent& componentA : polygonA.components) {
-                for (const ConvexComponent& componentB : polygonB.components) {
-                    SupportFunction functionA{std::bind(&ConvexComponent::supportFunction, &componentA, _1, std::cref(bodyA))};
-                    SupportFunction functionB{std::bind(&ConvexComponent::supportFunction, &componentB, _1, std::cref(bodyB))};
+            for (const ConvexPolygon& componentA : polygonA.components) {
+                for (const ConvexPolygon& componentB : polygonB.components) {
+                    SupportFunction functionA{std::bind(
+                        &PolygonBody::supportFunction,
+                        _1, std::cref(componentA), std::cref(bodyA))};
+                    SupportFunction functionB{std::bind(
+                        &PolygonBody::supportFunction,
+                        _1, std::cref(componentB), std::cref(bodyB))};
                     collideConvexes(functionA, functionB, bodyA, bodyB);
                 }
             }

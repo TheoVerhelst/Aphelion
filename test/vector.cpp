@@ -103,26 +103,6 @@ TEMPLATE_TEST_CASE("vector functions", "[vector][template]", float) {
         }
     }
 
-    SECTION("convexContains") {
-        const std::vector<Vector2<TestType>> triangle{{0, 0}, {0, 1}, {1, 0}};
-        REQUIRE(convexContains<TestType>(triangle, {0.1f, 0.1f}));
-        REQUIRE(convexContains<TestType>(triangle, {0, 0}));
-        REQUIRE(not convexContains<TestType>(triangle, {-0.1f, 1}));
-        const std::vector<Vector2<TestType>> box{{0, 0}, {0, 1}, {1, 1}, {1, 0}};
-        REQUIRE(convexContains<TestType>(box, {0.5f, 0.5f}));
-        REQUIRE(convexContains<TestType>(box, {0, 0}));
-        REQUIRE(convexContains<TestType>(box, {1, 1}));
-        REQUIRE(not convexContains<TestType>(box, {-0.1f, 1}));
-    }
-
-    SECTION("boxContains") {
-        const std::array<Vector2<TestType>, 4> box{{{0, 0}, {0, 1}, {1, 1}, {1, 0}}};
-        REQUIRE(boxContains<TestType>(box, {0.5f, 0.5f}));
-        REQUIRE(boxContains<TestType>(box, {0, 0}));
-        REQUIRE(boxContains<TestType>(box, {1, 1}));
-        REQUIRE(not boxContains<TestType>(box, {-0.1f, 1}));
-    }
-
     SECTION("clampVector") {
         REQUIRE(clampVector<TestType>({10, 10}, {1, 1}, {5, 5}).x == 5_a);
         REQUIRE(clampVector<TestType>({10, 10}, {1, 1}, {5, 5}).y == 5_a);

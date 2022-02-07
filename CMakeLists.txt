@@ -74,23 +74,24 @@ set(SOURCE_FILES
 	src/Animation.cpp
 	src/Application.cpp
 	src/InputManager.cpp
-	src/main.cpp
 	src/MusicManager.cpp
 	src/Paths.cpp
+    src/polygon.cpp
 	src/Scene.cpp
 	src/SceneSerializer.cpp
 )
 
 # Create the main executable
-add_executable(${CMAKE_PROJECT_NAME} ${SOURCE_FILES})
+add_executable(${CMAKE_PROJECT_NAME} ${SOURCE_FILES} src/main.cpp)
 target_link_libraries(${CMAKE_PROJECT_NAME} tgui sfml-audio sfml-graphics sfml-window sfml-system)
 
 # Create the test executable
 if (COMPILE_TESTS)
     set(TEST_FILES
-        test/main.cpp
+        test/polygon.cpp
         test/vector.cpp
     )
     include_directories("${CMAKE_SOURCE_DIR}/test")
-    add_executable(tests ${TEST_FILES})
+    add_executable(tests ${TEST_FILES} ${SOURCE_FILES} test/main.cpp)
+    target_link_libraries(tests tgui sfml-audio sfml-graphics sfml-window sfml-system)
 endif()

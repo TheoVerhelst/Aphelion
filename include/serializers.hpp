@@ -63,4 +63,13 @@ namespace nlohmann {
     };
 }
 
+template <typename T>
+std::ostream& operator<<(std::ostream& os, const std::vector<T>& vector) {
+	os << "[";
+	for (std::size_t i{0}; i < vector.size(); ++i) {
+		os << vector[i] << (i < vector.size() - 1 ? ", " : "");
+	}
+	return os << "]";
+}
+
 #endif // SERIALIZERS_HPP
