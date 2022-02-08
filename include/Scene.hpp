@@ -6,7 +6,6 @@
 #include <vector>
 #include <set>
 #include <map>
-#include <unordered_map>
 #include <memory>
 #include <cassert>
 #include <typeindex>
@@ -51,23 +50,24 @@ public:
     }
 
     template <typename... Types>
-    std::vector<EntityId> view() const {
-        std::vector<EntityId> res;
+    std::vector<std::tuple<EntityId, Types&...>> view() {
+        std::vector<std::tuple<EntityId, Types&...>> res;
+        std::tuple<ArrayModel<Types>&...> arrays(getArray<Types>()...);
         for (EntityId id{0}; id < _maxEntityId; ++id) {
             // Fold expression, it's equivalent to calling
-            // hasComponent<T1>(id) and hasComponent<T2>(id) and...
-            if ((hasComponent<Types>(id) and ...)) {
-                res.push_back(id);
+            // hasComponent<T1>(id) and hasComponent<T2>(id) and ...
+            if ((std::get<ArrayModel<Types>&>(arrays).contains(id) and ...)) {
+                res.emplace_back(id, std::get<ArrayModel<Types>&>(arrays).get(id)...);
             }
         }
         return res;
     }
 
     template <typename T>
-    EntityId findUnique() const {
-        const std::vector<EntityId> ids{view<T>()};
+    EntityId findUnique() {
+        auto ids = view<T>();
         assert(ids.size() == 1);
-        return ids.front();
+        return std::get<0>(ids.front());
     }
 
     std::vector<EntityId> allEntities() const {
@@ -99,7 +99,7 @@ private:
     // The derived class is template, so it can store the underlying array. It
     // also implements the virtual functions.
     template <typename T>
-    class ArrayModel : public ArrayConcept {
+    class ArrayModel final : public ArrayConcept {
     public:
         template <typename... Args>
         T& assign(EntityId id, Args&&... args) {
@@ -146,7 +146,7 @@ private:
     // smallest id first.
     std::set<EntityId> _freeIds;
     // Storage of component arrays, indexed by type_index
-    std::unordered_map<std::type_index, std::unique_ptr<ArrayConcept>> _arrays;
+    std::map<std::type_index, std::unique_ptr<ArrayConcept>> _arrays;
 
     template <typename T>
     inline const ArrayModel<T>& getArray() const {

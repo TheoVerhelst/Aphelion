@@ -9,22 +9,22 @@ CollisionSystem::CollisionSystem(Scene& scene):
 }
 
 void CollisionSystem::update() {
-    std::vector<EntityId> polygonView{_scene.view<Body, PolygonBody>()};
-    std::vector<EntityId> circleView{_scene.view<Body, CircleBody>()};
+    auto polygonView = _scene.view<Body, PolygonBody>();
+    auto circleView = _scene.view<Body, CircleBody>();
 
     for (std::size_t i{0}; i < circleView.size(); ++i) {
-        Body& bodyA{_scene.getComponent<Body>(circleView[i])};
-        const CircleBody& circleA{_scene.getComponent<CircleBody>(circleView[i])};
+        Body& bodyA{std::get<Body&>(circleView[i])};
+        const CircleBody& circleA{std::get<CircleBody&>(circleView[i])};
         // Circle - circle collisions
         for (std::size_t j{i + 1}; j < circleView.size(); ++j) {
-            Body& bodyB{_scene.getComponent<Body>(circleView[j])};
-            const CircleBody& circleB{_scene.getComponent<CircleBody>(circleView[j])};
+            Body& bodyB{std::get<Body&>(circleView[j])};
+            const CircleBody& circleB{std::get<CircleBody&>(circleView[j])};
             collideCircles(circleA, circleB, bodyA, bodyB);
         }
         // Circle - polygon collisions
         for (std::size_t j{0}; j < polygonView.size(); ++j) {
-            Body& bodyB{_scene.getComponent<Body>(polygonView[j])};
-            const PolygonBody& polygonB{_scene.getComponent<PolygonBody>(polygonView[j])};
+            Body& bodyB{std::get<Body&>(polygonView[j])};
+            const PolygonBody& polygonB{std::get<PolygonBody&>(polygonView[j])};
             for (const ConvexPolygon& componentB : polygonB.components) {
                 SupportFunction functionB{std::bind(
                     &PolygonBody::supportFunction,
@@ -35,12 +35,12 @@ void CollisionSystem::update() {
     }
 
     for (std::size_t i{0}; i < polygonView.size(); ++i) {
-        Body& bodyA{_scene.getComponent<Body>(polygonView[i])};
-        const PolygonBody& polygonA{_scene.getComponent<PolygonBody>(polygonView[i])};
+        Body& bodyA{std::get<Body&>(polygonView[i])};
+        const PolygonBody& polygonA{std::get<PolygonBody&>(polygonView[i])};
         // Polygon - polygon collisions
         for (std::size_t j{i + 1}; j < polygonView.size(); ++j) {
-            Body& bodyB{_scene.getComponent<Body>(polygonView[j])};
-            const PolygonBody& polygonB{_scene.getComponent<PolygonBody>(polygonView[j])};
+            Body& bodyB{std::get<Body&>(polygonView[j])};
+            const PolygonBody& polygonB{std::get<PolygonBody&>(polygonView[j])};
             for (const ConvexPolygon& componentA : polygonA.components) {
                 for (const ConvexPolygon& componentB : polygonB.components) {
                     SupportFunction functionA{std::bind(

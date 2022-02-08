@@ -13,8 +13,7 @@ AnimationSystem::AnimationSystem(Scene& scene, const SoundSettings& soundSetting
 }
 
 void AnimationSystem::update(sf::Time dt) {
-    for (EntityId id : _scene.view<Animations>()) {
-        Animations& animations{_scene.getComponent<Animations>(id)};
+    for (auto& [id, animations] : _scene.view<Animations>()) {
         for (auto& [action, animationData] : animations) {
             animationData.animation.setVolume(_soundSettings.mainVolume * _soundSettings.effectsVolume / 100);
             if (not animationData.animation.isStopped()) {

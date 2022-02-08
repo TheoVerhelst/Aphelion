@@ -11,11 +11,10 @@ RenderSystem::RenderSystem(Scene& scene):
 }
 
 void RenderSystem::draw(sf::RenderTarget& target, sf::RenderStates states) const {
-    for (EntityId id : _scene.view<Sprite>()) {
-        target.draw(_scene.getComponent<Sprite>(id).sprite, states);
+    for (auto& [id, sprite] : _scene.view<Sprite>()) {
+        target.draw(sprite.sprite, states);
     }
-    for (EntityId id : _scene.view<Animations>()) {
-        Animations& animations{_scene.getComponent<Animations>(id)};
+    for (auto& [id, animations] : _scene.view<Animations>()) {
         for (auto& [action, animationData] : animations) {
             if (not animationData.animation.isStopped()) {
                 target.draw(animationData.animation.getSprite(), states);
@@ -25,15 +24,11 @@ void RenderSystem::draw(sf::RenderTarget& target, sf::RenderStates states) const
 }
 
 void RenderSystem::update() {
-    for (EntityId id : _scene.view<Body, Sprite>()) {
-        const Body& body{_scene.getComponent<Body>(id)};
-        Sprite& sprite{_scene.getComponent<Sprite>(id)};
+    for (auto& [id, body, sprite] : _scene.view<Body, Sprite>()) {
         sprite.sprite.setPosition(body.position);
         sprite.sprite.setRotation(radToDeg(body.rotation));
     }
-    for (EntityId id : _scene.view<Body, Animations>()) {
-        const Body& body{_scene.getComponent<Body>(id)};
-        Animations& animations{_scene.getComponent<Animations>(id)};
+    for (auto& [id, body, animations] : _scene.view<Body, Animations>()) {
         for (auto& [action, animationData] : animations) {
             animationData.animation.getSprite().setPosition(body.position);
             animationData.animation.getSprite().setRotation(radToDeg(body.rotation));

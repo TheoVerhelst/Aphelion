@@ -16,8 +16,8 @@ MapState::MapState(StateStack& stack, ResourceManager<tgui::Texture>& tguiTextur
 }
 
 tgui::Widget::Ptr MapState::buildGui() {
-    for (EntityId id : _scene.view<MapElement>()) {
-        _mapIcons->add(_scene.getComponent<MapElement>(id).icon);
+    for (auto& [id, mapElement] : _scene.view<MapElement>()) {
+        _mapIcons->add(mapElement.icon);
     }
     tgui::Group::Ptr group{tgui::Group::create()};
     group->add(_background);
@@ -30,9 +30,7 @@ bool MapState::update(sf::Time) {
     const Vector2f playerPos{playerBody.position};
     const Vector2f mapSize{_mapIcons->getSize()};
 
-    for (EntityId id : _scene.view<Body, MapElement>()) {
-        const Body& body{_scene.getComponent<Body>(id)};
-        MapElement& mapElement{_scene.getComponent<MapElement>(id)};
+    for (auto& [id, body, mapElement] : _scene.view<Body, MapElement>()) {
         // Compute the position of the map element on the screen. Note that we
         // don't rotate the map icon.
         Vector2f screenPos{(body.position - playerPos) / _scale};

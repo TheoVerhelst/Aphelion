@@ -21,7 +21,7 @@ include_directories("${CMAKE_SOURCE_DIR}/include")
 # Set compiler flags
 set (CMAKE_CXX_STANDARD 20)
 if (CMAKE_COMPILER_IS_GNUCC)
-    set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} \
+    set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -pg \
 -Wall -Wextra -pedantic -pedantic-errors -Winit-self -Wcast-align -Wundef \
 -Wunreachable-code -Wmissing-declarations -Walloc-zero -Walloca \
 -Warith-conversion -Wcast-align -Wcast-qual -Wclass-memaccess -Wcomma-subscript \
@@ -89,9 +89,11 @@ target_link_libraries(${CMAKE_PROJECT_NAME} tgui sfml-audio sfml-graphics sfml-w
 if (COMPILE_TESTS)
     set(TEST_FILES
         test/polygon.cpp
+        src/polygon.cpp
+        src/components/Body.cpp
         test/vector.cpp
     )
     include_directories("${CMAKE_SOURCE_DIR}/test")
-    add_executable(tests ${TEST_FILES} ${SOURCE_FILES} test/main.cpp)
+    add_executable(tests ${TEST_FILES} test/main.cpp)
     target_link_libraries(tests tgui sfml-audio sfml-graphics sfml-window sfml-system)
 endif()

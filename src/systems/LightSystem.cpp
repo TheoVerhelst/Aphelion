@@ -44,9 +44,7 @@ void LightSystem::update() {
 
 void LightSystem::updateLightSources() {
     _numberLightSources = 0;
-    for (EntityId lightId : _scene.view<Body, LightSource>()) {
-        Body& body{_scene.getComponent<Body>(lightId)};
-        LightSource& lightSource{_scene.getComponent<LightSource>(lightId)};
+    for (auto& [lightId, body, lightSource] : _scene.view<Body, LightSource>()) {
         _lightPositions[_numberLightSources] = body.position;
         _lightBrightnesses[_numberLightSources] = lightSource.brightness;
         ++_numberLightSources;
@@ -66,17 +64,15 @@ std::vector<sf::ConvexShape> LightSystem::computeShadowShapes() {
 
     // Fetch the list of shadow entities in advance to avoid repeating the call
     // in the loop
-    std::vector<EntityId> shadowView{_scene.view<Body>()};
+    auto shadowView = _scene.view<Body>();
     std::vector<sf::ConvexShape> shadowShapes;
-    for (EntityId lightId : _scene.view<Body, LightSource>()) {
-        Body& lightBody{_scene.getComponent<Body>(lightId)};
+    for (auto& [lightId, lightBody, _ignored_] : _scene.view<Body, LightSource>()) {
         const Vector2f lightSource{lightBody.position};
 
-        for (EntityId shadowId : shadowView) {
+        for (auto& [shadowId, shadowBody] : shadowView) {
             if (lightId == shadowId) {
                 continue;
             }
-            const Body& shadowBody{_scene.getComponent<Body>(shadowId)};
             // Compute the edges of the shadow
             const std::vector<Vector2f> shadowPoints{shadowBody.shadowTerminator(lightBody.position, _scene, shadowId)};
             // Compute the shadow geometry from the edges and the light source

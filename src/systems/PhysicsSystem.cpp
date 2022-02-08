@@ -46,9 +46,8 @@ sf::Time PhysicsSystem::getElapsedTime() const {
 
 Vector2f PhysicsSystem::computeAcceleration(const Vector2f& position, EntityId id) const {
 	Vector2f res{0.f, 0.f};
-	for(EntityId otherId : _scene.view<Body>()) {
+	for(auto& [otherId, otherBody] : _scene.view<Body>()) {
 		if (otherId != id) {
-			const Body& otherBody{_scene.getComponent<Body>(otherId)};
 			Vector2f dx{otherBody.position - position};
 			float dist{norm(dx)};
 			res += otherBody.mass * dx / (dist * dist * dist);
@@ -63,8 +62,7 @@ void PhysicsSystem::updateStep(bool backwards) {
 	float dt{_timeStep.asSeconds() * (backwards ? -1.f : 1.f)};
 	std::map<EntityId, Vector2f> dv;
 	std::map<EntityId, Vector2f> dx;
-	for(EntityId id : _scene.view<Body>()) {
-		Body& body{_scene.getComponent<Body>(id)};
+	for(auto& [id, body] : _scene.view<Body>()) {
 		Vector2f vel{body.velocity};
 		Vector2f pos{body.position};
 		Vector2f l1{dt * computeAcceleration(pos, id)};
@@ -79,8 +77,7 @@ void PhysicsSystem::updateStep(bool backwards) {
 		dv[id] = (l1 + 2.f * l2 + 2.f *  l3 + l4) / 6.f;
 	}
 
-	for(EntityId id : _scene.view<Body>()) {
-		Body& body{_scene.getComponent<Body>(id)};
+    for(auto& [id, body] : _scene.view<Body>()) {
 		body.position += dx[id];
 		body.velocity += dv[id];
 		body.rotation += body.angularVelocity * dt;
