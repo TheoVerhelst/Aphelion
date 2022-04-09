@@ -32,15 +32,11 @@ bool MapState::update(sf::Time dt) {
     const Vector2f mapSize{_mapIcons->getSize()};
 
     for (auto& [id, body, mapElement] : _scene.view<Body, MapElement>()) {
-        // Compute the position of the map element on the screen. Note that we
-        // don't rotate the map icon.
+        // Compute the position of the map element on the screen.
         Vector2f screenPos{(body.position - playerPos) / _scale};
         screenPos += mapSize / 2.f;
         mapElement.icon->setPosition(static_cast<tgui::Vector2f>(screenPos));
-        // Except for ship icons
-        if (mapElement.type == MapElementType::Ship) {
-            mapElement.icon->setRotation(radToDeg(body.rotation));
-        }
+        mapElement.icon->setRotation(radToDeg(body.rotation));
     }
     handleContinuousActions(dt);
     return false;
