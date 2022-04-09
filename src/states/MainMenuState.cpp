@@ -1,3 +1,4 @@
+#include <SFML/Window/Event.hpp>
 #include <TGUI/Widgets/Button.hpp>
 #include <TGUI/Widgets/VerticalLayout.hpp>
 #include <TGUI/Texture.hpp>
@@ -79,14 +80,10 @@ bool MainMenuState::update(sf::Time) {
     return true;
 }
 
-bool MainMenuState::handleTriggerAction(const TriggerAction& actionPair) {
-    auto& [action, start] = actionPair;
-    if (action == Action::Exit and start) {
+bool MainMenuState::handleEvent(const sf::Event& event) {
+    if (event.type == sf::Event::KeyPressed and event.key.code == sf::Keyboard::Escape) {
         _stack.clearStates();
+        return true;
     }
-    return true;
-}
-
-bool MainMenuState::handleContinuousAction(const Action&, sf::Time) {
-    return true;
+    return false;
 }

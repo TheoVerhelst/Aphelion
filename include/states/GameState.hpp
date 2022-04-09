@@ -12,6 +12,7 @@
 #include <systems/LightSystem.hpp>
 #include <systems/PhysicsSystem.hpp>
 #include <systems/RenderSystem.hpp>
+#include <InputManager.hpp>
 #include <Scene.hpp>
 #include <SceneSerializer.hpp>
 
@@ -40,14 +41,15 @@ public:
 
     virtual tgui::Widget::Ptr buildGui() override;
     virtual bool update(sf::Time dt) override;
-    virtual bool handleTriggerAction(const TriggerAction& action) override;
-    virtual bool handleContinuousAction(const Action& action, sf::Time dt) override;
+    virtual bool handleEvent(const sf::Event& event) override;
+    void handleContinuousActions(sf::Time dt);
 
 private:
     Scene _scene;
     tgui::CanvasSFML::Ptr _canvas;
     ResourceManager<sf::Shader>& _shaderManager;
     tgui::Picture::Ptr _background;
+    InputManager _inputManager;
     AnimationSystem _animationSystem;
     CollisionSystem _collisionSystem;
     GameplaySystem _gameplaySystem;

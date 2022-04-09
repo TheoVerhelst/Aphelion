@@ -1,3 +1,4 @@
+#include <SFML/Window/Event.hpp>
 #include <TGUI/Widgets/Button.hpp>
 #include <TGUI/Texture.hpp>
 #include <states/StateStack.hpp>
@@ -25,7 +26,7 @@ tgui::Widget::Ptr MapState::buildGui() {
     return group;
 }
 
-bool MapState::update(sf::Time) {
+bool MapState::update(sf::Time dt) {
     const Body& playerBody{_scene.getComponent<Body>(_scene.findUnique<Player>())};
     const Vector2f playerPos{playerBody.position};
     const Vector2f mapSize{_mapIcons->getSize()};
@@ -41,31 +42,28 @@ bool MapState::update(sf::Time) {
             mapElement.icon->setRotation(radToDeg(body.rotation));
         }
     }
+    handleContinuousActions(dt);
     return false;
 }
 
-bool MapState::handleTriggerAction(const TriggerAction& actionPair) {
-    auto& [action, start] = actionPair;
-    if (action == Action::ToggleMap and start) {
+bool MapState::handleEvent(const sf::Event& event) {
+    if (event.type == sf::Event::KeyPressed and
+        (event.key.code == sf::Keyboard::Escape or event.key.code == sf::Keyboard::M)) {
         _stack.popStatesUntil(*this);
         return true;
     }
     return false;
 }
 
-bool MapState::handleContinuousAction(const Action& action, sf::Time dt) {
-    bool consumeEvent{true};
-    switch (action) {
-        case Action::ZoomIn:
-            _scale *= std::pow(_zoomSpeed, dt.asSeconds());
-            break;
-        case Action::ZoomOut:
-            _scale /= std::pow(_zoomSpeed, dt.asSeconds());
-            break;
-        default:
-            consumeEvent = false;
-            break;
+void MapState::handleContinuousActions(sf::Time dt) {
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::LShift) or
+        sf::Keyboard::isKeyPressed(sf::Keyboard::RShift)) {
+        _scale *= std::pow(_zoomSpeed, dt.asSeconds());
     }
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::LControl) or
+        sf::Keyboard::isKeyPressed(sf::Keyboard::RControl)) {
+        _scale /= std::pow(_zoomSpeed, dt.asSeconds());
+    }
+
     _scale = std::clamp(_scale, _minScale, _maxScale);
-    return consumeEvent;
 }

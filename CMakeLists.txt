@@ -30,7 +30,7 @@ if (CMAKE_COMPILER_IS_GNUCC)
 -Wdeprecated-enum-enum-conversion -Wdeprecated-enum-float-conversion \
 -Wdisabled-optimization -Wdouble-promotion -Wduplicated-branches \
 -Wduplicated-cond -Wextra-semi -Wfloat-equal -Wformat -Wformat-signedness \
--Winline -Winvalid-imported-macros -Winvalid-pch -Wlogical-op -Wmismatched-tags \
+-Winvalid-imported-macros -Winvalid-pch -Wlogical-op -Wmismatched-tags \
 -Wmissing-declarations -Wmissing-format-attribute -Wmissing-include-dirs \
 -Wmissing-noreturn -Wmultichar -Wnon-virtual-dtor \
 -Wnull-dereference -Wold-style-cast -Woverloaded-virtual -Wpacked \

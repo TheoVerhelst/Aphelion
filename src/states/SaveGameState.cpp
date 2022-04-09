@@ -1,3 +1,4 @@
+#include <SFML/Window/Event.hpp>
 #include <TGUI/Widgets/ChildWindow.hpp>
 #include <TGUI/Widgets/EditBox.hpp>
 #include <TGUI/Widgets/Label.hpp>
@@ -79,14 +80,10 @@ bool SaveGameState::update(sf::Time) {
     return true;
 }
 
-bool SaveGameState::handleTriggerAction(const TriggerAction& actionPair) {
-    auto& [action, start] = actionPair;
-    if (action == Action::Exit and start) {
+bool SaveGameState::handleEvent(const sf::Event& event) {
+    if (event.type == sf::Event::KeyPressed and event.key.code == sf::Keyboard::Escape) {
         _stack.popStatesUntil(*this);
+        return true;
     }
-    return true;
-}
-
-bool SaveGameState::handleContinuousAction(const Action&, sf::Time) {
-    return true;
+    return false;
 }

@@ -1,3 +1,4 @@
+#include <SFML/Window/Event.hpp>
 #include <TGUI/Widgets/ChildWindow.hpp>
 #include <TGUI/Widgets/Button.hpp>
 #include <TGUI/Widgets/Grid.hpp>
@@ -60,14 +61,10 @@ bool LoadGameState::update(sf::Time) {
     return true;
 }
 
-bool LoadGameState::handleTriggerAction(const TriggerAction& actionPair) {
-    auto& [action, start] = actionPair;
-    if (action == Action::Exit and start) {
+bool LoadGameState::handleEvent(const sf::Event& event) {
+    if (event.type == sf::Event::KeyPressed and event.key.code == sf::Keyboard::Escape) {
         _stack.popStatesUntil(*this);
+        return true;
     }
-    return true;
-}
-
-bool LoadGameState::handleContinuousAction(const Action&, sf::Time) {
-    return true;
+    return false;
 }

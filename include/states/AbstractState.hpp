@@ -7,9 +7,8 @@
 // Forward declarations
 namespace sf {
     class Time;
+    class Event;
 }
-enum class Action;
-typedef std::pair<Action, bool> TriggerAction;
 class StateStack;
 
 class AbstractState {
@@ -18,8 +17,7 @@ public:
     virtual ~AbstractState() = default;
     virtual tgui::Widget::Ptr buildGui() = 0;
     virtual bool update(sf::Time dt) = 0;
-    virtual bool handleTriggerAction(const TriggerAction& action) = 0;
-    virtual bool handleContinuousAction(const Action& action, sf::Time dt) = 0;
+    virtual bool handleEvent(const sf::Event& event) = 0;
 
 protected:
     StateStack& _stack;

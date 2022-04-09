@@ -38,6 +38,5 @@ NLOHMANN_JSON_SERIALIZE_ENUM(Action, {
 })
 
 typedef std::pair<Action, bool> TriggerAction;
-typedef std::pair<Action, sf::Time> ContinuousAction;
 
 #endif // ACTION_HPP

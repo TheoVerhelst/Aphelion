@@ -38,17 +38,9 @@ void StateStack::update(sf::Time dt) {
     }
 }
 
-void StateStack::handleTriggerAction(const TriggerAction& action) {
+void StateStack::handleEvent(const sf::Event& event) {
     for (auto it = _stack.rbegin(); it != _stack.rend(); ++it) {
-        if (it->state->handleTriggerAction(action)) {
-            break;
-        }
-    }
-}
-
-void StateStack::handleContinuousAction(const Action& action, sf::Time dt) {
-    for (auto it = _stack.rbegin(); it != _stack.rend(); ++it) {
-        if (it->state->handleContinuousAction(action, dt)) {
+        if (it->state->handleEvent(event)) {
             break;
         }
     }

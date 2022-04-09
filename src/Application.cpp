@@ -34,10 +34,7 @@ void Application::run() {
             // TGUI needs to handle the events first in order for resizing
             // the window to work properly
             _gui.handleEvent(event);
-            std::vector<TriggerAction> triggerActions{_inputManager.getTriggerActions(event)};
-            for (auto& action : triggerActions) {
-                _stack.handleTriggerAction(action);
-            }
+            _stack.handleEvent(event);
             if (event.type == sf::Event::Closed) {
                 _window.close();
             }
@@ -45,10 +42,6 @@ void Application::run() {
 
         // Update various systems
         sf::Time dt{clock.restart()};
-        std::vector<Action> continuousActions{_inputManager.getContinuousActions()};
-        for (auto& action : continuousActions) {
-            _stack.handleContinuousAction(action, dt);
-        }
         _stack.update(dt);
         _musicManager.update();
 

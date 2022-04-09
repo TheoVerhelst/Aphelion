@@ -1,3 +1,5 @@
+#include <SFML/Window/Event.hpp>
+#include <SFML/Window/Event.hpp>
 #include <TGUI/Widgets/ChildWindow.hpp>
 #include <TGUI/Widgets/Button.hpp>
 #include <TGUI/Widgets/VerticalLayout.hpp>
@@ -80,14 +82,10 @@ bool PauseState::update(sf::Time) {
     return true;
 }
 
-bool PauseState::handleTriggerAction(const TriggerAction& actionPair) {
-    auto& [action, start] = actionPair;
-    if (action == Action::Exit and start) {
+bool PauseState::handleEvent(const sf::Event& event) {
+    if (event.type == sf::Event::KeyPressed and event.key.code == sf::Keyboard::Escape) {
         _stack.popStatesUntil(*this);
+        return true;
     }
-    return true;
-}
-
-bool PauseState::handleContinuousAction(const Action&, sf::Time) {
-    return true;
+    return false;
 }

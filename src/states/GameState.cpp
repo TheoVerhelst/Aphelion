@@ -43,6 +43,7 @@ tgui::Widget::Ptr GameState::buildGui() {
 }
 
 bool GameState::update(sf::Time dt) {
+    handleContinuousActions(dt);
     // Update systems
     _collisionSystem.update();
     _lightSystem.update();
@@ -58,43 +59,52 @@ bool GameState::update(sf::Time dt) {
     return false;
 }
 
-bool GameState::handleTriggerAction(const TriggerAction& actionPair) {
-    auto& [action, start] = actionPair;
-    if (start) {
-        switch (action) {
-        case Action::ToggleMap:
-            _stack.pushState<MapState>(_scene);
+bool GameState::handleEvent(const sf::Event& event) {
+    std::vector<TriggerAction> triggerActions{_inputManager.getTriggerActions(event)};
+    for (auto& [action, start] : triggerActions) {
+        if (start) {
+            switch (action) {
+            case Action::ToggleMap:
+                _stack.pushState<MapState>(_scene);
+                return true;
+            case Action::Exit:
+                _stack.pushState<PauseState, const SceneSerializer&>(_serializer);
+                return true;
+            default:
+                break;
+            }
+        }
+        if (_animationSystem.handleTriggerAction({action, start})) {
             return true;
-        case Action::Exit:
-            _stack.pushState<PauseState, const SceneSerializer&>(_serializer);
-            return true;
-        default:
-            break;
         }
     }
-    return _animationSystem.handleTriggerAction(actionPair);
+    return false;
 }
 
-bool GameState::handleContinuousAction(const Action& action, sf::Time dt) {
-    float zoom{1.f};
-    bool rotate{false};
-    bool consumeEvent{true};
-    switch (action) {
-        case Action::ZoomIn:
-            zoom *= std::pow(_zoomSpeed, dt.asSeconds());
-            break;
-        case Action::ZoomOut:
-            zoom /= std::pow(_zoomSpeed, dt.asSeconds());
-            break;
-        case Action::RotateView:
-            rotate = true;
-            break;
-        default:
-            consumeEvent = false;
-            break;
+void GameState::handleContinuousActions(sf::Time dt) {
+    for (Action& action : _inputManager.getContinuousActions()) {
+        float zoom{1.f};
+        bool rotate{false};
+        bool eventConsumed{true};
+        switch (action) {
+            case Action::ZoomIn:
+                zoom *= std::pow(_zoomSpeed, dt.asSeconds());
+                break;
+            case Action::ZoomOut:
+                zoom /= std::pow(_zoomSpeed, dt.asSeconds());
+                break;
+            case Action::RotateView:
+                rotate = true;
+                break;
+            default:
+                eventConsumed = false;
+                break;
+        }
+        updateView(zoom, rotate, dt);
+        if (not eventConsumed) {
+            _gameplaySystem.handleContinuousAction(action, dt);
+        }
     }
-    updateView(zoom, rotate, dt);
-    return consumeEvent or _gameplaySystem.handleContinuousAction(action, dt);
 }
 
 void GameState::registerComponents() {

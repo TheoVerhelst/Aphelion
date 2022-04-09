@@ -7,7 +7,6 @@
 #include <TGUI/TGUI.hpp>
 #include <TGUI/Backend/SFML-Graphics.hpp>
 #include <states/StateStack.hpp>
-#include <InputManager.hpp>
 #include <SoundSettings.hpp>
 #include <MusicManager.hpp>
 #include <ResourceManager.hpp>
@@ -22,7 +21,6 @@ private:
     sf::RenderWindow _window;
     tgui::Gui _gui;
     StateStack _stack;
-    InputManager _inputManager;
 
     // Resource managers
     ResourceManager<sf::Texture> _textureManager;
