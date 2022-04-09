@@ -3,7 +3,7 @@
 #include <Scene.hpp>
 #include <Animation.hpp>
 #include <SoundSettings.hpp>
-#include <Action.hpp>
+#include <GameEvent.hpp>
 #include <components/Animations.hpp>
 #include <components/components.hpp>
 
@@ -23,19 +23,18 @@ void AnimationSystem::update(sf::Time dt) {
     }
 }
 
-bool AnimationSystem::handleTriggerAction(const GameAction& action, bool start) {
-    const EntityId playerId{_scene.findUnique<Player>()};
-
-    // Play the player animations
-    Animations& animations{_scene.getComponent<Animations>(playerId)};
-    auto animationIt = animations.find(action);
+void AnimationSystem::handleGameEvent(const GameEvent& event) {
+    if (event.status == EventStatus::Ongoing) {
+        return;
+    }
+    
+    Animations& animations{_scene.getComponent<Animations>(event.entity)};
+    auto animationIt = animations.find(event.type);
     if (animationIt != animations.end()) {
-        if (start) {
+        if (event.status == EventStatus::Start) {
             animationIt->second.animation.start();
-        } else {
+        } else { // Must be EventStatus::Stop
             animationIt->second.animation.stop();
         }
-        return true;
     }
-    return false;
 }

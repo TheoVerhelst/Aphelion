@@ -11,7 +11,7 @@
 #include <SFML/Window/VideoMode.hpp>
 #include <states/SettingsState.hpp>
 #include <states/StateStack.hpp>
-#include <Action.hpp>
+#include <Input.hpp>
 
 
 SettingsState::SettingsState(StateStack& stack, SoundSettings& soundSettings, sf::Window& window):

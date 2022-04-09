@@ -10,7 +10,7 @@
 #include <states/SettingsState.hpp>
 #include <ResourceManager.hpp>
 #include <Paths.hpp>
-#include <Action.hpp>
+#include <Input.hpp>
 
 MainMenuState::MainMenuState(StateStack& stack, ResourceManager<tgui::Texture>& tguiTextureManager):
     AbstractState{stack},

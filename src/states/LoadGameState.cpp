@@ -7,7 +7,7 @@
 #include <states/GameState.hpp>
 #include <states/LoadGameState.hpp>
 #include <Paths.hpp>
-#include <Action.hpp>
+#include <Input.hpp>
 
 LoadGameState::LoadGameState(StateStack& stack):
     AbstractState{stack} {

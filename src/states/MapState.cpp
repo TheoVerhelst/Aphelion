@@ -13,12 +13,12 @@ MapState::MapState(StateStack& stack, ResourceManager<tgui::Texture>& tguiTextur
     _tguiTextureManager{tguiTextureManager},
     _scene{scene},
     _inputManager{{
-        {sf::Keyboard::LShift, MapAction::ZoomIn},
-        {sf::Keyboard::RShift, MapAction::ZoomIn},
-        {sf::Keyboard::LControl, MapAction::ZoomOut},
-        {sf::Keyboard::RControl, MapAction::ZoomOut},
-        {sf::Keyboard::M, MapAction::Exit},
-        {sf::Keyboard::Escape, MapAction::Exit}
+        {sf::Keyboard::LShift, MapInput::ZoomIn},
+        {sf::Keyboard::RShift, MapInput::ZoomIn},
+        {sf::Keyboard::LControl, MapInput::ZoomOut},
+        {sf::Keyboard::RControl, MapInput::ZoomOut},
+        {sf::Keyboard::M, MapInput::Exit},
+        {sf::Keyboard::Escape, MapInput::Exit}
     }},
     _background{tgui::Picture::create(_tguiTextureManager.get("mapBackground"))} {
 }
@@ -45,16 +45,16 @@ bool MapState::update(sf::Time dt) {
         mapElement.icon->setPosition(static_cast<tgui::Vector2f>(screenPos));
         mapElement.icon->setRotation(radToDeg(body.rotation));
     }
-    handleContinuousActions(dt);
+    handleContinuousInputs(dt);
     return false;
 }
 
 bool MapState::handleEvent(const sf::Event& event) {
-    std::vector<std::pair<MapAction, bool>> triggerActions{_inputManager.getTriggerActions(event)};
-    for (auto& [action, start] : triggerActions) {
+    std::vector<std::pair<MapInput, bool>> triggerInputs{_inputManager.getTriggerInputs(event)};
+    for (auto& [input, start] : triggerInputs) {
         if (start) {
-            switch (action) {
-            case MapAction::Exit:
+            switch (input) {
+            case MapInput::Exit:
                 _stack.popStatesUntil(*this);
                 return true;
             default:
@@ -65,13 +65,13 @@ bool MapState::handleEvent(const sf::Event& event) {
     return false;
 }
 
-void MapState::handleContinuousActions(sf::Time dt) {
-    for (MapAction& action : _inputManager.getContinuousActions()) {
-        switch (action) {
-        case MapAction::ZoomIn:
+void MapState::handleContinuousInputs(sf::Time dt) {
+    for (MapInput& input : _inputManager.getContinuousInputs()) {
+        switch (input) {
+        case MapInput::ZoomIn:
             _scale *= std::pow(_zoomSpeed, dt.asSeconds());
             break;
-        case MapAction::ZoomOut:
+        case MapInput::ZoomOut:
             _scale /= std::pow(_zoomSpeed, dt.asSeconds());
             break;
         default:

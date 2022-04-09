@@ -139,11 +139,15 @@ void SceneSerializer::loadSprite(const json& value, EntityId id) {
 void SceneSerializer::loadAnimations(const json& value, EntityId id) {
     Animations& animations{_scene.assignComponent<Animations>(id)};
     value.get_to(animations);
-    for (auto& [action, animationData] : animations) {
+    for (auto& [eventType, animationData] : animations) {
         // Construct the animation object
-        animationData.animation = Animation(_textureManager.get(animationData.texture), animationData.frames,
-                _soundBufferManager.get(animationData.soundBuffer),
-                animationData.soundLoopStart, animationData.soundLoopEnd);
+        animationData.animation = Animation(
+            _textureManager.get(animationData.texture),
+            animationData.frames,
+            _soundBufferManager.get(animationData.soundBuffer),
+            animationData.soundLoopStart,
+            animationData.soundLoopEnd
+        );
         // Set the sprite origin
         const Vector2f spriteOrigin{_scene.getComponent<Body>(id).centerOfMass - animationData.offset};
         animationData.animation.getSprite().setOrigin(spriteOrigin);

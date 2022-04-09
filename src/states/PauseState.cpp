@@ -9,7 +9,7 @@
 #include <states/LoadGameState.hpp>
 #include <states/SaveGameState.hpp>
 #include <states/SettingsState.hpp>
-#include <Action.hpp>
+#include <Input.hpp>
 #include <SoundSettings.hpp>
 #include <SceneSerializer.hpp>
 

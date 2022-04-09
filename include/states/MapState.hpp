@@ -6,7 +6,7 @@
 #include <states/AbstractState.hpp>
 #include <vector.hpp>
 #include <InputManager.hpp>
-#include <Action.hpp>
+#include <Input.hpp>
 
 // Forward declarations
 namespace tgui {
@@ -22,12 +22,12 @@ public:
     virtual tgui::Widget::Ptr buildGui() override;
     virtual bool update(sf::Time dt) override;
     virtual bool handleEvent(const sf::Event& event) override;
-    void handleContinuousActions(sf::Time dt);
+    void handleContinuousInputs(sf::Time dt);
 
 private:
     ResourceManager<tgui::Texture>& _tguiTextureManager;
     Scene& _scene;
-    InputManager<MapAction> _inputManager;
+    InputManager<MapInput> _inputManager;
     tgui::Group::Ptr _mapIcons{tgui::Group::create()};
     tgui::Picture::Ptr _background;
     const float _zoomSpeed{15};

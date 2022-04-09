@@ -1,21 +1,19 @@
 #ifndef ANIMATIONSYSTEM_HPP
 #define ANIMATIONSYSTEM_HPP
 
-#include <utility>
-
 // Forward declarations
 namespace sf {
     class Time;
 }
 class Scene;
 struct SoundSettings;
-enum class GameAction;
+struct GameEvent;
 
 class AnimationSystem {
 public:
     AnimationSystem(Scene& scene, const SoundSettings& soundSettings);
     void update(sf::Time dt);
-    bool handleTriggerAction(const GameAction& action, bool start);
+    void handleGameEvent(const GameEvent& event);
 
 private:
     Scene& _scene;

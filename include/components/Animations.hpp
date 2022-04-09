@@ -9,7 +9,7 @@
 #include <serializers.hpp>
 #include <Animation.hpp>
 #include <vector.hpp>
-#include <Action.hpp>
+#include <GameEvent.hpp>
 
 struct AnimationData {
 	std::string texture;
@@ -22,7 +22,7 @@ struct AnimationData {
 };
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(AnimationData, texture, offset, frames, soundBuffer, soundLoopStart, soundLoopEnd)
 
-typedef std::map<GameAction, AnimationData> Animations;
+typedef std::map<GameEventType, AnimationData> Animations;
 
 // We have to define the serialization manually, otherwise the Action keys get
 // converted to int, and the map is converted to an JSON array

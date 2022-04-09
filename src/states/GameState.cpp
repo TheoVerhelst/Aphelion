@@ -7,7 +7,8 @@
 #include <states/StateStack.hpp>
 #include <states/MapState.hpp>
 #include <ResourceManager.hpp>
-#include <Action.hpp>
+#include <Input.hpp>
+#include <GameEvent.hpp>
 #include <components/Body.hpp>
 #include <components/Animations.hpp>
 #include <components/components.hpp>
@@ -24,20 +25,29 @@ GameState::GameState(StateStack& stack,
     _shaderManager{shaderManager},
     _background{tgui::Picture::create(tguiTextureManager.get("background"))},
     _inputManager{{
-        {sf::Keyboard::Z, GameAction::RcsUp},
-        {sf::Keyboard::Q, GameAction::RcsLeft},
-        {sf::Keyboard::S, GameAction::RcsDown},
-        {sf::Keyboard::D, GameAction::RcsRight},
-        {sf::Keyboard::A, GameAction::RcsCounterClockwise},
-        {sf::Keyboard::E, GameAction::RcsClockwise},
-        {sf::Keyboard::Space, GameAction::Engine},
-        {sf::Keyboard::LShift, GameAction::ZoomIn},
-        {sf::Keyboard::RShift, GameAction::ZoomIn},
-        {sf::Keyboard::LControl, GameAction::ZoomOut},
-        {sf::Keyboard::RControl, GameAction::ZoomOut},
-        {sf::Keyboard::M, GameAction::ToggleMap},
-        {sf::Keyboard::LAlt, GameAction::RotateView},
-        {sf::Keyboard::Escape, GameAction::Pause}
+        {sf::Keyboard::Z, GameInput::RcsUp},
+        {sf::Keyboard::Q, GameInput::RcsLeft},
+        {sf::Keyboard::S, GameInput::RcsDown},
+        {sf::Keyboard::D, GameInput::RcsRight},
+        {sf::Keyboard::A, GameInput::RcsCounterClockwise},
+        {sf::Keyboard::E, GameInput::RcsClockwise},
+        {sf::Keyboard::Space, GameInput::Engine},
+        {sf::Keyboard::LShift, GameInput::ZoomIn},
+        {sf::Keyboard::RShift, GameInput::ZoomIn},
+        {sf::Keyboard::LControl, GameInput::ZoomOut},
+        {sf::Keyboard::RControl, GameInput::ZoomOut},
+        {sf::Keyboard::M, GameInput::ToggleMap},
+        {sf::Keyboard::LAlt, GameInput::RotateView},
+        {sf::Keyboard::Escape, GameInput::Pause}
+    }},
+    _eventMapping{{
+        {GameInput::Engine, GameEventType::Engine},
+        {GameInput::RcsUp, GameEventType::RcsUp},
+        {GameInput::RcsDown, GameEventType::RcsDown},
+        {GameInput::RcsLeft, GameEventType::RcsLeft},
+        {GameInput::RcsRight, GameEventType::RcsRight},
+        {GameInput::RcsClockwise, GameEventType::RcsClockwise},
+        {GameInput::RcsCounterClockwise, GameEventType::RcsCounterClockwise}
     }},
     _animationSystem{_scene, soundSettings},
     _collisionSystem{_scene},
@@ -59,13 +69,21 @@ tgui::Widget::Ptr GameState::buildGui() {
 }
 
 bool GameState::update(sf::Time dt) {
-    handleContinuousActions(dt);
+    handleContinuousInputs(dt);
     // Update systems
     _collisionSystem.update();
     _lightSystem.update();
     _animationSystem.update(dt);
     _physicsSystem.update(dt);
     _renderSystem.update();
+
+    while (not _eventQueue.empty()) {
+        const GameEvent& event{_eventQueue.front()};
+        _animationSystem.handleGameEvent(event);
+        _gameplaySystem.handleGameEvent(event, dt);
+        _eventQueue.pop();
+    }
+
     // Update the view
     updateView(1.f, false, dt);
     // Draw on the canvas
@@ -76,49 +94,62 @@ bool GameState::update(sf::Time dt) {
 }
 
 bool GameState::handleEvent(const sf::Event& event) {
-    std::vector<std::pair<GameAction, bool>> triggerActions{_inputManager.getTriggerActions(event)};
-    for (auto& [action, start] : triggerActions) {
-        if (start) {
-            switch (action) {
-            case GameAction::ToggleMap:
+    const EntityId playerId{_scene.findUnique<Player>()};
+    bool consumed{false};
+    std::vector<std::pair<GameInput, bool>> triggerInputs{_inputManager.getTriggerInputs(event)};
+    for (auto& [input, start] : triggerInputs) {
+        auto it = _eventMapping.find(input);
+        if (it != _eventMapping.end()) {
+            GameEvent gameEvent{
+                it->second,
+                start ? EventStatus::Start : EventStatus::Stop,
+                playerId,
+                0
+            };
+            _eventQueue.push(gameEvent);
+            consumed = true;
+        } else if (start) {
+            switch (input) {
+            case GameInput::ToggleMap:
                 _stack.pushState<MapState>(_scene);
-                return true;
-            case GameAction::Pause:
+                consumed = true;
+                break;
+            case GameInput::Pause:
                 _stack.pushState<PauseState, const SceneSerializer&>(_serializer);
-                return true;
+                consumed = true;
+                break;
             default:
                 break;
             }
         }
-        if (_animationSystem.handleTriggerAction(action, start)) {
-            return true;
-        }
     }
-    return false;
+    return consumed;
 }
 
-void GameState::handleContinuousActions(sf::Time dt) {
-    for (GameAction& action : _inputManager.getContinuousActions()) {
-        float zoom{1.f};
-        bool rotate{false};
-        bool eventConsumed{true};
-        switch (action) {
-        case GameAction::ZoomIn:
-            zoom *= std::pow(_zoomSpeed, dt.asSeconds());
-            break;
-        case GameAction::ZoomOut:
-            zoom /= std::pow(_zoomSpeed, dt.asSeconds());
-            break;
-        case GameAction::RotateView:
-            rotate = true;
-            break;
-        default:
-            eventConsumed = false;
-            break;
-        }
-        updateView(zoom, rotate, dt);
-        if (not eventConsumed) {
-            _gameplaySystem.handleContinuousAction(action, dt);
+void GameState::handleContinuousInputs(sf::Time dt) {
+    const EntityId playerId{_scene.findUnique<Player>()};
+
+    for (GameInput& input : _inputManager.getContinuousInputs()) {
+        auto it = _eventMapping.find(input);
+        if (it != _eventMapping.end()) {
+            _eventQueue.emplace(it->second, EventStatus::Ongoing, playerId, 0);
+        } else {
+            float zoom{1.f};
+            bool rotate{false};
+            switch (input) {
+            case GameInput::ZoomIn:
+                zoom *= std::pow(_zoomSpeed, dt.asSeconds());
+                break;
+            case GameInput::ZoomOut:
+                zoom /= std::pow(_zoomSpeed, dt.asSeconds());
+                break;
+            case GameInput::RotateView:
+                rotate = true;
+                break;
+            default:
+                break;
+            }
+            updateView(zoom, rotate, dt);
         }
     }
 }

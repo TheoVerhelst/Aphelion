@@ -6,7 +6,7 @@
 #include <TGUI/Widgets/Grid.hpp>
 #include <states/StateStack.hpp>
 #include <states/SaveGameState.hpp>
-#include <Action.hpp>
+#include <Input.hpp>
 #include <SceneSerializer.hpp>
 #include <Paths.hpp>
 

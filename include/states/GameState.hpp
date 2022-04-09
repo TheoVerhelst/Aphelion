@@ -3,6 +3,7 @@
 
 #include <string>
 #include <filesystem>
+#include <queue>
 #include <TGUI/Backend/Renderer/SFML-Graphics/CanvasSFML.hpp>
 #include <TGUI/Widgets/Picture.hpp>
 #include <states/AbstractState.hpp>
@@ -15,7 +16,8 @@
 #include <InputManager.hpp>
 #include <Scene.hpp>
 #include <SceneSerializer.hpp>
-#include <Action.hpp>
+#include <GameEvent.hpp>
+#include <Input.hpp>
 
 // Forward declarations
 namespace sf {
@@ -43,14 +45,16 @@ public:
     virtual tgui::Widget::Ptr buildGui() override;
     virtual bool update(sf::Time dt) override;
     virtual bool handleEvent(const sf::Event& event) override;
-    void handleContinuousActions(sf::Time dt);
+    void handleContinuousInputs(sf::Time dt);
 
 private:
     Scene _scene;
     tgui::CanvasSFML::Ptr _canvas;
     ResourceManager<sf::Shader>& _shaderManager;
     tgui::Picture::Ptr _background;
-    InputManager<GameAction> _inputManager;
+    InputManager<GameInput> _inputManager;
+    const std::map<GameInput, GameEventType> _eventMapping;
+    std::queue<GameEvent> _eventQueue;
     AnimationSystem _animationSystem;
     CollisionSystem _collisionSystem;
     GameplaySystem _gameplaySystem;

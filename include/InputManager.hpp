@@ -6,44 +6,43 @@
 #include <SFML/Window/Keyboard.hpp>
 #include <SFML/Window/Event.hpp>
 
-
-template <typename Action>
+template <typename Input>
 class InputManager {
 public:
-    InputManager(const std::map<sf::Keyboard::Key, Action>& mapping);
-    std::vector<std::pair<Action, bool>> getTriggerActions(const sf::Event& event);
-    std::vector<Action> getContinuousActions();
+    InputManager(const std::map<sf::Keyboard::Key, Input>& mapping);
+    std::vector<std::pair<Input, bool>> getTriggerInputs(const sf::Event& event);
+    std::vector<Input> getContinuousInputs();
 
 private:
-    const std::map<sf::Keyboard::Key, Action> _mapping;
+    const std::map<sf::Keyboard::Key, Input> _mapping;
 };
 
-template <typename Action>
-InputManager<Action>::InputManager(const std::map<sf::Keyboard::Key, Action>& mapping):
+template <typename Input>
+InputManager<Input>::InputManager(const std::map<sf::Keyboard::Key, Input>& mapping):
     _mapping{mapping} {
 }
 
-template <typename Action>
-std::vector<std::pair<Action, bool>> InputManager<Action>::getTriggerActions(const sf::Event& event) {
-    std::vector<std::pair<Action, bool>> actions;
+template <typename Input>
+std::vector<std::pair<Input, bool>> InputManager<Input>::getTriggerInputs(const sf::Event& event) {
+    std::vector<std::pair<Input, bool>> inputs;
     if (event.type == sf::Event::KeyPressed or event.type == sf::Event::KeyReleased) {
         auto mappingIt = _mapping.find(event.key.code);
         if (mappingIt != _mapping.end()) {
-            actions.emplace_back(mappingIt->second, event.type == sf::Event::KeyPressed);
+            inputs.emplace_back(mappingIt->second, event.type == sf::Event::KeyPressed);
         }
     }
-    return actions;
+    return inputs;
 }
 
-template <typename Action>
-std::vector<Action> InputManager<Action>::getContinuousActions() {
-    std::vector<Action> actions;
-    for (auto& [key, action] : _mapping) {
+template <typename Input>
+std::vector<Input> InputManager<Input>::getContinuousInputs() {
+    std::vector<Input> inputs;
+    for (auto& [key, input] : _mapping) {
         if (sf::Keyboard::isKeyPressed(key)) {
-            actions.push_back(action);
+            inputs.push_back(input);
         }
     }
-    return actions;
+    return inputs;
 }
 
 
