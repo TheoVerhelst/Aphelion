@@ -7,12 +7,19 @@
 #include <ResourceManager.hpp>
 #include <components/Body.hpp>
 #include <components/components.hpp>
-#include <Action.hpp>
 
 MapState::MapState(StateStack& stack, ResourceManager<tgui::Texture>& tguiTextureManager, Scene& scene):
     AbstractState{stack},
     _tguiTextureManager{tguiTextureManager},
     _scene{scene},
+    _inputManager{{
+        {sf::Keyboard::LShift, MapAction::ZoomIn},
+        {sf::Keyboard::RShift, MapAction::ZoomIn},
+        {sf::Keyboard::LControl, MapAction::ZoomOut},
+        {sf::Keyboard::RControl, MapAction::ZoomOut},
+        {sf::Keyboard::M, MapAction::Exit},
+        {sf::Keyboard::Escape, MapAction::Exit}
+    }},
     _background{tgui::Picture::create(_tguiTextureManager.get("mapBackground"))} {
 }
 
@@ -43,23 +50,33 @@ bool MapState::update(sf::Time dt) {
 }
 
 bool MapState::handleEvent(const sf::Event& event) {
-    if (event.type == sf::Event::KeyPressed and
-        (event.key.code == sf::Keyboard::Escape or event.key.code == sf::Keyboard::M)) {
-        _stack.popStatesUntil(*this);
-        return true;
+    std::vector<std::pair<MapAction, bool>> triggerActions{_inputManager.getTriggerActions(event)};
+    for (auto& [action, start] : triggerActions) {
+        if (start) {
+            switch (action) {
+            case MapAction::Exit:
+                _stack.popStatesUntil(*this);
+                return true;
+            default:
+                break;
+            }
+        }
     }
     return false;
 }
 
 void MapState::handleContinuousActions(sf::Time dt) {
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::LShift) or
-        sf::Keyboard::isKeyPressed(sf::Keyboard::RShift)) {
-        _scale *= std::pow(_zoomSpeed, dt.asSeconds());
+    for (MapAction& action : _inputManager.getContinuousActions()) {
+        switch (action) {
+        case MapAction::ZoomIn:
+            _scale *= std::pow(_zoomSpeed, dt.asSeconds());
+            break;
+        case MapAction::ZoomOut:
+            _scale /= std::pow(_zoomSpeed, dt.asSeconds());
+            break;
+        default:
+            break;
+        }
     }
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::LControl) or
-        sf::Keyboard::isKeyPressed(sf::Keyboard::RControl)) {
-        _scale /= std::pow(_zoomSpeed, dt.asSeconds());
-    }
-
     _scale = std::clamp(_scale, _minScale, _maxScale);
 }

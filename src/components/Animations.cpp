@@ -8,7 +8,7 @@ void to_json(nlohmann::json& j, const Animations& animations) {
 
 void from_json(const nlohmann::json& j, Animations& animations) {
     for (auto& [actionValue, animationDataValue] : j.items()) {
-		Action action;
+		GameAction action;
 		nlohmann::json(actionValue).get_to(action);
 		animationDataValue.get_to(animations[action]);
 	}

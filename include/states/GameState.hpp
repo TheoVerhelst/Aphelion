@@ -15,6 +15,7 @@
 #include <InputManager.hpp>
 #include <Scene.hpp>
 #include <SceneSerializer.hpp>
+#include <Action.hpp>
 
 // Forward declarations
 namespace sf {
@@ -49,7 +50,7 @@ private:
     tgui::CanvasSFML::Ptr _canvas;
     ResourceManager<sf::Shader>& _shaderManager;
     tgui::Picture::Ptr _background;
-    InputManager _inputManager;
+    InputManager<GameAction> _inputManager;
     AnimationSystem _animationSystem;
     CollisionSystem _collisionSystem;
     GameplaySystem _gameplaySystem;

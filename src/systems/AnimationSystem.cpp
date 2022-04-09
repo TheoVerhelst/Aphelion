@@ -23,9 +23,8 @@ void AnimationSystem::update(sf::Time dt) {
     }
 }
 
-bool AnimationSystem::handleTriggerAction(const TriggerAction& actionPair) {
+bool AnimationSystem::handleTriggerAction(const GameAction& action, bool start) {
     const EntityId playerId{_scene.findUnique<Player>()};
-    auto& [action, start] = actionPair;
 
     // Play the player animations
     Animations& animations{_scene.getComponent<Animations>(playerId)};

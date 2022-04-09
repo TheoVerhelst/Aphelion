@@ -5,6 +5,8 @@
 #include <TGUI/Widgets/Picture.hpp>
 #include <states/AbstractState.hpp>
 #include <vector.hpp>
+#include <InputManager.hpp>
+#include <Action.hpp>
 
 // Forward declarations
 namespace tgui {
@@ -25,6 +27,7 @@ public:
 private:
     ResourceManager<tgui::Texture>& _tguiTextureManager;
     Scene& _scene;
+    InputManager<MapAction> _inputManager;
     tgui::Group::Ptr _mapIcons{tgui::Group::create()};
     tgui::Picture::Ptr _background;
     const float _zoomSpeed{15};

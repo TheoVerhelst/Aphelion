@@ -40,7 +40,7 @@ void Application::run() {
             }
         }
 
-        // Update various systems
+        // Update the stack and the music manager
         sf::Time dt{clock.restart()};
         _stack.update(dt);
         _musicManager.update();

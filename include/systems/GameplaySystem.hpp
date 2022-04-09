@@ -5,14 +5,14 @@
 namespace sf {
     class Time;
 }
-enum class Action;
+enum class GameAction;
 class Scene;
 
 
 class GameplaySystem {
 public:
     GameplaySystem(Scene& scene);
-    bool handleContinuousAction(const Action& action, sf::Time dt);
+    bool handleContinuousAction(const GameAction& action, sf::Time dt);
 
 private:
     Scene& _scene;

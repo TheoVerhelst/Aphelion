@@ -73,7 +73,6 @@ set(SOURCE_FILES
 	src/systems/RenderSystem.cpp
 	src/Animation.cpp
 	src/Application.cpp
-	src/InputManager.cpp
 	src/MusicManager.cpp
 	src/Paths.cpp
     src/polygon.cpp

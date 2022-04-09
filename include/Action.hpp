@@ -8,7 +8,7 @@ namespace sf {
     class Time;
 }
 
-enum class Action {
+enum class GameAction {
     Engine,
     RcsUp,
     RcsDown,
@@ -20,23 +20,28 @@ enum class Action {
     ZoomOut,
     RotateView,
     ToggleMap,
-    Exit
+    Pause
 };
-NLOHMANN_JSON_SERIALIZE_ENUM(Action, {
-    {Action::Engine, "engine"},
-    {Action::RcsUp, "rcsUp"},
-    {Action::RcsDown, "rcsDown"},
-    {Action::RcsLeft, "rcsLeft"},
-    {Action::RcsRight, "rcsRight"},
-    {Action::RcsClockwise, "rcsClockwise"},
-    {Action::RcsCounterClockwise, "rcsCounterClockwise"},
-    {Action::ZoomIn, "zoomIn"},
-    {Action::ZoomOut, "zoomOut"},
-    {Action::RotateView, "rotateView"},
-    {Action::ToggleMap, "toggleMap"},
-    {Action::Exit, "exit"}
+
+NLOHMANN_JSON_SERIALIZE_ENUM(GameAction, {
+    {GameAction::Engine, "engine"},
+    {GameAction::RcsUp, "rcsUp"},
+    {GameAction::RcsDown, "rcsDown"},
+    {GameAction::RcsLeft, "rcsLeft"},
+    {GameAction::RcsRight, "rcsRight"},
+    {GameAction::RcsClockwise, "rcsClockwise"},
+    {GameAction::RcsCounterClockwise, "rcsCounterClockwise"},
+    {GameAction::ZoomIn, "zoomIn"},
+    {GameAction::ZoomOut, "zoomOut"},
+    {GameAction::RotateView, "rotateView"},
+    {GameAction::ToggleMap, "toggleMap"},
+    {GameAction::Pause, "pause"}
 })
 
-typedef std::pair<Action, bool> TriggerAction;
+enum class MapAction {
+    ZoomIn,
+    ZoomOut,
+    Exit
+};
 
 #endif // ACTION_HPP

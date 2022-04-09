@@ -8,7 +8,7 @@ GameplaySystem::GameplaySystem(Scene& scene):
     _scene{scene} {
 }
 
-bool GameplaySystem::handleContinuousAction(const Action& action, sf::Time dt) {
+bool GameplaySystem::handleContinuousAction(const GameAction& action, sf::Time dt) {
     const EntityId playerId{_scene.findUnique<Player>()};
     Vector2f dv{0, 0};
     float dw{0};
@@ -17,25 +17,25 @@ bool GameplaySystem::handleContinuousAction(const Action& action, sf::Time dt) {
     const float rcsCircularAccel{10};
     bool consumedAction{true};
     switch (action) {
-        case Action::Engine:
+        case GameAction::Engine:
             dv += {0, -engineAccel};
             break;
-        case Action::RcsUp:
+        case GameAction::RcsUp:
             dv += {0, -rcsLinearAccel};
             break;
-        case Action::RcsDown:
+        case GameAction::RcsDown:
             dv += {0, rcsLinearAccel};
             break;
-        case Action::RcsLeft:
+        case GameAction::RcsLeft:
             dv += {-rcsLinearAccel, 0};
             break;
-        case Action::RcsRight:
+        case GameAction::RcsRight:
             dv += {rcsLinearAccel, 0};
             break;
-        case Action::RcsClockwise:
+        case GameAction::RcsClockwise:
             dw += rcsCircularAccel;
             break;
-        case Action::RcsCounterClockwise:
+        case GameAction::RcsCounterClockwise:
             dw -= rcsCircularAccel;
             break;
         default:

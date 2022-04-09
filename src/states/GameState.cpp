@@ -23,6 +23,22 @@ GameState::GameState(StateStack& stack,
     _canvas{tgui::CanvasSFML::create()},
     _shaderManager{shaderManager},
     _background{tgui::Picture::create(tguiTextureManager.get("background"))},
+    _inputManager{{
+        {sf::Keyboard::Z, GameAction::RcsUp},
+        {sf::Keyboard::Q, GameAction::RcsLeft},
+        {sf::Keyboard::S, GameAction::RcsDown},
+        {sf::Keyboard::D, GameAction::RcsRight},
+        {sf::Keyboard::A, GameAction::RcsCounterClockwise},
+        {sf::Keyboard::E, GameAction::RcsClockwise},
+        {sf::Keyboard::Space, GameAction::Engine},
+        {sf::Keyboard::LShift, GameAction::ZoomIn},
+        {sf::Keyboard::RShift, GameAction::ZoomIn},
+        {sf::Keyboard::LControl, GameAction::ZoomOut},
+        {sf::Keyboard::RControl, GameAction::ZoomOut},
+        {sf::Keyboard::M, GameAction::ToggleMap},
+        {sf::Keyboard::LAlt, GameAction::RotateView},
+        {sf::Keyboard::Escape, GameAction::Pause}
+    }},
     _animationSystem{_scene, soundSettings},
     _collisionSystem{_scene},
     _gameplaySystem{_scene},
@@ -60,21 +76,21 @@ bool GameState::update(sf::Time dt) {
 }
 
 bool GameState::handleEvent(const sf::Event& event) {
-    std::vector<TriggerAction> triggerActions{_inputManager.getTriggerActions(event)};
+    std::vector<std::pair<GameAction, bool>> triggerActions{_inputManager.getTriggerActions(event)};
     for (auto& [action, start] : triggerActions) {
         if (start) {
             switch (action) {
-            case Action::ToggleMap:
+            case GameAction::ToggleMap:
                 _stack.pushState<MapState>(_scene);
                 return true;
-            case Action::Exit:
+            case GameAction::Pause:
                 _stack.pushState<PauseState, const SceneSerializer&>(_serializer);
                 return true;
             default:
                 break;
             }
         }
-        if (_animationSystem.handleTriggerAction({action, start})) {
+        if (_animationSystem.handleTriggerAction(action, start)) {
             return true;
         }
     }
@@ -82,23 +98,23 @@ bool GameState::handleEvent(const sf::Event& event) {
 }
 
 void GameState::handleContinuousActions(sf::Time dt) {
-    for (Action& action : _inputManager.getContinuousActions()) {
+    for (GameAction& action : _inputManager.getContinuousActions()) {
         float zoom{1.f};
         bool rotate{false};
         bool eventConsumed{true};
         switch (action) {
-            case Action::ZoomIn:
-                zoom *= std::pow(_zoomSpeed, dt.asSeconds());
-                break;
-            case Action::ZoomOut:
-                zoom /= std::pow(_zoomSpeed, dt.asSeconds());
-                break;
-            case Action::RotateView:
-                rotate = true;
-                break;
-            default:
-                eventConsumed = false;
-                break;
+        case GameAction::ZoomIn:
+            zoom *= std::pow(_zoomSpeed, dt.asSeconds());
+            break;
+        case GameAction::ZoomOut:
+            zoom /= std::pow(_zoomSpeed, dt.asSeconds());
+            break;
+        case GameAction::RotateView:
+            rotate = true;
+            break;
+        default:
+            eventConsumed = false;
+            break;
         }
         updateView(zoom, rotate, dt);
         if (not eventConsumed) {

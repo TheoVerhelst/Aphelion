@@ -9,14 +9,13 @@ namespace sf {
 }
 class Scene;
 struct SoundSettings;
-enum class Action;
-typedef std::pair<Action, bool> TriggerAction;
+enum class GameAction;
 
 class AnimationSystem {
 public:
     AnimationSystem(Scene& scene, const SoundSettings& soundSettings);
     void update(sf::Time dt);
-    bool handleTriggerAction(const TriggerAction& actionPair);
+    bool handleTriggerAction(const GameAction& action, bool start);
 
 private:
     Scene& _scene;
