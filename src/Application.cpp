@@ -42,6 +42,7 @@ void Application::run() {
 
         // Update the stack and the music manager
         sf::Time dt{clock.restart()};
+        _stack.handleContinuousInputs(dt);
         _stack.update(dt);
         _musicManager.update();
 

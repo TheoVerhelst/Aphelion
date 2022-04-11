@@ -10,7 +10,6 @@ class SaveGameState : public AbstractState {
 public:
     SaveGameState(StateStack& stack, const SceneSerializer& serializer);
     virtual tgui::Widget::Ptr buildGui() override;
-    virtual bool update(sf::Time dt) override;
     virtual bool handleEvent(const sf::Event& event) override;
 
 private:

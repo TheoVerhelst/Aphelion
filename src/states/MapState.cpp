@@ -51,21 +51,17 @@ bool MapState::update(sf::Time dt) {
 
 bool MapState::handleEvent(const sf::Event& event) {
     std::vector<std::pair<MapInput, bool>> triggerInputs{_inputManager.getTriggerInputs(event)};
+    bool consumed{false};
     for (auto& [input, start] : triggerInputs) {
-        if (start) {
-            switch (input) {
-            case MapInput::Exit:
-                _stack.popStatesUntil(*this);
-                return true;
-            default:
-                break;
-            }
+        if (start and input == MapInput::Exit) {
+            _stack.popStatesUntil(*this);
+            consumed = true;
         }
     }
-    return false;
+    return consumed;
 }
 
-void MapState::handleContinuousInputs(sf::Time dt) {
+bool MapState::handleContinuousInputs(sf::Time dt) {
     for (MapInput& input : _inputManager.getContinuousInputs()) {
         switch (input) {
         case MapInput::ZoomIn:
@@ -79,4 +75,5 @@ void MapState::handleContinuousInputs(sf::Time dt) {
         }
     }
     _scale = std::clamp(_scale, _minScale, _maxScale);
+    return false;
 }

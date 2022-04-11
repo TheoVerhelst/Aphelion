@@ -79,13 +79,19 @@ tgui::Widget::Ptr PauseState::buildGui() {
 }
 
 bool PauseState::update(sf::Time) {
+    // Pause the game
     return true;
 }
 
 bool PauseState::handleEvent(const sf::Event& event) {
     if (event.type == sf::Event::KeyPressed and event.key.code == sf::Keyboard::Escape) {
         _stack.popStatesUntil(*this);
-        return true;
     }
-    return false;
+    // Block inputs
+    return true;
+}
+
+bool PauseState::handleContinuousInputs(sf::Time) {
+    // Block inputs
+    return true;
 }

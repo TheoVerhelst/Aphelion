@@ -76,10 +76,6 @@ tgui::Widget::Ptr MainMenuState::buildGui() {
     return group;
 }
 
-bool MainMenuState::update(sf::Time) {
-    return true;
-}
-
 bool MainMenuState::handleEvent(const sf::Event& event) {
     if (event.type == sf::Event::KeyPressed and event.key.code == sf::Keyboard::Escape) {
         _stack.clearStates();

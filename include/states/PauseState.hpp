@@ -12,6 +12,7 @@ public:
     virtual tgui::Widget::Ptr buildGui() override;
     virtual bool update(sf::Time dt) override;
     virtual bool handleEvent(const sf::Event& event) override;
+    virtual bool handleContinuousInputs(sf::Time dt) override;
 
 private:
     const SceneSerializer& _serializer;

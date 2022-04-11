@@ -22,7 +22,7 @@ public:
     virtual tgui::Widget::Ptr buildGui() override;
     virtual bool update(sf::Time dt) override;
     virtual bool handleEvent(const sf::Event& event) override;
-    void handleContinuousInputs(sf::Time dt);
+    virtual bool handleContinuousInputs(sf::Time dt) override;
 
 private:
     ResourceManager<tgui::Texture>& _tguiTextureManager;

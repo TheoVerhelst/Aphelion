@@ -10,7 +10,6 @@ class LoadGameState : public AbstractState {
 public:
     LoadGameState(StateStack& stack);
     virtual tgui::Widget::Ptr buildGui() override;
-    virtual bool update(sf::Time dt) override;
     virtual bool handleEvent(const sf::Event& event) override;
 
 private:

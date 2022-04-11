@@ -46,6 +46,14 @@ void StateStack::handleEvent(const sf::Event& event) {
     }
 }
 
+void StateStack::handleContinuousInputs(sf::Time dt) {
+    for (auto it = _stack.rbegin(); it != _stack.rend(); ++it) {
+        if (it->state->handleContinuousInputs(dt)) {
+            break;
+        }
+    }
+}
+
 bool StateStack::isEmpty() const {
     return _stack.empty();
 }

@@ -138,10 +138,6 @@ tgui::Widget::Ptr SettingsState::buildGui() {
     return window;
 }
 
-bool SettingsState::update(sf::Time) {
-    return true;
-}
-
 bool SettingsState::handleEvent(const sf::Event& event) {
     if (event.type == sf::Event::KeyPressed and event.key.code == sf::Keyboard::Escape) {
         _stack.popStatesUntil(*this);

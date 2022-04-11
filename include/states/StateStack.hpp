@@ -44,6 +44,7 @@ public:
     void clearStates();
     void update(sf::Time dt);
     void handleEvent(const sf::Event& event);
+    void handleContinuousInputs(sf::Time dt);
     bool isEmpty() const;
 
 private:

@@ -15,7 +15,6 @@ class MainMenuState : public AbstractState {
 public:
     MainMenuState(StateStack& stack, ResourceManager<tgui::Texture>& tguiTextureManager);
     virtual tgui::Widget::Ptr buildGui() override;
-    virtual bool update(sf::Time dt) override;
     virtual bool handleEvent(const sf::Event& event) override;
 
 private:

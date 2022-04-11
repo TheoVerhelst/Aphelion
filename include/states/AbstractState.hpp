@@ -16,8 +16,9 @@ public:
     AbstractState(StateStack& stack);
     virtual ~AbstractState() = default;
     virtual tgui::Widget::Ptr buildGui() = 0;
-    virtual bool update(sf::Time dt) = 0;
-    virtual bool handleEvent(const sf::Event& event) = 0;
+    virtual bool update(sf::Time dt);
+    virtual bool handleEvent(const sf::Event& event);
+    virtual bool handleContinuousInputs(sf::Time dt);
 
 protected:
     StateStack& _stack;

@@ -69,7 +69,6 @@ tgui::Widget::Ptr GameState::buildGui() {
 }
 
 bool GameState::update(sf::Time dt) {
-    handleContinuousInputs(dt);
     // Update systems
     _collisionSystem.update();
     _lightSystem.update();
@@ -126,7 +125,7 @@ bool GameState::handleEvent(const sf::Event& event) {
     return consumed;
 }
 
-void GameState::handleContinuousInputs(sf::Time dt) {
+bool GameState::handleContinuousInputs(sf::Time dt) {
     const EntityId playerId{_scene.findUnique<Player>()};
 
     for (GameInput& input : _inputManager.getContinuousInputs()) {
@@ -152,6 +151,7 @@ void GameState::handleContinuousInputs(sf::Time dt) {
             updateView(zoom, rotate, dt);
         }
     }
+    return true;
 }
 
 void GameState::registerComponents() {

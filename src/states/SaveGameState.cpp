@@ -76,10 +76,6 @@ tgui::Widget::Ptr SaveGameState::buildGui() {
     return window;
 }
 
-bool SaveGameState::update(sf::Time) {
-    return true;
-}
-
 bool SaveGameState::handleEvent(const sf::Event& event) {
     if (event.type == sf::Event::KeyPressed and event.key.code == sf::Keyboard::Escape) {
         _stack.popStatesUntil(*this);

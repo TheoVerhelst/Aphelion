@@ -57,10 +57,6 @@ tgui::Widget::Ptr LoadGameState::buildGui() {
     return window;
 }
 
-bool LoadGameState::update(sf::Time) {
-    return true;
-}
-
 bool LoadGameState::handleEvent(const sf::Event& event) {
     if (event.type == sf::Event::KeyPressed and event.key.code == sf::Keyboard::Escape) {
         _stack.popStatesUntil(*this);
