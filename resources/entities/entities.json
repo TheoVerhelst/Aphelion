@@ -23,7 +23,7 @@
     },
     "mercury": {
         "circleBody": {
-            "radius": 230
+            "radius": 215.5
         },
         "sprite": {
             "texture": "mercury",
