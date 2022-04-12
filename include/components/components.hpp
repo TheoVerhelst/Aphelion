@@ -8,6 +8,7 @@
 #include <json.hpp>
 #include <serializers.hpp>
 #include <vector.hpp>
+#include <GameEvent.hpp>
 
 struct Sprite {
 	std::string texture;
@@ -47,5 +48,19 @@ struct Player {
 	bool placeholder;
 };
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(Player, placeholder)
+
+typedef std::vector<GameEventType> ContinuousEvents;
+
+struct ShipControl {
+	bool playerRcsClockwise;
+	bool playerRcsCounterClockwise;
+	bool autoRcsClockwise;
+	bool autoRcsCounterClockwise;
+	float angularVelocityThreshold;
+};
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(ShipControl, playerRcsClockwise,
+	playerRcsCounterClockwise, autoRcsClockwise, autoRcsCounterClockwise,
+	angularVelocityThreshold)
+
 
 #endif // COMPONENTS_HPP

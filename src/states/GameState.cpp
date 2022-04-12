@@ -50,6 +50,7 @@ GameState::GameState(StateStack& stack,
         {GameInput::RcsCounterClockwise, GameEventType::RcsCounterClockwise}
     }},
     _animationSystem{_scene, soundSettings},
+    _autoPilotSystem{_scene},
     _collisionSystem{_scene},
     _gameplaySystem{_scene},
     _lightSystem{_scene, _canvas->getRenderTexture(), shaderManager.get("light")},
@@ -69,20 +70,14 @@ tgui::Widget::Ptr GameState::buildGui() {
 }
 
 bool GameState::update(sf::Time dt) {
+    processtriggerEventsQueue();
     // Update systems
     _collisionSystem.update();
     _lightSystem.update();
     _animationSystem.update(dt);
     _physicsSystem.update(dt);
     _renderSystem.update();
-
-    while (not _eventQueue.empty()) {
-        const GameEvent& event{_eventQueue.front()};
-        _animationSystem.handleGameEvent(event);
-        _gameplaySystem.handleGameEvent(event, dt);
-        _eventQueue.pop();
-    }
-
+    _gameplaySystem.update(dt);
     // Update the view
     updateView(1.f, false, dt);
     // Draw on the canvas
@@ -99,14 +94,17 @@ bool GameState::handleEvent(const sf::Event& event) {
     for (auto& [input, start] : triggerInputs) {
         auto it = _eventMapping.find(input);
         if (it != _eventMapping.end()) {
-            GameEvent gameEvent{
-                it->second,
-                start ? EventStatus::Start : EventStatus::Stop,
-                playerId,
-                0
-            };
-            _eventQueue.push(gameEvent);
+            GameEvent gameEvent{it->second, playerId, 0};
+            _triggerEventsQueue.emplace(gameEvent, start);
             consumed = true;
+
+            ShipControl& shipControl{_scene.getComponent<ShipControl>(playerId)};
+            if (gameEvent.type == GameEventType::RcsClockwise) {
+                shipControl.playerRcsClockwise = start;
+            } else if (gameEvent.type == GameEventType::RcsCounterClockwise) {
+                shipControl.playerRcsCounterClockwise = start;
+            }
+
         } else if (start) {
             switch (input) {
             case GameInput::ToggleMap:
@@ -126,31 +124,25 @@ bool GameState::handleEvent(const sf::Event& event) {
 }
 
 bool GameState::handleContinuousInputs(sf::Time dt) {
-    const EntityId playerId{_scene.findUnique<Player>()};
-
     for (GameInput& input : _inputManager.getContinuousInputs()) {
-        auto it = _eventMapping.find(input);
-        if (it != _eventMapping.end()) {
-            _eventQueue.emplace(it->second, EventStatus::Ongoing, playerId, 0);
-        } else {
-            float zoom{1.f};
-            bool rotate{false};
-            switch (input) {
-            case GameInput::ZoomIn:
-                zoom *= std::pow(_zoomSpeed, dt.asSeconds());
-                break;
-            case GameInput::ZoomOut:
-                zoom /= std::pow(_zoomSpeed, dt.asSeconds());
-                break;
-            case GameInput::RotateView:
-                rotate = true;
-                break;
-            default:
-                break;
-            }
-            updateView(zoom, rotate, dt);
+        float zoom{1.f};
+        bool rotate{false};
+        switch (input) {
+        case GameInput::ZoomIn:
+            zoom *= std::pow(_zoomSpeed, dt.asSeconds());
+            break;
+        case GameInput::ZoomOut:
+            zoom /= std::pow(_zoomSpeed, dt.asSeconds());
+            break;
+        case GameInput::RotateView:
+            rotate = true;
+            break;
+        default:
+            break;
         }
+        updateView(zoom, rotate, dt);
     }
+
     return true;
 }
 
@@ -163,6 +155,8 @@ void GameState::registerComponents() {
     _scene.registerComponent<Player>();
     _scene.registerComponent<MapElement>();
     _scene.registerComponent<Sprite>();
+    _scene.registerComponent<ShipControl>();
+    _scene.registerComponent<ContinuousEvents>();
 }
 
 void GameState::updateView(float zoom, bool rotate, sf::Time dt) {
@@ -187,4 +181,27 @@ void GameState::updateView(float zoom, bool rotate, sf::Time dt) {
         }
     }
     _canvas->getRenderTexture().setView(view);
+}
+
+void GameState::processtriggerEventsQueue() {
+    // Add events from systems that generate them
+    auto autoPilotQueue = _autoPilotSystem.queueTriggerEvents();
+    while (not autoPilotQueue.empty()) {
+        _triggerEventsQueue.push(autoPilotQueue.front());
+        autoPilotQueue.pop();
+    }
+    // Process them
+    while (not _triggerEventsQueue.empty()) {
+        const auto [event, start] = _triggerEventsQueue.front();
+        // Update the continuous events list of the entity
+        ContinuousEvents& entityEvents{_scene.getComponent<ContinuousEvents>(event.entity)};
+        auto it = std::find(entityEvents.begin(), entityEvents.end(), event.type);
+        if (it != entityEvents.end() and not start) {
+            entityEvents.erase(it);
+        } else if (it == entityEvents.end() and start) {
+            entityEvents.push_back(event.type);
+        }
+        _animationSystem.handleTriggerEvent(event, start);
+        _triggerEventsQueue.pop();
+    }
 }

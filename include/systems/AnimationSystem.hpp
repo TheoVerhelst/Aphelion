@@ -13,7 +13,7 @@ class AnimationSystem {
 public:
     AnimationSystem(Scene& scene, const SoundSettings& soundSettings);
     void update(sf::Time dt);
-    void handleGameEvent(const GameEvent& event);
+    void handleTriggerEvent(const GameEvent& event, bool start);
 
 private:
     Scene& _scene;

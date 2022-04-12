@@ -23,17 +23,13 @@ void AnimationSystem::update(sf::Time dt) {
     }
 }
 
-void AnimationSystem::handleGameEvent(const GameEvent& event) {
-    if (event.status == EventStatus::Ongoing) {
-        return;
-    }
-    
+void AnimationSystem::handleTriggerEvent(const GameEvent& event, bool start) {
     Animations& animations{_scene.getComponent<Animations>(event.entity)};
     auto animationIt = animations.find(event.type);
     if (animationIt != animations.end()) {
-        if (event.status == EventStatus::Start) {
+        if (start) {
             animationIt->second.animation.start();
-        } else { // Must be EventStatus::Stop
+        } else {
             animationIt->second.animation.stop();
         }
     }

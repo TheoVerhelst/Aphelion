@@ -17,12 +17,6 @@ enum class GameEventType {
     Collision
 };
 
-enum class EventStatus {
-    Start,
-    Stop,
-    Ongoing
-};
-
 NLOHMANN_JSON_SERIALIZE_ENUM(GameEventType, {
     {GameEventType::Engine, "engine"},
     {GameEventType::RcsUp, "rcsUp"},
@@ -36,7 +30,6 @@ NLOHMANN_JSON_SERIALIZE_ENUM(GameEventType, {
 
 struct GameEvent {
     GameEventType type;
-    EventStatus status;
     EntityId entity;
     EntityId otherEntity;
 };

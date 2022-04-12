@@ -21,7 +21,7 @@ include_directories("${CMAKE_SOURCE_DIR}/include")
 # Set compiler flags
 set (CMAKE_CXX_STANDARD 20)
 if (CMAKE_COMPILER_IS_GNUCC)
-    set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -pg \
+    set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} \
 -Wall -Wextra -pedantic -pedantic-errors -Winit-self -Wcast-align -Wundef \
 -Wunreachable-code -Wmissing-declarations -Walloc-zero -Walloca \
 -Warith-conversion -Wcast-align -Wcast-qual -Wclass-memaccess -Wcomma-subscript \
@@ -66,6 +66,7 @@ set(SOURCE_FILES
     src/states/SettingsState.cpp
     src/states/StateStack.cpp
 	src/systems/AnimationSystem.cpp
+	src/systems/AutoPilotSystem.cpp
 	src/systems/CollisionSystem.cpp
 	src/systems/GameplaySystem.cpp
 	src/systems/LightSystem.cpp

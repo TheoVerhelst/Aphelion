@@ -39,7 +39,9 @@ void SceneSerializer::load(const std::filesystem::path& path) {
         {"animations", &SceneSerializer::loadAnimations},
         {"player", &SceneSerializer::loadPlayer},
         {"lightSource", &SceneSerializer::loadLightSource},
-        {"mapElement", &SceneSerializer::loadMapElement}
+        {"mapElement", &SceneSerializer::loadMapElement},
+        {"continuousEvents", &SceneSerializer::loadContinuousEvents},
+        {"shipControl", &SceneSerializer::loadShipControl}
     };
 
     // We use parenthesis init rather than brace init, otherwise the json value
@@ -75,6 +77,8 @@ void SceneSerializer::save(const std::filesystem::path& path) const {
         saveComponent<Player>(entityValue, id, "player");
         saveComponent<LightSource>(entityValue, id, "lightSource");
         saveComponent<MapElement>(entityValue, id, "mapElement");
+        saveComponent<ContinuousEvents>(entityValue, id, "continuousEvents");
+        saveComponent<ShipControl>(entityValue, id, "shipControl");
 
         if (_loadedClasses.contains(id)) {
             const std::string className{_loadedClasses.at(id)};
@@ -109,8 +113,7 @@ json SceneSerializer::computeClassPatch(const json& classValue, const json& enti
 }
 
 void SceneSerializer::loadBody(const json& value, EntityId id) {
-    Body& body{_scene.assignComponent<Body>(id)};
-    value.get_to(body);
+    value.get_to(_scene.assignComponent<Body>(id));
 }
 
 void SceneSerializer::loadCircleBody(const json& value, EntityId id) {
@@ -155,13 +158,11 @@ void SceneSerializer::loadAnimations(const json& value, EntityId id) {
 }
 
 void SceneSerializer::loadPlayer(const json& value, EntityId id) {
-    Player& player{_scene.assignComponent<Player>(id)};
-    value.get_to(player);
+    value.get_to(_scene.assignComponent<Player>(id));
 }
 
 void SceneSerializer::loadLightSource(const json& value, EntityId id) {
-    LightSource& lightSource{_scene.assignComponent<LightSource>(id)};
-    value.get_to(lightSource);
+    value.get_to(_scene.assignComponent<LightSource>(id));
 }
 
 void SceneSerializer::loadMapElement(const json& value, EntityId id) {
@@ -172,4 +173,14 @@ void SceneSerializer::loadMapElement(const json& value, EntityId id) {
     if (mapElement.type == MapElementType::CelestialBody) {
         mapElement.icon->setScale(2.f);
     }
+}
+
+void SceneSerializer::loadContinuousEvents(const json& /* value */, EntityId id) {
+    _scene.assignComponent<ContinuousEvents>(id);
+    //value.get_to(continuousEvents);
+    // TODO: import the events, and fire corresponding trigger event starts
+}
+
+void SceneSerializer::loadShipControl(const json& value, EntityId id) {
+    value.get_to(_scene.assignComponent<ShipControl>(id));
 }

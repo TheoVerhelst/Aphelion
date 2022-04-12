@@ -45,6 +45,8 @@ private:
     void loadPlayer(const nlohmann::json& value, EntityId id);
     void loadLightSource(const nlohmann::json& value, EntityId id);
     void loadMapElement(const nlohmann::json& value, EntityId id);
+    void loadContinuousEvents(const nlohmann::json& value, EntityId id);
+    void loadShipControl(const nlohmann::json& value, EntityId id);
 
     template <typename T>
     void saveComponent(nlohmann::json& value, EntityId id, const std::string name) const {
@@ -52,7 +54,7 @@ private:
             value[name] = _scene.getComponent<T>(id);
         }
     }
-    
+
     nlohmann::json computeClassPatch(const nlohmann::json& classValue, const nlohmann::json& entityValue) const;
 
 };

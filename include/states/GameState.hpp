@@ -8,6 +8,7 @@
 #include <TGUI/Widgets/Picture.hpp>
 #include <states/AbstractState.hpp>
 #include <systems/AnimationSystem.hpp>
+#include <systems/AutoPilotSystem.hpp>
 #include <systems/CollisionSystem.hpp>
 #include <systems/GameplaySystem.hpp>
 #include <systems/LightSystem.hpp>
@@ -54,8 +55,9 @@ private:
     tgui::Picture::Ptr _background;
     InputManager<GameInput> _inputManager;
     const std::map<GameInput, GameEventType> _eventMapping;
-    std::queue<GameEvent> _eventQueue;
+    std::queue<std::pair<GameEvent, bool>> _triggerEventsQueue;
     AnimationSystem _animationSystem;
+    AutoPilotSystem _autoPilotSystem;
     CollisionSystem _collisionSystem;
     GameplaySystem _gameplaySystem;
     LightSystem _lightSystem;
@@ -66,9 +68,12 @@ private:
     const float _zoomSpeed{15.f};
     const Vector2f _minViewSize{130.f, 70.f};
     const Vector2f _maxViewSize{6400.f, 4500.f};
+    bool _playerAutoRcsActivated{false};
+    bool _playerAutoRcsClockwise{false};
 
     void registerComponents();
     void updateView(float zoom, bool rotate, sf::Time dt);
+    void processtriggerEventsQueue();
 };
 
 #endif // GAMESTATE_HPP

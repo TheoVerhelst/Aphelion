@@ -90,6 +90,14 @@
         },
         "player": {
             "placeholder": true
-        }
+        },
+        "shipControl": {
+            "playerRcsClockwise": false,
+            "playerRcsCounterClockwise": false,
+            "autoRcsClockwise": false,
+            "autoRcsCounterClockwise": false,
+            "angularVelocityThreshold": 0.15
+        },
+        "continuousEvents": []
     }
 ]
