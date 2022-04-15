@@ -92,12 +92,25 @@
             "placeholder": true
         },
         "shipControl": {
-            "playerRcsClockwise": false,
-            "playerRcsCounterClockwise": false,
-            "autoRcsClockwise": false,
-            "autoRcsCounterClockwise": false,
+            "playerControls": {
+                "engine": false,
+                "rcsUp": false,
+                "rcsDown": false,
+                "rcsLeft": false,
+                "rcsRight": false,
+                "rcsClockwise": false,
+                "rcsCounterClockwise": false
+            },
+            "autoControls": {
+                "engine": false,
+                "rcsUp": false,
+                "rcsDown": false,
+                "rcsLeft": false,
+                "rcsRight": false,
+                "rcsClockwise": false,
+                "rcsCounterClockwise": false
+            },
             "angularVelocityThreshold": 0.15
-        },
-        "continuousEvents": []
+        }
     }
 ]

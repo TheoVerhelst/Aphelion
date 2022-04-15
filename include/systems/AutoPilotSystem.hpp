@@ -6,12 +6,12 @@
 
 // Forward declarations
 class Scene;
-struct GameEvent;
+struct Event;
 
 class AutoPilotSystem {
 public:
     AutoPilotSystem(Scene& scene);
-    std::queue<std::pair<GameEvent, bool>> queueTriggerEvents();
+    std::queue<Event> queueEvents();
 
 private:
     Scene& _scene;

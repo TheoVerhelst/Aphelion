@@ -40,7 +40,6 @@ void SceneSerializer::load(const std::filesystem::path& path) {
         {"player", &SceneSerializer::loadPlayer},
         {"lightSource", &SceneSerializer::loadLightSource},
         {"mapElement", &SceneSerializer::loadMapElement},
-        {"continuousEvents", &SceneSerializer::loadContinuousEvents},
         {"shipControl", &SceneSerializer::loadShipControl}
     };
 
@@ -77,7 +76,6 @@ void SceneSerializer::save(const std::filesystem::path& path) const {
         saveComponent<Player>(entityValue, id, "player");
         saveComponent<LightSource>(entityValue, id, "lightSource");
         saveComponent<MapElement>(entityValue, id, "mapElement");
-        saveComponent<ContinuousEvents>(entityValue, id, "continuousEvents");
         saveComponent<ShipControl>(entityValue, id, "shipControl");
 
         if (_loadedClasses.contains(id)) {
@@ -173,12 +171,6 @@ void SceneSerializer::loadMapElement(const json& value, EntityId id) {
     if (mapElement.type == MapElementType::CelestialBody) {
         mapElement.icon->setScale(2.f);
     }
-}
-
-void SceneSerializer::loadContinuousEvents(const json& /* value */, EntityId id) {
-    _scene.assignComponent<ContinuousEvents>(id);
-    //value.get_to(continuousEvents);
-    // TODO: import the events, and fire corresponding trigger event starts
 }
 
 void SceneSerializer::loadShipControl(const json& value, EntityId id) {

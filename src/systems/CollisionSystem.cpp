@@ -1,6 +1,7 @@
 #include <systems/CollisionSystem.hpp>
-#include <Scene.hpp>
 #include <components/Body.hpp>
+#include <Scene.hpp>
+#include <Event.hpp>
 
 using namespace std::placeholders;
 
@@ -54,6 +55,12 @@ void CollisionSystem::update() {
             }
         }
     }
+}
+
+std::queue<Event> CollisionSystem::queueEvents() {
+    std::queue<Event> res;
+    std::swap(res, _collisionEvents);
+    return res;
 }
 
 void CollisionSystem::collideConvexes(const SupportFunction& functionA,
@@ -165,6 +172,9 @@ void CollisionSystem::collisionResponse(Body& bodyA, Body& bodyB, const ContactI
     // Shift the bodies out of collision. Note that we have a negative signed distance
     bodyA.position += contactInfo.normal * contactInfo.distance * bodyB.mass / (bodyA.mass + bodyB.mass);
     bodyB.position -= contactInfo.normal * contactInfo.distance * bodyA.mass / (bodyA.mass + bodyB.mass);
+
+    // TODO we don't have access to the entity ids here
+    _collisionEvents.emplace(0, true, Event::CollisionEvent(0));
 }
 
 void CollisionSystem::MinkowskyPolygon::pushBack(const Vector2f& A, const Vector2f& B) {

@@ -50,9 +50,9 @@ bool MapState::update(sf::Time dt) {
 }
 
 bool MapState::handleEvent(const sf::Event& event) {
-    std::vector<std::pair<MapInput, bool>> triggerInputs{_inputManager.getTriggerInputs(event)};
+    std::vector<std::pair<MapInput, bool>> inputEvents{_inputManager.getInputEvents(event)};
     bool consumed{false};
-    for (auto& [input, start] : triggerInputs) {
+    for (auto& [input, start] : inputEvents) {
         if (start and input == MapInput::Exit) {
             _stack.popStatesUntil(*this);
             consumed = true;
@@ -62,17 +62,11 @@ bool MapState::handleEvent(const sf::Event& event) {
 }
 
 bool MapState::handleContinuousInputs(sf::Time dt) {
-    for (MapInput& input : _inputManager.getContinuousInputs()) {
-        switch (input) {
-        case MapInput::ZoomIn:
-            _scale *= std::pow(_zoomSpeed, dt.asSeconds());
-            break;
-        case MapInput::ZoomOut:
-            _scale /= std::pow(_zoomSpeed, dt.asSeconds());
-            break;
-        default:
-            break;
-        }
+    if (_inputManager.isActivated(MapInput::ZoomIn)) {
+        _scale *= std::pow(_zoomSpeed, dt.asSeconds());
+    }
+    if (_inputManager.isActivated(MapInput::ZoomOut)) {
+        _scale /= std::pow(_zoomSpeed, dt.asSeconds());
     }
     _scale = std::clamp(_scale, _minScale, _maxScale);
     return false;

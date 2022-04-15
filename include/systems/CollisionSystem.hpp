@@ -4,6 +4,8 @@
 #include <vector>
 #include <cstddef>
 #include <functional>
+#include <queue>
+#include <utility>
 #include <vector.hpp>
 
 // Forward declarations
@@ -11,18 +13,21 @@ class Scene;
 struct Body;
 struct CircleBody;
 class SupportFunction;
+struct Event;
 
 
 class CollisionSystem {
 public:
 	CollisionSystem(Scene& scene);
 	void update();
+    std::queue<Event> queueEvents();
 
 private:
 	typedef std::function<Vector2f(const Vector2f&)> SupportFunction;
 
 	static constexpr float eps{0.0001f};
 	Scene& _scene;
+	std::queue<Event> _collisionEvents;
 
 	// List of 2D points formed by the difference of two shapes. This class
 	// makes it easy to store and pass around the difference and the original

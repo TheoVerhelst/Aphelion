@@ -10,8 +10,8 @@ template <typename Input>
 class InputManager {
 public:
     InputManager(const std::map<sf::Keyboard::Key, Input>& mapping);
-    std::vector<std::pair<Input, bool>> getTriggerInputs(const sf::Event& event);
-    std::vector<Input> getContinuousInputs();
+    std::vector<std::pair<Input, bool>> getInputEvents(const sf::Event& event);
+    bool isActivated(Input input);
 
 private:
     const std::map<sf::Keyboard::Key, Input> _mapping;
@@ -23,7 +23,7 @@ InputManager<Input>::InputManager(const std::map<sf::Keyboard::Key, Input>& mapp
 }
 
 template <typename Input>
-std::vector<std::pair<Input, bool>> InputManager<Input>::getTriggerInputs(const sf::Event& event) {
+std::vector<std::pair<Input, bool>> InputManager<Input>::getInputEvents(const sf::Event& event) {
     std::vector<std::pair<Input, bool>> inputs;
     if (event.type == sf::Event::KeyPressed or event.type == sf::Event::KeyReleased) {
         auto mappingIt = _mapping.find(event.key.code);
@@ -35,14 +35,13 @@ std::vector<std::pair<Input, bool>> InputManager<Input>::getTriggerInputs(const 
 }
 
 template <typename Input>
-std::vector<Input> InputManager<Input>::getContinuousInputs() {
-    std::vector<Input> inputs;
-    for (auto& [key, input] : _mapping) {
-        if (sf::Keyboard::isKeyPressed(key)) {
-            inputs.push_back(input);
+bool InputManager<Input>::isActivated(Input input) {
+    for (auto& [key, otherInput] : _mapping) {
+        if (input == otherInput) {
+            return sf::Keyboard::isKeyPressed(key);
         }
     }
-    return inputs;
+    return false;
 }
 
 

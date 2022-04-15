@@ -45,7 +45,6 @@ private:
     void loadPlayer(const nlohmann::json& value, EntityId id);
     void loadLightSource(const nlohmann::json& value, EntityId id);
     void loadMapElement(const nlohmann::json& value, EntityId id);
-    void loadContinuousEvents(const nlohmann::json& value, EntityId id);
     void loadShipControl(const nlohmann::json& value, EntityId id);
 
     template <typename T>

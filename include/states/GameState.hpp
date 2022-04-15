@@ -17,7 +17,7 @@
 #include <InputManager.hpp>
 #include <Scene.hpp>
 #include <SceneSerializer.hpp>
-#include <GameEvent.hpp>
+#include <Event.hpp>
 #include <Input.hpp>
 
 // Forward declarations
@@ -54,8 +54,8 @@ private:
     ResourceManager<sf::Shader>& _shaderManager;
     tgui::Picture::Ptr _background;
     InputManager<GameInput> _inputManager;
-    const std::map<GameInput, GameEventType> _eventMapping;
-    std::queue<std::pair<GameEvent, bool>> _triggerEventsQueue;
+    const std::map<GameInput, Event> _eventMapping;
+    std::queue<Event> _eventQueue;
     AnimationSystem _animationSystem;
     AutoPilotSystem _autoPilotSystem;
     CollisionSystem _collisionSystem;

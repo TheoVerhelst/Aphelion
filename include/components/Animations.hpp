@@ -9,7 +9,6 @@
 #include <serializers.hpp>
 #include <Animation.hpp>
 #include <vector.hpp>
-#include <GameEvent.hpp>
 
 struct AnimationData {
 	std::string texture;
@@ -22,7 +21,26 @@ struct AnimationData {
 };
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(AnimationData, texture, offset, frames, soundBuffer, soundLoopStart, soundLoopEnd)
 
-typedef std::map<GameEventType, AnimationData> Animations;
+enum class AnimationType {
+	Engine,
+	RcsUp,
+	RcsDown,
+	RcsLeft,
+	RcsRight,
+	RcsClockwise,
+	RcsCounterClockwise
+};
+NLOHMANN_JSON_SERIALIZE_ENUM(AnimationType, {
+	{AnimationType::Engine, "engine"},
+	{AnimationType::RcsUp, "rcsUp"},
+	{AnimationType::RcsDown, "rcsDown"},
+	{AnimationType::RcsLeft, "rcsLeft"},
+	{AnimationType::RcsRight, "rcsRight"},
+	{AnimationType::RcsClockwise, "rcsClockwise"},
+	{AnimationType::RcsCounterClockwise, "rcsCounterClockwise"}
+})
+
+typedef std::map<AnimationType, AnimationData> Animations;
 
 // We have to define the serialization manually, otherwise the Action keys get
 // converted to int, and the map is converted to an JSON array

@@ -8,7 +8,7 @@
 #include <states/MapState.hpp>
 #include <ResourceManager.hpp>
 #include <Input.hpp>
-#include <GameEvent.hpp>
+#include <Event.hpp>
 #include <components/Body.hpp>
 #include <components/Animations.hpp>
 #include <components/components.hpp>
@@ -40,15 +40,15 @@ GameState::GameState(StateStack& stack,
         {sf::Keyboard::LAlt, GameInput::RotateView},
         {sf::Keyboard::Escape, GameInput::Pause}
     }},
-    _eventMapping{{
-        {GameInput::Engine, GameEventType::Engine},
-        {GameInput::RcsUp, GameEventType::RcsUp},
-        {GameInput::RcsDown, GameEventType::RcsDown},
-        {GameInput::RcsLeft, GameEventType::RcsLeft},
-        {GameInput::RcsRight, GameEventType::RcsRight},
-        {GameInput::RcsClockwise, GameEventType::RcsClockwise},
-        {GameInput::RcsCounterClockwise, GameEventType::RcsCounterClockwise}
-    }},
+    _eventMapping{
+        {GameInput::Engine, {0, false, Event::EngineEvent()}},
+        {GameInput::RcsUp, {0, false, Event::RcsEvent::Up}},
+        {GameInput::RcsDown, {0, false, Event::RcsEvent::Down}},
+        {GameInput::RcsLeft, {0, false, Event::RcsEvent::Left}},
+        {GameInput::RcsRight, {0, false, Event::RcsEvent::Right}},
+        {GameInput::RcsClockwise, {0, false, Event::RcsEvent::Clockwise}},
+        {GameInput::RcsCounterClockwise, {0, false, Event::RcsEvent::CounterClockwise}}
+    },
     _animationSystem{_scene, soundSettings},
     _autoPilotSystem{_scene},
     _collisionSystem{_scene},
@@ -87,24 +87,51 @@ bool GameState::update(sf::Time dt) {
     return false;
 }
 
-bool GameState::handleEvent(const sf::Event& event) {
+bool GameState::handleEvent(const sf::Event& sfEvent) {
     const EntityId playerId{_scene.findUnique<Player>()};
+    ShipControl& shipControl{_scene.getComponent<ShipControl>(playerId)};
     bool consumed{false};
-    std::vector<std::pair<GameInput, bool>> triggerInputs{_inputManager.getTriggerInputs(event)};
-    for (auto& [input, start] : triggerInputs) {
+    std::vector<std::pair<GameInput, bool>> inputEvents{_inputManager.getInputEvents(sfEvent)};
+    for (auto& [input, start] : inputEvents) {
+        // If it is a gameplay input event
         auto it = _eventMapping.find(input);
         if (it != _eventMapping.end()) {
-            GameEvent gameEvent{it->second, playerId, 0};
-            _triggerEventsQueue.emplace(gameEvent, start);
-            consumed = true;
-
-            ShipControl& shipControl{_scene.getComponent<ShipControl>(playerId)};
-            if (gameEvent.type == GameEventType::RcsClockwise) {
-                shipControl.playerRcsClockwise = start;
-            } else if (gameEvent.type == GameEventType::RcsCounterClockwise) {
-                shipControl.playerRcsCounterClockwise = start;
+            // Set the entity and the event data
+            Event event{it->second};
+            event.entity = playerId;
+            event.start = start;
+            // Update the ship control component. We have to do it in this class
+            // rather than in, say, AutoPilotSystem because only here we know
+            // that the event is due to user input and not due to gameplay
+            // logic. So we know that we have to set shipControl.playerControls
+            // rather than shipControl.autoControls.
+            switch(input) {
+            case GameInput::Engine:
+                shipControl.playerControls.engine = start;
+                break;
+            case GameInput::RcsUp:
+                shipControl.playerControls.rcsUp = start;
+                break;
+            case GameInput::RcsDown:
+                shipControl.playerControls.rcsDown = start;
+                break;
+            case GameInput::RcsLeft:
+                shipControl.playerControls.rcsLeft = start;
+                break;
+            case GameInput::RcsRight:
+                shipControl.playerControls.rcsRight = start;
+                break;
+            case GameInput::RcsClockwise:
+                shipControl.playerControls.rcsClockwise = start;
+                break;
+            case GameInput::RcsCounterClockwise:
+                shipControl.playerControls.rcsCounterClockwise = start;
+                break;
+            default:
+                break;
             }
-
+            _eventQueue.push(event);
+            consumed = true;
         } else if (start) {
             switch (input) {
             case GameInput::ToggleMap:
@@ -124,25 +151,18 @@ bool GameState::handleEvent(const sf::Event& event) {
 }
 
 bool GameState::handleContinuousInputs(sf::Time dt) {
-    for (GameInput& input : _inputManager.getContinuousInputs()) {
-        float zoom{1.f};
-        bool rotate{false};
-        switch (input) {
-        case GameInput::ZoomIn:
-            zoom *= std::pow(_zoomSpeed, dt.asSeconds());
-            break;
-        case GameInput::ZoomOut:
-            zoom /= std::pow(_zoomSpeed, dt.asSeconds());
-            break;
-        case GameInput::RotateView:
-            rotate = true;
-            break;
-        default:
-            break;
-        }
-        updateView(zoom, rotate, dt);
+    float zoom{1.f};
+    bool rotate{false};
+    if (_inputManager.isActivated(GameInput::ZoomIn)) {
+        zoom *= std::pow(_zoomSpeed, dt.asSeconds());
     }
-
+    if (_inputManager.isActivated(GameInput::ZoomOut)) {
+        zoom /= std::pow(_zoomSpeed, dt.asSeconds());
+    }
+    if (_inputManager.isActivated(GameInput::RotateView)) {
+        rotate = true;
+    }
+    updateView(zoom, rotate, dt);
     return true;
 }
 
@@ -156,7 +176,6 @@ void GameState::registerComponents() {
     _scene.registerComponent<MapElement>();
     _scene.registerComponent<Sprite>();
     _scene.registerComponent<ShipControl>();
-    _scene.registerComponent<ContinuousEvents>();
 }
 
 void GameState::updateView(float zoom, bool rotate, sf::Time dt) {
@@ -185,23 +204,20 @@ void GameState::updateView(float zoom, bool rotate, sf::Time dt) {
 
 void GameState::processtriggerEventsQueue() {
     // Add events from systems that generate them
-    auto autoPilotQueue = _autoPilotSystem.queueTriggerEvents();
+    auto autoPilotQueue = _autoPilotSystem.queueEvents();
     while (not autoPilotQueue.empty()) {
-        _triggerEventsQueue.push(autoPilotQueue.front());
+        _eventQueue.push(autoPilotQueue.front());
         autoPilotQueue.pop();
     }
+    auto collisionQueue = _collisionSystem.queueEvents();
+    while (not collisionQueue.empty()) {
+        _eventQueue.push(collisionQueue.front());
+        collisionQueue.pop();
+    }
     // Process them
-    while (not _triggerEventsQueue.empty()) {
-        const auto [event, start] = _triggerEventsQueue.front();
-        // Update the continuous events list of the entity
-        ContinuousEvents& entityEvents{_scene.getComponent<ContinuousEvents>(event.entity)};
-        auto it = std::find(entityEvents.begin(), entityEvents.end(), event.type);
-        if (it != entityEvents.end() and not start) {
-            entityEvents.erase(it);
-        } else if (it == entityEvents.end() and start) {
-            entityEvents.push_back(event.type);
-        }
-        _animationSystem.handleTriggerEvent(event, start);
-        _triggerEventsQueue.pop();
+    while (not _eventQueue.empty()) {
+        const Event& event{_eventQueue.front()};
+        _animationSystem.handleEvent(event);
+        _eventQueue.pop();
     }
 }

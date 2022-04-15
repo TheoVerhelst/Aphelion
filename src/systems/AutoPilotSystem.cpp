@@ -3,60 +3,57 @@
 #include <components/components.hpp>
 #include <components/Body.hpp>
 #include <Scene.hpp>
-#include <GameEvent.hpp>
+#include <Event.hpp>
 #include <Input.hpp>
 
 AutoPilotSystem::AutoPilotSystem(Scene& scene):
     _scene{scene} {
 }
 
-std::queue<std::pair<GameEvent, bool>> AutoPilotSystem::queueTriggerEvents() {
-    std::queue<std::pair<GameEvent, bool>> queue;
+std::queue<Event> AutoPilotSystem::queueEvents() {
+    std::queue<Event> queue;
     const EntityId playerId{_scene.findUnique<Player>()};
     ShipControl& shipControl{_scene.getComponent<ShipControl>(playerId)};
     // First, check if the player is using RCS by themselves. If so, we should
     // desactivate the actions that the user is not doing themselves
-    if (shipControl.playerRcsClockwise or shipControl.playerRcsCounterClockwise) {
-        if (shipControl.autoRcsClockwise and not shipControl.playerRcsClockwise) {
+    if (shipControl.playerControls.rcsClockwise or
+        shipControl.playerControls.rcsCounterClockwise) {
+        if (shipControl.autoControls.rcsClockwise and
+            not shipControl.playerControls.rcsClockwise) {
             // Stop RCS clockwise
-            GameEvent event{GameEventType::RcsClockwise, playerId, 0};
-            queue.emplace(event, false);
+            queue.emplace(playerId, false, Event::RcsEvent::Clockwise);
         }
-        if (shipControl.autoRcsCounterClockwise and not shipControl.playerRcsCounterClockwise) {
+        if (shipControl.autoControls.rcsCounterClockwise and
+            not shipControl.playerControls.rcsCounterClockwise) {
             // Stop RCS counterclockwise
-            GameEvent event{GameEventType::RcsCounterClockwise, playerId, 0};
-            queue.emplace(event, false);
+            queue.emplace(playerId, false, Event::RcsEvent::CounterClockwise);
         }
-        shipControl.autoRcsClockwise = false;
-        shipControl.autoRcsCounterClockwise = false;
+        shipControl.autoControls.rcsClockwise = false;
+        shipControl.autoControls.rcsCounterClockwise = false;
         return queue;
     }
 
     // Check if the RCS should start or stop
     const Body& playerBody{_scene.getComponent<Body>(playerId)};
     const float threshold{shipControl.angularVelocityThreshold};
-    if (playerBody.angularVelocity > threshold and not shipControl.autoRcsCounterClockwise) {
+    if (playerBody.angularVelocity > threshold and not shipControl.autoControls.rcsCounterClockwise) {
         // Start RCS counterclockwise
-        GameEvent event{GameEventType::RcsCounterClockwise, playerId, 0};
-        queue.emplace(event, true);
-        shipControl.autoRcsCounterClockwise = true;
-    } else if (playerBody.angularVelocity < -threshold and not shipControl.autoRcsClockwise) {
+        queue.emplace(playerId, true, Event::RcsEvent::CounterClockwise);
+        shipControl.autoControls.rcsCounterClockwise = true;
+    } else if (playerBody.angularVelocity < -threshold and not shipControl.autoControls.rcsClockwise) {
         // Start RCS clockwise
-        GameEvent event{GameEventType::RcsClockwise, playerId, 0};
-        queue.emplace(event, true);
-        shipControl.autoRcsClockwise = true;
+        queue.emplace(playerId, true, Event::RcsEvent::Clockwise);
+        shipControl.autoControls.rcsClockwise = true;
     } else if (std::abs(playerBody.angularVelocity) < threshold) {
-        if (shipControl.autoRcsClockwise) {
+        if (shipControl.autoControls.rcsClockwise) {
             // Stop RCS clockwise
-            GameEvent event{GameEventType::RcsClockwise, playerId, 0};
-            queue.emplace(event, false);
-            shipControl.autoRcsClockwise = false;
+            queue.emplace(playerId, false, Event::RcsEvent::Clockwise);
+            shipControl.autoControls.rcsClockwise = false;
         }
-        if (shipControl.autoRcsCounterClockwise) {
+        if (shipControl.autoControls.rcsCounterClockwise) {
             // Stop RCS counterclockwise
-            GameEvent event{GameEventType::RcsCounterClockwise, playerId, 0};
-            queue.emplace(event, false);
-            shipControl.autoRcsCounterClockwise = false;
+            queue.emplace(playerId, false, Event::RcsEvent::CounterClockwise);
+            shipControl.autoControls.rcsCounterClockwise = false;
         }
     }
     return queue;
