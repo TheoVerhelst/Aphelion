@@ -89,9 +89,6 @@
             "angularVelocity": 0
         },
         "player": {
-            "placeholder": true
-        },
-        "shipControl": {
             "playerControls": {
                 "engine": false,
                 "rcsUp": false,

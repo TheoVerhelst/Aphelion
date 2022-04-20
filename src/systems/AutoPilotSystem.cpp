@@ -13,47 +13,47 @@ AutoPilotSystem::AutoPilotSystem(Scene& scene):
 std::queue<Event> AutoPilotSystem::queueEvents() {
     std::queue<Event> queue;
     const EntityId playerId{_scene.findUnique<Player>()};
-    ShipControl& shipControl{_scene.getComponent<ShipControl>(playerId)};
+    Player& player{_scene.getComponent<Player>(playerId)};
     // First, check if the player is using RCS by themselves. If so, we should
     // desactivate the actions that the user is not doing themselves
-    if (shipControl.playerControls.rcsClockwise or
-        shipControl.playerControls.rcsCounterClockwise) {
-        if (shipControl.autoControls.rcsClockwise and
-            not shipControl.playerControls.rcsClockwise) {
+    if (player.playerControls.rcsClockwise or
+        player.playerControls.rcsCounterClockwise) {
+        if (player.autoControls.rcsClockwise and
+            not player.playerControls.rcsClockwise) {
             // Stop RCS clockwise
             queue.emplace(playerId, false, Event::RcsEvent::Clockwise);
         }
-        if (shipControl.autoControls.rcsCounterClockwise and
-            not shipControl.playerControls.rcsCounterClockwise) {
+        if (player.autoControls.rcsCounterClockwise and
+            not player.playerControls.rcsCounterClockwise) {
             // Stop RCS counterclockwise
             queue.emplace(playerId, false, Event::RcsEvent::CounterClockwise);
         }
-        shipControl.autoControls.rcsClockwise = false;
-        shipControl.autoControls.rcsCounterClockwise = false;
+        player.autoControls.rcsClockwise = false;
+        player.autoControls.rcsCounterClockwise = false;
         return queue;
     }
 
     // Check if the RCS should start or stop
     const Body& playerBody{_scene.getComponent<Body>(playerId)};
-    const float threshold{shipControl.angularVelocityThreshold};
-    if (playerBody.angularVelocity > threshold and not shipControl.autoControls.rcsCounterClockwise) {
+    const float threshold{player.angularVelocityThreshold};
+    if (playerBody.angularVelocity > threshold and not player.autoControls.rcsCounterClockwise) {
         // Start RCS counterclockwise
         queue.emplace(playerId, true, Event::RcsEvent::CounterClockwise);
-        shipControl.autoControls.rcsCounterClockwise = true;
-    } else if (playerBody.angularVelocity < -threshold and not shipControl.autoControls.rcsClockwise) {
+        player.autoControls.rcsCounterClockwise = true;
+    } else if (playerBody.angularVelocity < -threshold and not player.autoControls.rcsClockwise) {
         // Start RCS clockwise
         queue.emplace(playerId, true, Event::RcsEvent::Clockwise);
-        shipControl.autoControls.rcsClockwise = true;
+        player.autoControls.rcsClockwise = true;
     } else if (std::abs(playerBody.angularVelocity) < threshold) {
-        if (shipControl.autoControls.rcsClockwise) {
+        if (player.autoControls.rcsClockwise) {
             // Stop RCS clockwise
             queue.emplace(playerId, false, Event::RcsEvent::Clockwise);
-            shipControl.autoControls.rcsClockwise = false;
+            player.autoControls.rcsClockwise = false;
         }
-        if (shipControl.autoControls.rcsCounterClockwise) {
+        if (player.autoControls.rcsCounterClockwise) {
             // Stop RCS counterclockwise
             queue.emplace(playerId, false, Event::RcsEvent::CounterClockwise);
-            shipControl.autoControls.rcsCounterClockwise = false;
+            player.autoControls.rcsCounterClockwise = false;
         }
     }
     return queue;

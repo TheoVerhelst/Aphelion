@@ -39,8 +39,7 @@ void SceneSerializer::load(const std::filesystem::path& path) {
         {"animations", &SceneSerializer::loadAnimations},
         {"player", &SceneSerializer::loadPlayer},
         {"lightSource", &SceneSerializer::loadLightSource},
-        {"mapElement", &SceneSerializer::loadMapElement},
-        {"shipControl", &SceneSerializer::loadShipControl}
+        {"mapElement", &SceneSerializer::loadMapElement}
     };
 
     // We use parenthesis init rather than brace init, otherwise the json value
@@ -76,7 +75,6 @@ void SceneSerializer::save(const std::filesystem::path& path) const {
         saveComponent<Player>(entityValue, id, "player");
         saveComponent<LightSource>(entityValue, id, "lightSource");
         saveComponent<MapElement>(entityValue, id, "mapElement");
-        saveComponent<ShipControl>(entityValue, id, "shipControl");
 
         if (_loadedClasses.contains(id)) {
             const std::string className{_loadedClasses.at(id)};
@@ -171,8 +169,4 @@ void SceneSerializer::loadMapElement(const json& value, EntityId id) {
     if (mapElement.type == MapElementType::CelestialBody) {
         mapElement.icon->setScale(2.f);
     }
-}
-
-void SceneSerializer::loadShipControl(const json& value, EntityId id) {
-    value.get_to(_scene.assignComponent<ShipControl>(id));
 }

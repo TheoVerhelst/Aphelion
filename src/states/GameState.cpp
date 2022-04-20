@@ -89,7 +89,7 @@ bool GameState::update(sf::Time dt) {
 
 bool GameState::handleEvent(const sf::Event& sfEvent) {
     const EntityId playerId{_scene.findUnique<Player>()};
-    ShipControl& shipControl{_scene.getComponent<ShipControl>(playerId)};
+    Player& player{_scene.getComponent<Player>(playerId)};
     bool consumed{false};
     std::vector<std::pair<GameInput, bool>> inputEvents{_inputManager.getInputEvents(sfEvent)};
     for (auto& [input, start] : inputEvents) {
@@ -103,29 +103,29 @@ bool GameState::handleEvent(const sf::Event& sfEvent) {
             // Update the ship control component. We have to do it in this class
             // rather than in, say, AutoPilotSystem because only here we know
             // that the event is due to user input and not due to gameplay
-            // logic. So we know that we have to set shipControl.playerControls
-            // rather than shipControl.autoControls.
+            // logic. So we know that we have to set player.playerControls
+            // rather than player.autoControls.
             switch(input) {
             case GameInput::Engine:
-                shipControl.playerControls.engine = start;
+                player.playerControls.engine = start;
                 break;
             case GameInput::RcsUp:
-                shipControl.playerControls.rcsUp = start;
+                player.playerControls.rcsUp = start;
                 break;
             case GameInput::RcsDown:
-                shipControl.playerControls.rcsDown = start;
+                player.playerControls.rcsDown = start;
                 break;
             case GameInput::RcsLeft:
-                shipControl.playerControls.rcsLeft = start;
+                player.playerControls.rcsLeft = start;
                 break;
             case GameInput::RcsRight:
-                shipControl.playerControls.rcsRight = start;
+                player.playerControls.rcsRight = start;
                 break;
             case GameInput::RcsClockwise:
-                shipControl.playerControls.rcsClockwise = start;
+                player.playerControls.rcsClockwise = start;
                 break;
             case GameInput::RcsCounterClockwise:
-                shipControl.playerControls.rcsCounterClockwise = start;
+                player.playerControls.rcsCounterClockwise = start;
                 break;
             default:
                 break;
@@ -175,7 +175,6 @@ void GameState::registerComponents() {
     _scene.registerComponent<Player>();
     _scene.registerComponent<MapElement>();
     _scene.registerComponent<Sprite>();
-    _scene.registerComponent<ShipControl>();
 }
 
 void GameState::updateView(float zoom, bool rotate, sf::Time dt) {

@@ -42,14 +42,7 @@ struct MapElement {
 };
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(MapElement, type, tguiTexture)
 
-// Tag component, it has no data but it used to find which entity is the player.
-// The placeholder member is just used to make serialization easier.
 struct Player {
-	bool placeholder;
-};
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(Player, placeholder)
-
-struct ShipControl {
 	struct Controls {
 		bool rcsUp, rcsDown, rcsLeft, rcsRight, rcsClockwise, rcsCounterClockwise;
 		bool engine;
@@ -58,10 +51,10 @@ struct ShipControl {
 	Controls autoControls;
 	float angularVelocityThreshold;
 };
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(ShipControl::Controls, rcsUp, rcsDown, rcsLeft,
-	rcsRight, rcsClockwise, rcsCounterClockwise, engine)
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(ShipControl, playerControls, autoControls,
-	angularVelocityThreshold)
 
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(Player::Controls, rcsUp, rcsDown, rcsLeft,
+	rcsRight, rcsClockwise, rcsCounterClockwise, engine)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(Player, playerControls, autoControls,
+	angularVelocityThreshold)
 
 #endif // COMPONENTS_HPP
