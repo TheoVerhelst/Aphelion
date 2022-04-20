@@ -19,6 +19,9 @@
             "density": 1154575177,
             "restitution": 0.9,
             "friction": 0.5
+        },
+        "soundEffects": {
+            "collision": {"soundBuffer": "landing"}
         }
     },
     "mercury": {
@@ -38,6 +41,9 @@
             "density": 1802873,
             "restitution": 0.9,
             "friction": 0.5
+        },
+        "soundEffects": {
+            "collision": {"soundBuffer": "landing"}
         }
     },
     "venus": {
@@ -57,6 +63,9 @@
             "density": 4328094,
             "restitution": 0.9,
             "friction": 0.5
+        },
+        "soundEffects": {
+            "collision": {"soundBuffer": "landing"}
         }
     },
     "earth": {
@@ -76,6 +85,9 @@
             "density": 4791536,
             "restitution": 0.9,
             "friction": 0.5
+        },
+        "soundEffects": {
+            "collision": {"soundBuffer": "landing"}
         }
     },
     "mars": {
@@ -95,6 +107,9 @@
             "density": 1810046,
             "restitution": 0.9,
             "friction": 0.5
+        },
+        "soundEffects": {
+            "collision": {"soundBuffer": "landing"}
         }
     },
     "ship": {

@@ -15,6 +15,7 @@ struct Event {
     };
 
     struct CollisionEvent {
+        float impactStrength;
         EntityId otherEntity;
     };
 

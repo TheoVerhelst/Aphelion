@@ -56,6 +56,7 @@ GameState::GameState(StateStack& stack,
     _lightSystem{_scene, _canvas->getRenderTexture(), shaderManager.get("light")},
     _physicsSystem{_scene},
     _renderSystem{_scene},
+    _soundEffectsSystem{_scene, soundSettings},
     _serializer{_scene, textureManager, tguiTextureManager, soundBufferManager} {
     registerComponents();
     // TODO Display a message when the save is invalid (e.g. JSON error), rather than crashing
@@ -170,6 +171,7 @@ void GameState::registerComponents() {
     _scene.registerComponent<Body>();
     _scene.registerComponent<CircleBody>();
     _scene.registerComponent<PolygonBody>();
+    _scene.registerComponent<SoundEffects>();
     _scene.registerComponent<Animations>();
     _scene.registerComponent<LightSource>();
     _scene.registerComponent<Player>();
@@ -217,6 +219,7 @@ void GameState::processtriggerEventsQueue() {
     while (not _eventQueue.empty()) {
         const Event& event{_eventQueue.front()};
         _animationSystem.handleEvent(event);
+        _soundEffectsSystem.handleEvent(event);
         _eventQueue.pop();
     }
 }

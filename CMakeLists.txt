@@ -56,6 +56,7 @@ endif()
 set(SOURCE_FILES
     src/components/Body.cpp
     src/components/Animations.cpp
+    src/components/components.cpp
     src/states/AbstractState.cpp
     src/states/GameState.cpp
     src/states/LoadGameState.cpp
@@ -72,6 +73,7 @@ set(SOURCE_FILES
 	src/systems/LightSystem.cpp
 	src/systems/PhysicsSystem.cpp
 	src/systems/RenderSystem.cpp
+	src/systems/SoundEffectsSystem.cpp
 	src/Animation.cpp
 	src/Application.cpp
 	src/MusicManager.cpp

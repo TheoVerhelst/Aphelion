@@ -14,34 +14,29 @@ void CollisionSystem::update() {
     auto circleView = _scene.view<Body, CircleBody>();
 
     for (std::size_t i{0}; i < circleView.size(); ++i) {
-        Body& bodyA{std::get<Body&>(circleView[i])};
-        const CircleBody& circleA{std::get<CircleBody&>(circleView[i])};
+        auto& [idA, bodyA, circleA] = circleView[i];
         // Circle - circle collisions
         for (std::size_t j{i + 1}; j < circleView.size(); ++j) {
-            Body& bodyB{std::get<Body&>(circleView[j])};
-            const CircleBody& circleB{std::get<CircleBody&>(circleView[j])};
-            collideCircles(circleA, circleB, bodyA, bodyB);
+            auto& [idB, bodyB, circleB] = circleView[j];
+            collideCircles(idA, idB, circleA, circleB, bodyA, bodyB);
         }
         // Circle - polygon collisions
         for (std::size_t j{0}; j < polygonView.size(); ++j) {
-            Body& bodyB{std::get<Body&>(polygonView[j])};
-            const PolygonBody& polygonB{std::get<PolygonBody&>(polygonView[j])};
+            auto& [idB, bodyB, polygonB] = polygonView[j];
             for (const ConvexPolygon& componentB : polygonB.components) {
                 SupportFunction functionB{std::bind(
                     &PolygonBody::supportFunction,
                     _1, std::cref(componentB), std::cref(bodyB))};
-                collideCircleAndConvex(circleA, functionB, bodyA, bodyB);
+                collideCircleAndConvex(idA, idB, circleA, functionB, bodyA, bodyB);
             }
         }
     }
 
     for (std::size_t i{0}; i < polygonView.size(); ++i) {
-        Body& bodyA{std::get<Body&>(polygonView[i])};
-        const PolygonBody& polygonA{std::get<PolygonBody&>(polygonView[i])};
+        auto& [idA, bodyA, polygonA] = polygonView[i];
         // Polygon - polygon collisions
         for (std::size_t j{i + 1}; j < polygonView.size(); ++j) {
-            Body& bodyB{std::get<Body&>(polygonView[j])};
-            const PolygonBody& polygonB{std::get<PolygonBody&>(polygonView[j])};
+            auto& [idB, bodyB, polygonB] = polygonView[j];
             for (const ConvexPolygon& componentA : polygonA.components) {
                 for (const ConvexPolygon& componentB : polygonB.components) {
                     SupportFunction functionA{std::bind(
@@ -50,7 +45,7 @@ void CollisionSystem::update() {
                     SupportFunction functionB{std::bind(
                         &PolygonBody::supportFunction,
                         _1, std::cref(componentB), std::cref(bodyB))};
-                    collideConvexes(functionA, functionB, bodyA, bodyB);
+                    collideConvexes(idA, idB, functionA, functionB, bodyA, bodyB);
                 }
             }
         }
@@ -63,20 +58,22 @@ std::queue<Event> CollisionSystem::queueEvents() {
     return res;
 }
 
-void CollisionSystem::collideConvexes(const SupportFunction& functionA,
-        const SupportFunction& functionB, Body& bodyA, Body& bodyB) {
+void CollisionSystem::collideConvexes(EntityId idA, EntityId idB,
+        const SupportFunction& functionA, const SupportFunction& functionB,
+        Body& bodyA, Body& bodyB) {
     // Determine if the bodies collide with GJK
     std::pair<bool, MinkowskyPolygon> collision{collisionGJK(functionA, functionB)};
     if (collision.first) {
         // Determine the collision info with EPA
         ContactInfo contactInfo{EPA(functionA, functionB, collision.second)};
         // Update the bodies' speed, position and rotation according to the collision
-        collisionResponse(bodyA, bodyB, contactInfo);
+        collisionResponse(idA, idB, bodyA, bodyB, contactInfo);
     }
 }
 
-void CollisionSystem::collideCircles(const CircleBody& circleA,
-        const CircleBody& circleB, Body& bodyA, Body& bodyB) {
+void CollisionSystem::collideCircles(EntityId idA, EntityId idB,
+        const CircleBody& circleA, const CircleBody& circleB,
+        Body& bodyA, Body& bodyB) {
     const Vector2f diff_x = bodyB.position - bodyA.position;
     const float dist{norm(diff_x)};
     const float overlap{circleA.radius + circleB.radius - dist};
@@ -97,11 +94,14 @@ void CollisionSystem::collideCircles(const CircleBody& circleA,
         // The displacement is proportional to the mass of the other body.
         bodyA.position -= m_b * overlap * diff_x / (dist * (m_a + m_b));
         bodyB.position += m_a * overlap * diff_x / (dist * (m_a + m_b));
+
+        _collisionEvents.emplace(idA, true, Event::CollisionEvent(norm(addedVel), idB));
     }
 }
 
-void CollisionSystem::collideCircleAndConvex(const CircleBody& circleA,
-        const SupportFunction& functionB, Body& bodyA, Body& bodyB) {
+void CollisionSystem::collideCircleAndConvex(EntityId idA, EntityId idB,
+        const CircleBody& circleA, const SupportFunction& functionB,
+        Body& bodyA, Body& bodyB) {
     // Check the distance between B and the center of A
     const Vector2f centerA{bodyA.localToWorld({0, 0})};
     SupportFunction functionA = [centerA](const Vector2f&) noexcept {return centerA;};
@@ -117,7 +117,7 @@ void CollisionSystem::collideCircleAndConvex(const CircleBody& circleA,
         if (circleA.radius - distanceInfo.distance > eps) {
             distanceInfo.distance -= circleA.radius;
             distanceInfo.C_A += distanceInfo.normal * circleA.radius;
-            collisionResponse(bodyA, bodyB, distanceInfo);
+            collisionResponse(idA, idB, bodyA, bodyB, distanceInfo);
         }
     } else {
         // The center of A is in B, use EPA to find the collision vector, and
@@ -125,11 +125,12 @@ void CollisionSystem::collideCircleAndConvex(const CircleBody& circleA,
         ContactInfo contactInfo{EPA(functionA, functionB, collision.second)};
         contactInfo.C_A += contactInfo.normal * circleA.radius;
         contactInfo.distance -= circleA.radius;
-        collisionResponse(bodyA, bodyB, contactInfo);
+        collisionResponse(idA, idB, bodyA, bodyB, contactInfo);
     }
 }
 
-void CollisionSystem::collisionResponse(Body& bodyA, Body& bodyB, const ContactInfo& contactInfo) {
+void CollisionSystem::collisionResponse(EntityId idA, EntityId idB,
+        Body& bodyA, Body& bodyB, const ContactInfo& contactInfo) {
     // Vector going from the center of mass to the contact point.
     // We don't use Body::worldToLocal because we need to keep the angle.
     assert(std::abs(norm(contactInfo.normal) - 1) < eps);
@@ -173,8 +174,7 @@ void CollisionSystem::collisionResponse(Body& bodyA, Body& bodyB, const ContactI
     bodyA.position += contactInfo.normal * contactInfo.distance * bodyB.mass / (bodyA.mass + bodyB.mass);
     bodyB.position -= contactInfo.normal * contactInfo.distance * bodyA.mass / (bodyA.mass + bodyB.mass);
 
-    // TODO we don't have access to the entity ids here
-    _collisionEvents.emplace(0, true, Event::CollisionEvent(0));
+    _collisionEvents.emplace(idA, true, Event::CollisionEvent(norm(J), idB));
 }
 
 void CollisionSystem::MinkowskyPolygon::pushBack(const Vector2f& A, const Vector2f& B) {

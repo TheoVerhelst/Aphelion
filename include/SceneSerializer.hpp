@@ -45,6 +45,7 @@ private:
     void loadPlayer(const nlohmann::json& value, EntityId id);
     void loadLightSource(const nlohmann::json& value, EntityId id);
     void loadMapElement(const nlohmann::json& value, EntityId id);
+    void loadSoundEffects(const nlohmann::json& value, EntityId id);
 
     template <typename T>
     void saveComponent(nlohmann::json& value, EntityId id, const std::string name) const {

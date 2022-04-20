@@ -5,6 +5,7 @@
 #include <SFML/Graphics/Rect.hpp>
 #include <SFML/Graphics/Sprite.hpp>
 #include <TGUI/Widgets/Picture.hpp>
+#include <SFML/Audio/Sound.hpp>
 #include <json.hpp>
 #include <serializers.hpp>
 #include <vector.hpp>
@@ -56,5 +57,25 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(Player::Controls, rcsUp, rcsDown, rcsLeft,
 	rcsRight, rcsClockwise, rcsCounterClockwise, engine)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(Player, playerControls, autoControls,
 	angularVelocityThreshold)
+
+enum class SoundEffectType {
+	Collision
+};
+NLOHMANN_JSON_SERIALIZE_ENUM(SoundEffectType, {
+	{SoundEffectType::Collision, "collision"}
+})
+
+struct SoundEffectData {
+	std::string soundBuffer;
+	sf::Sound sound;
+};
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(SoundEffectData, soundBuffer)
+
+typedef std::map<SoundEffectType, SoundEffectData> SoundEffects;
+
+// We have to define the serialization manually, otherwise the SoundEffectType
+// keys get converted to int, and the map is converted to an JSON array
+void to_json(nlohmann::json& j, const SoundEffects& soundEffects);
+void from_json(const nlohmann::json& j, SoundEffects& soundEffects);
 
 #endif // COMPONENTS_HPP

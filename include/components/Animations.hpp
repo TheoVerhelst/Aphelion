@@ -42,8 +42,8 @@ NLOHMANN_JSON_SERIALIZE_ENUM(AnimationType, {
 
 typedef std::map<AnimationType, AnimationData> Animations;
 
-// We have to define the serialization manually, otherwise the Action keys get
-// converted to int, and the map is converted to an JSON array
+// We have to define the serialization manually, otherwise the AnimationType
+// keys get converted to int, and the map is converted to an JSON array
 void to_json(nlohmann::json& j, const Animations& animations);
 void from_json(const nlohmann::json& j, Animations& animations);
 

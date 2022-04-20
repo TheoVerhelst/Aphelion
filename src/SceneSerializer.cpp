@@ -39,7 +39,8 @@ void SceneSerializer::load(const std::filesystem::path& path) {
         {"animations", &SceneSerializer::loadAnimations},
         {"player", &SceneSerializer::loadPlayer},
         {"lightSource", &SceneSerializer::loadLightSource},
-        {"mapElement", &SceneSerializer::loadMapElement}
+        {"mapElement", &SceneSerializer::loadMapElement},
+        {"soundEffects", &SceneSerializer::loadSoundEffects}
     };
 
     // We use parenthesis init rather than brace init, otherwise the json value
@@ -168,5 +169,13 @@ void SceneSerializer::loadMapElement(const json& value, EntityId id) {
     mapElement.icon->setOrigin(0.5f, 0.5f);
     if (mapElement.type == MapElementType::CelestialBody) {
         mapElement.icon->setScale(2.f);
+    }
+}
+
+void SceneSerializer::loadSoundEffects(const json& value, EntityId id) {
+    SoundEffects& soundEffects{_scene.assignComponent<SoundEffects>(id)};
+    value.get_to(soundEffects);
+    for (auto& [soundEffectType, soundEffectData] : soundEffects) {
+        soundEffectData.sound = sf::Sound(_soundBufferManager.get(soundEffectData.soundBuffer));
     }
 }
