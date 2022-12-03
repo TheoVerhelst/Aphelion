@@ -17,7 +17,7 @@ SaveGameState::SaveGameState(StateStack& stack, const SceneSerializer& serialize
 
 tgui::Widget::Ptr SaveGameState::buildGui() {
     tgui::ChildWindow::Ptr window{tgui::ChildWindow::create("Save game")};
-    window->setSize("25%", "50%");
+    window->setSize(350, 350);
     window->setPosition("50%", "50%");
     window->setOrigin(0.5f, 0.5f);
     window->onClose([this] {
@@ -35,11 +35,12 @@ tgui::Widget::Ptr SaveGameState::buildGui() {
 
     tgui::Button::Ptr newSaveButton{tgui::Button::create("Save")};
     newSaveButton->onPress([this, newSaveButton, newSaveEdit]() noexcept {
-        const std::string stem{newSaveEdit->getText()};
-        if (not stem.empty()) {
-            newSaveButton->setText("Saved!");
-            _serializer.save(Paths::savePathFromStem(stem));
+        std::string stem{newSaveEdit->getText()};
+        if (stem.empty()) {
+            stem = "New game";
         }
+        newSaveButton->setText("Saved!");
+        _serializer.save(Paths::savePathFromStem(stem));
     });
     newSaveButton->setTextSize(20);
     newSaveButton->setSize(tgui::bindInnerWidth(window) * 0.2, 30);

@@ -25,16 +25,16 @@ tgui::Widget::Ptr MainMenuState::buildGui() {
 
     tgui::Label::Ptr title{tgui::Label::create("Aphelion")};
     title->setTextSize(120);
-    title->setPosition("50%", "25%");
+    title->setPosition("50%", "15%");
     title->setOrigin(0.5f, 0.5f);
     title->getRenderer()->setTextColor(tgui::Color::White);
     title->getRenderer()->setFont("resources/fonts/Brodo.ttf");
     group->add(title);
 
     tgui::VerticalLayout::Ptr layout{tgui::VerticalLayout::create()};
-    layout->setSize("50%", "50%");
-    layout->setPosition("50%", "70%");
-    layout->setOrigin(0.5f, 0.5f);
+    layout->setSize(700, 300);
+    layout->setPosition("50%", "95%");
+    layout->setOrigin(0.5f, 1.f);
     group->add(layout);
 
     tgui::Button::Ptr newGameButton{tgui::Button::create("New game")};

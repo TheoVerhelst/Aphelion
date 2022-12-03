@@ -1,4 +1,5 @@
 #include <cassert>
+#include <algorithm>
 #include <Paths.hpp>
 
 namespace fs = std::filesystem;

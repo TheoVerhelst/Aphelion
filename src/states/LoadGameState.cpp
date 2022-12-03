@@ -15,7 +15,7 @@ LoadGameState::LoadGameState(StateStack& stack):
 
 tgui::Widget::Ptr LoadGameState::buildGui() {
     tgui::ChildWindow::Ptr window{tgui::ChildWindow::create("Load game")};
-    window->setSize("25%", "50%");
+    window->setSize(350, 350);
     window->setPosition("50%", "50%");
     window->setOrigin(0.5f, 0.5f);
     window->onClose([this] {

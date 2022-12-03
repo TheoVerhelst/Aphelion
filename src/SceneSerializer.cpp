@@ -31,7 +31,10 @@ SceneSerializer::SceneSerializer(Scene& scene,
 }
 
 void SceneSerializer::load(const std::filesystem::path& path) {
-    std::vector<std::pair<std::string, std::function<void(SceneSerializer*, const json&,  EntityId)>>> loadFunctions{
+    std::vector<std::pair<
+        std::string,
+        std::function<void(SceneSerializer*, const json&,  EntityId)>
+    >> loadFunctions{
         {"body", &SceneSerializer::loadBody},
         {"circleBody", &SceneSerializer::loadCircleBody},
         {"polygonBody", &SceneSerializer::loadPolygonBody},
@@ -76,6 +79,7 @@ void SceneSerializer::save(const std::filesystem::path& path) const {
         saveComponent<Player>(entityValue, id, "player");
         saveComponent<LightSource>(entityValue, id, "lightSource");
         saveComponent<MapElement>(entityValue, id, "mapElement");
+        saveComponent<SoundEffects>(entityValue, id, "soundEffects");
 
         if (_loadedClasses.contains(id)) {
             const std::string className{_loadedClasses.at(id)};
@@ -96,6 +100,8 @@ json SceneSerializer::computeClassPatch(const json& classValue, const json& enti
     float eps{1e-5f};
     for (auto& [path, classProperty] : flatClass.items()) {
         json::json_pointer pointer{path};
+        // If this assert triggers, this is probably due to a forgotten
+        // saveComponent in SceneSerializer::save
         assert(entityValue.contains(pointer));
         const json& entityProperty(entityValue[pointer]);
         if ((classProperty.is_number_float()

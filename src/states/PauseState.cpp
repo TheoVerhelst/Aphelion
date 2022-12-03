@@ -20,7 +20,7 @@ PauseState::PauseState(StateStack& stack, const SceneSerializer& serializer):
 
 tgui::Widget::Ptr PauseState::buildGui() {
     tgui::ChildWindow::Ptr window{tgui::ChildWindow::create("Pause")};
-    window->setSize(200, 300);
+    window->setSize(200, 350);
     window->setPosition("50%", "50%");
     window->setOrigin(0.5f, 0.5f);
     window->onClose([this] {
