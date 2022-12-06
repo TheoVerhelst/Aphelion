@@ -1,9 +1,7 @@
 #include <SFML/Window/Event.hpp>
-#include <TGUI/Widgets/ChildWindow.hpp>
 #include <TGUI/Widgets/EditBox.hpp>
 #include <TGUI/Widgets/Label.hpp>
 #include <TGUI/Widgets/Button.hpp>
-#include <TGUI/Widgets/Grid.hpp>
 #include <states/StateStack.hpp>
 #include <states/SaveGameState.hpp>
 #include <Input.hpp>
@@ -16,54 +14,38 @@ SaveGameState::SaveGameState(StateStack& stack, const SceneSerializer& serialize
 }
 
 tgui::Widget::Ptr SaveGameState::buildGui() {
-    tgui::ChildWindow::Ptr window{tgui::ChildWindow::create("Save game")};
-    window->setSize(350, 350);
-    window->setPosition("50%", "50%");
-    window->setOrigin(0.5f, 0.5f);
-    window->onClose([this] {
+    _window = tgui::ChildWindow::create("Save game");
+    _window->setSize(350, 350);
+    _window->setPosition("50%", "50%");
+    _window->setOrigin(0.5f, 0.5f);
+    _window->onClose([this] {
         _stack.popStatesUntil(*this);
     });
 
-    tgui::Grid::Ptr grid{tgui::Grid::create()};
-    grid->setPosition("5%", "5%");
-    window->add(grid);
+    _grid = tgui::Grid::create();
+    _grid->setPosition("5%", "5%");
+    _window->add(_grid);
 
     tgui::EditBox::Ptr newSaveEdit{tgui::EditBox::create()};
     newSaveEdit->setDefaultText("New save...");
-    newSaveEdit->setSize(tgui::bindInnerWidth(window) * 0.7, 40);
-    grid->addWidget(newSaveEdit, 0, 0, tgui::Grid::Alignment::Left);
+    newSaveEdit->setSize(tgui::bindInnerWidth(_window) * 0.7, 40);
+    _grid->addWidget(newSaveEdit, 0, 0, tgui::Grid::Alignment::Left);
 
     tgui::Button::Ptr newSaveButton{tgui::Button::create("Save")};
     newSaveButton->onPress([this, newSaveButton, newSaveEdit]() noexcept {
         std::string stem{newSaveEdit->getText()};
         if (stem.empty()) {
-            stem = "New game";
+            stem = Paths::generateStem();
         }
         newSaveButton->setText("Saved!");
         _serializer.save(Paths::savePathFromStem(stem));
+        populateSavesList();
     });
     newSaveButton->setTextSize(20);
-    newSaveButton->setSize(tgui::bindInnerWidth(window) * 0.2, 30);
-    grid->addWidget(newSaveButton, 0, 1, tgui::Grid::Alignment::Right, {10, 0});
+    newSaveButton->setSize(tgui::bindInnerWidth(_window) * 0.2, 30);
+    _grid->addWidget(newSaveButton, 0, 1, tgui::Grid::Alignment::Right, {10, 0});
 
-    // TODO Use tgui::ScrollablePanel instead of Grid
-    std::size_t row{1};
-    for (auto& path : Paths::getSavePaths()) {
-        tgui::Label::Ptr label{tgui::Label::create(std::string(path.stem()))};
-        label->setTextSize(20);
-        label->setSize(tgui::bindInnerWidth(window) * 0.7, 40);
-        grid->addWidget(label, row, 0, tgui::Grid::Alignment::Left);
-
-        tgui::Button::Ptr saveButton{tgui::Button::create("Save")};
-        saveButton->onPress([this, path, saveButton]() noexcept {
-            saveButton->setText("Saved!");
-            _serializer.save(path);
-        });
-        saveButton->setTextSize(20);
-        saveButton->setSize(tgui::bindInnerWidth(window) * 0.2, 30);
-        grid->addWidget(saveButton, row, 1, tgui::Grid::Alignment::Right, {10, 0});
-        row++;
-    }
+    populateSavesList();
 
     tgui::Button::Ptr okButton{tgui::Button::create("OK")};
     okButton->onPress([this] {
@@ -72,9 +54,9 @@ tgui::Widget::Ptr SaveGameState::buildGui() {
     okButton->setTextSize(18);
     okButton->setPosition("95%", "95%");
     okButton->setOrigin(1.f, 1.f);
-    window->add(okButton);
+    _window->add(okButton);
 
-    return window;
+    return _window;
 }
 
 bool SaveGameState::handleEvent(const sf::Event& event) {
@@ -83,4 +65,33 @@ bool SaveGameState::handleEvent(const sf::Event& event) {
         return true;
     }
     return false;
+}
+
+void SaveGameState::populateSavesList() {
+    // Clear the current list
+    for (auto& widget : _savesListWidgets) {
+        _grid->remove(widget);
+    }
+    _savesListWidgets.clear();
+
+    // Populate the list with the save files
+    // TODO Use tgui::ScrollablePanel instead of Grid
+    std::size_t row{1};
+    for (auto& path : Paths::getSavePaths()) {
+        tgui::Label::Ptr label{tgui::Label::create(std::string(path.stem()))};
+        label->setSize(tgui::bindInnerWidth(_window) * 0.7, 40);
+        _grid->addWidget(label, row, 0, tgui::Grid::Alignment::Left);
+        _savesListWidgets.push_back(label);
+
+        tgui::Button::Ptr saveButton{tgui::Button::create("Save")};
+        saveButton->onPress([this, path, saveButton]() noexcept {
+            saveButton->setText("Saved!");
+            _serializer.save(path);
+        });
+        saveButton->setTextSize(20);
+        saveButton->setSize(tgui::bindInnerWidth(_window) * 0.2, 30);
+        _grid->addWidget(saveButton, row, 1, tgui::Grid::Alignment::Right, {10, 0});
+        _savesListWidgets.push_back(saveButton);
+        row++;
+    }
 }

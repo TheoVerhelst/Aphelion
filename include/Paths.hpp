@@ -12,6 +12,7 @@ public:
     static std::filesystem::path getNewGameSavePath();
     // Precondition: getSavePaths().empty() must be false
     static std::filesystem::path getMostRecentSavePath();
+    static std::string generateStem();
     static std::vector<std::filesystem::path> getSavePaths();
     static std::vector<std::filesystem::path> getEntityPaths();
     static std::vector<std::filesystem::path> getTguiTexturePaths();
@@ -25,6 +26,7 @@ private:
     static const std::filesystem::path _resourceDirectory;
 
     static std::vector<std::filesystem::path> getPaths(const std::string& directory, const std::string& extension);
+    static bool comparePath(const std::filesystem::path& p1, const std::filesystem::path& p2);
 };
 
 #endif // PATHS_HPP

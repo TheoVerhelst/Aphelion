@@ -30,7 +30,6 @@ tgui::Widget::Ptr LoadGameState::buildGui() {
     std::size_t row{0};
     for (auto& path : Paths::getSavePaths()) {
         tgui::Label::Ptr label{tgui::Label::create(std::string(path.stem()))};
-        label->setTextSize(20);
         label->setSize(tgui::bindInnerWidth(window) * 0.7, 40);
         grid->addWidget(label, row, 0, tgui::Grid::Alignment::Left);
 

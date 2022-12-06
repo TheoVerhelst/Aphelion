@@ -1,6 +1,9 @@
 #ifndef SAVEGAMESTATE_HPP
 #define SAVEGAMESTATE_HPP
 
+#include <vector>
+#include <TGUI/Widgets/ChildWindow.hpp>
+#include <TGUI/Widgets/Grid.hpp>
 #include <states/AbstractState.hpp>
 
 // Forward declarations
@@ -14,6 +17,11 @@ public:
 
 private:
     const SceneSerializer& _serializer;
+    tgui::ChildWindow::Ptr _window;
+    tgui::Grid::Ptr _grid;
+    std::vector<tgui::Widget::Ptr> _savesListWidgets;
+
+    void populateSavesList();
 };
 
 #endif // SAVEGAME_HPP

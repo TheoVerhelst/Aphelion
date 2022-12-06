@@ -1,4 +1,7 @@
 #include <cassert>
+#include <ctime>
+#include <iomanip>
+#include <sstream>
 #include <algorithm>
 #include <Paths.hpp>
 
@@ -23,12 +26,16 @@ fs::path Paths::getNewGameSavePath() {
 fs::path Paths::getMostRecentSavePath() {
     std::vector<fs::path> savePaths{getSavePaths()};
     assert(not savePaths.empty());
-    auto it = std::max_element(savePaths.begin(), savePaths.end(),
-        [] (const fs::path& p1, const fs::path& p2) {
-            return fs::last_write_time(p1) < fs::last_write_time(p2);
-        }
-    );
-    return *it;
+    return *std::max_element(savePaths.begin(), savePaths.end(), &comparePath);
+}
+
+std::string Paths::generateStem() {
+    // Create a path based on the current date and time
+    std::time_t now{std::time(nullptr)};
+    std::tm nowCalendar{*std::localtime(&now)};
+    std::stringstream formattedTime;
+    formattedTime << std::put_time(&nowCalendar, "NewGame-%F-%H-%M-%S");
+    return formattedTime.str();
 }
 
 std::vector<fs::path> Paths::getSavePaths() {
@@ -69,5 +76,11 @@ std::vector<fs::path> Paths::getPaths(const std::string& directory, const std::s
             res.push_back(entry);
         }
     }
+    // Sort by recency
+    std::sort(res.begin(), res.end(), &comparePath);
     return res;
+}
+
+bool Paths::comparePath(const fs::path& p1, const fs::path& p2) {
+    return fs::last_write_time(p2) < fs::last_write_time(p1);
 }
