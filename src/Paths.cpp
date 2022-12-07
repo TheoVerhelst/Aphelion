@@ -23,6 +23,10 @@ fs::path Paths::getNewGameSavePath() {
     return _resourceDirectory/"newGame.json";
 }
 
+fs::path Paths::getSettingsPath() {
+    return "settings.json";
+}
+
 fs::path Paths::getMostRecentSavePath() {
     std::vector<fs::path> savePaths{getSavePaths()};
     assert(not savePaths.empty());

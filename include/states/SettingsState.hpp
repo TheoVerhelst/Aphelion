@@ -25,6 +25,8 @@ private:
     Vector2u _initalScreenSize;
     std::map<std::string, sf::VideoMode> _videoModes;
     std::vector<std::string> _videoModeOrder;
+
+    static std::string videoModeToName(const sf::VideoMode& mode);
 };
 
 #endif // SETTINGSSTATE_HPP

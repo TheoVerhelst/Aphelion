@@ -80,6 +80,7 @@ set(SOURCE_FILES
     src/polygon.cpp
 	src/Scene.cpp
 	src/SceneSerializer.cpp
+	src/Settings.cpp
 )
 
 # Create the main executable

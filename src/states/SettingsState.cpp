@@ -18,12 +18,12 @@ SettingsState::SettingsState(StateStack& stack, Settings& settings, sf::Window& 
     AbstractState{stack},
     _settings{settings},
     _initialSettings{settings},
-    _window{window},
-    _initalScreenSize{window.getSize()} {
+    _window{window} {
     // Find all fullscreen video modes, with the highest bits per pixel rating
     for (const sf::VideoMode& mode : sf::VideoMode::getFullscreenModes()) {
-        std::string modeName{std::to_string(mode.width) + "x" + std::to_string(mode.height)};
-        if (not _videoModes.contains(modeName) or _videoModes.at(modeName).bitsPerPixel < mode.bitsPerPixel) {
+        std::string modeName{videoModeToName(mode)};
+        if (not _videoModes.contains(modeName)
+            or _videoModes.at(modeName).bitsPerPixel < mode.bitsPerPixel) {
             _videoModes[modeName] = mode;
             // Maintain the order of video modes
             // TODO there is probably a cleaner way
@@ -37,6 +37,7 @@ SettingsState::SettingsState(StateStack& stack, Settings& settings, sf::Window& 
 }
 
 tgui::Widget::Ptr SettingsState::buildGui() {
+    /// Main layout ///
     tgui::ChildWindow::Ptr window{tgui::ChildWindow::create("Settings")};
     window->setClientSize({350.f, 400.f});
     window->setPosition("50%", "50%");
@@ -55,21 +56,29 @@ tgui::Widget::Ptr SettingsState::buildGui() {
     float widgetHeight{20};
     auto widgetWidth = tgui::bindInnerWidth(window) * 0.5;
 
+    /// Resolution combo box ///
     tgui::Label::Ptr resolutionLabel{tgui::Label::create("Resolution")};
     resolutionLabel->setSize(labelWidth, labelHeight);
     grid->addWidget(resolutionLabel, row, 0, tgui::Grid::Alignment::Left);
 
     tgui::ComboBox::Ptr resolutionListBox{tgui::ComboBox::create()};
     resolutionListBox->setSize(widgetWidth, widgetHeight);
+    resolutionListBox->onItemSelect([this](const tgui::String& tguiModeName) noexcept {
+        const std::string modeName{tguiModeName.toStdString()};
+        if (not modeName.empty() and _videoModes.contains(modeName)) {
+            _settings.videoMode = _videoModes.at(modeName);
+        }
+    });
     for (auto& modeName : _videoModeOrder) {
         resolutionListBox->addItem(modeName);
     }
-    std::string currentModeName{std::to_string(_initalScreenSize.x) + "x" + std::to_string(_initalScreenSize.y)};
+    std::string currentModeName{videoModeToName(_initialSettings.videoMode)};
     if (_videoModes.contains(currentModeName)) {
         resolutionListBox->setSelectedItem(currentModeName);
     }
     grid->addWidget(resolutionListBox, row++, 1, tgui::Grid::Alignment::Left);
 
+    /// Sound settings ///
     tgui::Label::Ptr mainVolumeLabel{tgui::Label::create("Main volume")};
     mainVolumeLabel->setSize(labelWidth, labelHeight);
     grid->addWidget(mainVolumeLabel, row, 0, tgui::Grid::Alignment::Left);
@@ -106,6 +115,7 @@ tgui::Widget::Ptr SettingsState::buildGui() {
     });
     grid->addWidget(musicVolumeSlider, row++, 1, tgui::Grid::Alignment::Right);
 
+    /// Buttons at the bottom ///
     tgui::HorizontalLayout::Ptr bottomLayout{tgui::HorizontalLayout::create()};
     bottomLayout->setSize("80%", "8%");
     bottomLayout->setPosition("10%", "90%");
@@ -122,13 +132,11 @@ tgui::Widget::Ptr SettingsState::buildGui() {
 
     tgui::Button::Ptr okButton{tgui::Button::create("OK")};
     okButton->onPress([this, resolutionListBox] {
-        std::string modeName{resolutionListBox->getSelectedItem()};
-        if (not modeName.empty() and _videoModes.contains(modeName)) {
-            const sf::VideoMode& mode{_videoModes.at(modeName)};
-            if (mode.width != _initalScreenSize.x and mode.height != _initalScreenSize.y) {
-                _window.create(mode, "Aphelion", sf::Style::Fullscreen);
-            }
+        const sf::VideoMode& mode{_settings.videoMode};
+        if (mode.width != _initalScreenSize.x and mode.height != _initalScreenSize.y) {
+            _window.create(mode, "Aphelion", sf::Style::Fullscreen);
         }
+        Settings::saveSettings(_settings);
         _stack.popStatesUntil(*this);
     });
     okButton->setTextSize(18);
@@ -144,4 +152,8 @@ bool SettingsState::handleEvent(const sf::Event& event) {
         return true;
     }
     return false;
+}
+
+std::string SettingsState::videoModeToName(const sf::VideoMode& mode) {
+    return std::to_string(mode.width) + "x" + std::to_string(mode.height);
 }

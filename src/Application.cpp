@@ -10,43 +10,10 @@
 #include <SceneSerializer.hpp>
 
 Application::Application():
-    _window{sf::VideoMode::getDesktopMode(), "Aphelion", sf::Style::Fullscreen},
+    _settings{Settings::loadSettings()},
+    _window{_settings.videoMode, "Aphelion", sf::Style::Fullscreen},
     _gui{_window},
     _stack{_gui},
-    _settings{
-        {100, 50, 70},
-        sf::VideoMode::getDesktopMode(),
-        {
-            {sf::Keyboard::Z, GameInput::RcsUp},
-            {sf::Keyboard::Q, GameInput::RcsLeft},
-            {sf::Keyboard::S, GameInput::RcsDown},
-            {sf::Keyboard::D, GameInput::RcsRight},
-            {sf::Keyboard::A, GameInput::RcsCounterClockwise},
-            {sf::Keyboard::E, GameInput::RcsClockwise},
-            {sf::Keyboard::Space, GameInput::Engine},
-            {sf::Keyboard::LShift, GameInput::ZoomIn},
-            {sf::Keyboard::RShift, GameInput::ZoomIn},
-            {sf::Keyboard::LControl, GameInput::ZoomOut},
-            {sf::Keyboard::RControl, GameInput::ZoomOut},
-            {sf::Keyboard::M, GameInput::ToggleMap},
-            {sf::Keyboard::LAlt, GameInput::RotateView},
-            {sf::Keyboard::Escape, GameInput::Pause}
-        },
-        {
-            {ControllerButton::X, GameInput::Engine}
-        },
-        {
-            {sf::Keyboard::LShift, MapInput::ZoomIn},
-            {sf::Keyboard::RShift, MapInput::ZoomIn},
-            {sf::Keyboard::LControl, MapInput::ZoomOut},
-            {sf::Keyboard::RControl, MapInput::ZoomOut},
-            {sf::Keyboard::M, MapInput::Exit},
-            {sf::Keyboard::Escape, MapInput::Exit}
-        },
-        {
-            {ControllerButton::X, MapInput::ZoomIn}
-        }
-    },
     _musicManager{_settings.soundSettings} {
     _window.setKeyRepeatEnabled(false);
     registerResources();

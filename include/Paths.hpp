@@ -10,6 +10,7 @@ public:
     static std::filesystem::path getFontsDirectory();
     static std::filesystem::path savePathFromStem(const std::string& stem);
     static std::filesystem::path getNewGameSavePath();
+    static std::filesystem::path getSettingsPath();
     // Precondition: getSavePaths().empty() must be false
     static std::filesystem::path getMostRecentSavePath();
     static std::string generateStem();

@@ -18,6 +18,7 @@ public:
 
 private:
     // Main objects
+    Settings _settings;
     sf::RenderWindow _window;
     tgui::Gui _gui;
     StateStack _stack;
@@ -27,7 +28,6 @@ private:
     ResourceManager<tgui::Texture> _tguiTextureManager;
     ResourceManager<sf::Shader> _shaderManager;
     ResourceManager<sf::SoundBuffer> _soundBufferManager;
-    Settings _settings;
     MusicManager _musicManager;
 
     void registerResources();
