@@ -74,41 +74,26 @@ tgui::Widget::Ptr SettingsState::buildGui() {
     grid->addWidget(resolutionListBox, row++, 1, tgui::Grid::Alignment::Left);
 
     /// Sound settings ///
-    tgui::Label::Ptr mainVolumeLabel{tgui::Label::create("Main volume")};
-    mainVolumeLabel->setSize(labelWidth, labelHeight);
-    grid->addWidget(mainVolumeLabel, row, 0, tgui::Grid::Alignment::Left);
+    std::vector<std::pair<std::string, float&>> sliders{
+        {"Main volume", _settings.soundSettings.mainVolume},
+        {"Effects volume", _settings.soundSettings.effectsVolume},
+        {"Music volume", _settings.soundSettings.musicVolume}
+    };
 
-    tgui::Slider::Ptr mainVolumeSlider{tgui::Slider::create(0, 100)};
-    mainVolumeSlider->setSize(widgetWidth, widgetHeight);
-    mainVolumeSlider->setValue(_settings.soundSettings.mainVolume);
-    mainVolumeSlider->onValueChange([this](float value) noexcept {
-        _settings.soundSettings.mainVolume = value;
-    });
-    grid->addWidget(mainVolumeSlider, row++, 1, tgui::Grid::Alignment::Right);
+    for (auto& [text, settingReference] : sliders) {
+        tgui::Label::Ptr label{tgui::Label::create(text)};
+        label->setSize(labelWidth, labelHeight);
+        grid->addWidget(label, row, 0, tgui::Grid::Alignment::Left);
 
-    tgui::Label::Ptr effectsVolumeLabel{tgui::Label::create("Effects volume")};
-    effectsVolumeLabel->setSize(labelWidth, labelHeight);
-    grid->addWidget(effectsVolumeLabel, row, 0, tgui::Grid::Alignment::Left);
-
-    tgui::Slider::Ptr effectsVolumeSlider{tgui::Slider::create(0, 100)};
-    effectsVolumeSlider->setSize(widgetWidth, widgetHeight);
-    effectsVolumeSlider->setValue(_settings.soundSettings.effectsVolume);
-    effectsVolumeSlider->onValueChange([this](float value) noexcept {
-        _settings.soundSettings.effectsVolume = value;
-    });
-    grid->addWidget(effectsVolumeSlider, row++, 1, tgui::Grid::Alignment::Right);
-
-    tgui::Label::Ptr musicVolumeLabel{tgui::Label::create("Music volume")};
-    musicVolumeLabel->setSize(labelWidth, labelHeight);
-    grid->addWidget(musicVolumeLabel, row, 0, tgui::Grid::Alignment::Left);
-
-    tgui::Slider::Ptr musicVolumeSlider{tgui::Slider::create(0, 100)};
-    musicVolumeSlider->setSize(widgetWidth, widgetHeight);
-    musicVolumeSlider->setValue(_settings.soundSettings.musicVolume);
-    musicVolumeSlider->onValueChange([this](float value) noexcept {
-        _settings.soundSettings.musicVolume = value;
-    });
-    grid->addWidget(musicVolumeSlider, row++, 1, tgui::Grid::Alignment::Right);
+        tgui::Slider::Ptr slider{tgui::Slider::create(0, 100)};
+        slider->setSize(widgetWidth, widgetHeight);
+        slider->setValue(settingReference);
+        slider->onValueChange([this, &settingReference](float value) noexcept {
+            settingReference = value;
+        });
+        grid->addWidget(slider, row, 1, tgui::Grid::Alignment::Left);
+        ++row;
+    }
 
     /// Buttons at the bottom ///
     tgui::HorizontalLayout::Ptr bottomLayout{tgui::HorizontalLayout::create()};

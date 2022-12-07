@@ -199,7 +199,7 @@ MessageBox {
 }
 
 Panel {
-    BackgroundColor = rgb(100, 100, 100);
+    BackgroundColor = rgb(120, 120, 120);
     BorderColor     = rgb(70, 70, 70);
     Borders         = (0, 0, 3, 0);
 }
