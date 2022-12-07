@@ -37,41 +37,37 @@ tgui::Widget::Ptr MainMenuState::buildGui() {
     layout->setOrigin(0.5f, 1.f);
     group->add(layout);
 
-    tgui::Button::Ptr newGameButton{tgui::Button::create("New game")};
-    newGameButton->onPress([this] {
-        _stack.clearStates();
-        _stack.pushState<GameState, const std::filesystem::path&>(Paths::getNewGameSavePath());
-    });
-    newGameButton->setTextSize(30);
-    layout->add(newGameButton);
-    layout->addSpace(0.2f);
+
+    std::vector<std::pair<std::string, std::function<void()>>> buttons{
+        {"New game", [this] {
+            _stack.clearStates();
+            _stack.pushState<GameState, const std::filesystem::path&>(Paths::getNewGameSavePath());
+        }},
+        {"Settings", [this] {
+            _stack.pushState<SettingsState>();
+        }},
+        {"Exit game", [this] {
+            _stack.clearStates();
+        }}
+    };
 
     const std::vector<std::filesystem::path> savePaths{Paths::getSavePaths()};
     if (not savePaths.empty()) {
-        tgui::Button::Ptr continueButton{tgui::Button::create("Continue")};
-        continueButton->onPress([this] {
+        buttons.insert(buttons.begin() + 1, {"Continue", [this] {
             _stack.clearStates();
             _stack.pushState<GameState, const std::filesystem::path&>(Paths::getMostRecentSavePath());
-        });
-        continueButton->setTextSize(30);
-        layout->add(continueButton);
-        layout->addSpace(0.2f);
+        }});
     }
 
-    tgui::Button::Ptr settingsButton{tgui::Button::create("Settings")};
-    settingsButton->onPress([this]{
-        _stack.pushState<SettingsState>();
-    });
-    settingsButton->setTextSize(30);
-    layout->add(settingsButton);
-    layout->addSpace(0.2f);
-
-    tgui::Button::Ptr exitGameButton{tgui::Button::create("Exit game")};
-    exitGameButton->onPress([this]{
-        _stack.clearStates();
-    });
-    exitGameButton->setTextSize(30);
-    layout->add(exitGameButton);
+    for (auto& [text, function] : buttons) {
+        tgui::Button::Ptr button{tgui::Button::create(text)};
+        button->onPress(function);
+        button->setTextSize(30);
+        layout->add(button);
+        layout->addSpace(0.2f);
+    }
+    // Remove last spacing
+    layout->setRatio(2 * buttons.size() - 1, 0.f);
 
     return group;
 }
