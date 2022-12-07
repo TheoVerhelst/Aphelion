@@ -32,7 +32,9 @@ Application::Application():
             {sf::Keyboard::LAlt, GameInput::RotateView},
             {sf::Keyboard::Escape, GameInput::Pause}
         },
-        {},
+        {
+            {ControllerButton::X, GameInput::Engine}
+        },
         {
             {sf::Keyboard::LShift, MapInput::ZoomIn},
             {sf::Keyboard::RShift, MapInput::ZoomIn},
@@ -41,7 +43,9 @@ Application::Application():
             {sf::Keyboard::M, MapInput::Exit},
             {sf::Keyboard::Escape, MapInput::Exit}
         },
-        {}
+        {
+            {ControllerButton::X, MapInput::ZoomIn}
+        }
     },
     _musicManager{_settings.soundSettings} {
     _window.setKeyRepeatEnabled(false);

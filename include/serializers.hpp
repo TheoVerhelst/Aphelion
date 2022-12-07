@@ -5,6 +5,8 @@
 #include <SFML/System/Vector2.hpp>
 #include <SFML/Graphics/Rect.hpp>
 #include <SFML/Graphics/Color.hpp>
+#include <SFML/Window/VideoMode.hpp>
+#include <SFML/Window/Keyboard.hpp>
 #include <json.hpp>
 
 // Serializers for SFML classes
@@ -85,7 +87,7 @@ namespace nlohmann {
     };
 }
 
-/*namespace sf {
+namespace sf {
     NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(VideoMode, width, height,
         bitsPerPixel)
     NLOHMANN_JSON_SERIALIZE_ENUM(Keyboard::Key, {
@@ -192,7 +194,7 @@ namespace nlohmann {
         {Keyboard::F15, "F15"},
         {Keyboard::Pause, "Pause"}
     })
-}*/
+}
 
 template <typename T>
 std::ostream& operator<<(std::ostream& os, const std::vector<T>& vector) {

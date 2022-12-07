@@ -6,6 +6,7 @@
 #include <SFML/Window/VideoMode.hpp>
 #include <json.hpp>
 #include <Input.hpp>
+#include <serializers.hpp>
 
 struct SoundSettings {
     float mainVolume;
@@ -24,8 +25,8 @@ struct Settings {
     std::map<ControllerButton, MapInput> mapControllerMapping;
 };
 
-//NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(Settings, soundSettings, videoMode,
-//    gameKeyboardMapping, gameControllerMapping, mapKeyboardMapping,
-//    mapControllerMapping)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(Settings, soundSettings, videoMode,
+    gameKeyboardMapping, gameControllerMapping, mapKeyboardMapping,
+    mapControllerMapping)
 
 #endif // SETTINGS_HPP
