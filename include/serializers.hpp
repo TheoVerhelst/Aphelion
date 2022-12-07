@@ -65,23 +65,24 @@ namespace nlohmann {
     // Define serialization for maps on enums because the default
     // behavior is to convert the enum to int and convert the result
     // to an array instead of a map.
-    /*template <typename EnumType, typename T,
-        typename = std::enable_if_t<std::is_enum_v<EnumType>>>
+    template <typename EnumType, typename T>
     struct adl_serializer<std::map<EnumType, T>> {
-        static void to_json(json& j, const std::map<EnumType, T>& map) {
+        static std::enable_if_t<std::is_enum_v<EnumType>>
+                to_json(json& j, const std::map<EnumType, T>& map) {
             for (auto& [key, value] : map) {
 		        j[nlohmann::json(key).get<std::string>()] = value;
 	        }
         }
 
-        static void from_json(const json& j, std::map<EnumType, T>& map) {
+        static std::enable_if_t<std::is_enum_v<EnumType>>
+                from_json(const json& j, std::map<EnumType, T>& map) {
             for (auto& [keyJson, valueJson] : j.items()) {
 		        EnumType key;
 		        nlohmann::json(keyJson).get_to(key);
 		        valueJson.get_to(map[key]);
 	        }
         }
-    };*/
+    };
 }
 
 /*namespace sf {

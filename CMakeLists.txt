@@ -55,7 +55,6 @@ endif()
 # List all source files
 set(SOURCE_FILES
     src/components/Body.cpp
-    src/components/Animations.cpp
     src/components/components.cpp
     src/states/AbstractState.cpp
     src/states/GameState.cpp
