@@ -1,5 +1,5 @@
 #include <SFML/Window/Event.hpp>
-#include <TGUI/Widgets/ChildWindow.hpp>
+#include <TGUI/Widgets/Panel.hpp>
 #include <TGUI/Widgets/Button.hpp>
 #include <TGUI/Widgets/ComboBox.hpp>
 #include <TGUI/Widgets/VerticalLayout.hpp>
@@ -38,23 +38,18 @@ SettingsState::SettingsState(StateStack& stack, Settings& settings, sf::Window& 
 
 tgui::Widget::Ptr SettingsState::buildGui() {
     /// Main layout ///
-    tgui::ChildWindow::Ptr window{tgui::ChildWindow::create("Settings")};
-    window->setClientSize({350.f, 400.f});
-    window->setPosition("50%", "50%");
-    window->setOrigin(0.5f, 0.5f);
-    window->onClose([this] {
-        _stack.popStatesUntil(*this);
-    });
+    tgui::Panel::Ptr panel{tgui::Panel::create({"25%", "100%"})};
+    panel->setPosition("25%-1px", "0%");
 
     tgui::Grid::Ptr grid{tgui::Grid::create()};
-    grid->setPosition("5%", "5%");
-    window->add(grid);
+    grid->setPosition("10%", "10%");
+    panel->add(grid);
     std::size_t row{0};
 
     float labelHeight{35};
-    auto labelWidth = tgui::bindInnerWidth(window) * 0.35;
+    auto labelWidth = tgui::bindInnerWidth(panel) * 0.35;
     float widgetHeight{20};
-    auto widgetWidth = tgui::bindInnerWidth(window) * 0.5;
+    auto widgetWidth = tgui::bindInnerWidth(panel) * 0.45;
 
     /// Resolution combo box ///
     tgui::Label::Ptr resolutionLabel{tgui::Label::create("Resolution")};
@@ -119,7 +114,7 @@ tgui::Widget::Ptr SettingsState::buildGui() {
     tgui::HorizontalLayout::Ptr bottomLayout{tgui::HorizontalLayout::create()};
     bottomLayout->setSize("80%", "8%");
     bottomLayout->setPosition("10%", "90%");
-    window->add(bottomLayout);
+    panel->add(bottomLayout);
 
     tgui::Button::Ptr cancelButton{tgui::Button::create("Cancel")};
     cancelButton->onPress([this] {
@@ -132,9 +127,8 @@ tgui::Widget::Ptr SettingsState::buildGui() {
 
     tgui::Button::Ptr okButton{tgui::Button::create("OK")};
     okButton->onPress([this, resolutionListBox] {
-        const sf::VideoMode& mode{_settings.videoMode};
-        if (mode.width != _initalScreenSize.x and mode.height != _initalScreenSize.y) {
-            _window.create(mode, "Aphelion", sf::Style::Fullscreen);
+        if (_settings.videoMode != _initialSettings.videoMode) {
+            _window.create(_settings.videoMode, "Aphelion", sf::Style::Fullscreen);
         }
         Settings::saveSettings(_settings);
         _stack.popStatesUntil(*this);
@@ -143,7 +137,7 @@ tgui::Widget::Ptr SettingsState::buildGui() {
     bottomLayout->add(okButton);
     bottomLayout->addSpace(0.1f);
 
-    return window;
+    return panel;
 }
 
 bool SettingsState::handleEvent(const sf::Event& event) {

@@ -39,8 +39,11 @@ public:
         });
     }
 
-    // Removes states from the stack up to and including the given state. The
-    // stack cannot be empty.
+    // Removes states from the stack up to but not including the given
+    // state. The stack cannot be empty.
+    void popStatesUpTo(const AbstractState& state);
+    // Removes states from the stack up to and including the given
+    // state. The stack cannot be empty.
     void popStatesUntil(const AbstractState& state);
     // Remove all states from the stack, if any.
     void clearStates();

@@ -1,6 +1,6 @@
 #include <SFML/Window/Event.hpp>
 #include <SFML/Window/Event.hpp>
-#include <TGUI/Widgets/ChildWindow.hpp>
+#include <TGUI/Widgets/Panel.hpp>
 #include <TGUI/Widgets/Button.hpp>
 #include <TGUI/Widgets/VerticalLayout.hpp>
 #include <states/StateStack.hpp>
@@ -18,63 +18,45 @@ PauseState::PauseState(StateStack& stack, const SceneSerializer& serializer):
 }
 
 tgui::Widget::Ptr PauseState::buildGui() {
-    tgui::ChildWindow::Ptr window{tgui::ChildWindow::create("Pause")};
-    window->setSize(200, 350);
-    window->setPosition("50%", "50%");
-    window->setOrigin(0.5f, 0.5f);
-    window->onClose([this] {
-        _stack.popStatesUntil(*this);
-    });
-    // TODO focus the window
+    tgui::Panel::Ptr panel{tgui::Panel::create({"25%", "100%"})};
+    panel->setPosition(0, 0);
 
     tgui::VerticalLayout::Ptr layout{tgui::VerticalLayout::create()};
-    layout->setSize("80%", "80%");
-    layout->setPosition("50%", "50%");
-    layout->setOrigin(0.5f, 0.5f);
-    window->add(layout);
+    layout->setSize("80%", "70%");
+    layout->setPosition("10%", "15%");
+    panel->add(layout);
 
-    tgui::Button::Ptr continueButton{tgui::Button::create("Continue")};
-    continueButton->onPress([this]{
-        _stack.popStatesUntil(*this);
-    });
-    continueButton->setTextSize(18);
-    layout->add(continueButton);
-    layout->addSpace(0.1f);
+    std::vector<std::pair<std::string, std::function<void()>>> buttons{
+        {"Continue", [this] {
+            _stack.popStatesUntil(*this);
+        }},
+        {"Save game", [this] {
+            _stack.popStatesUpTo(*this);
+            _stack.pushState<SaveGameState>(_serializer);
+        }},
+        {"Load game", [this] {
+            _stack.popStatesUpTo(*this);
+            _stack.pushState<LoadGameState>();
+        }},
+        {"Settings", [this] {
+            _stack.popStatesUpTo(*this);
+            _stack.pushState<SettingsState>();
+        }},
+        {"Main menu", [this] {
+            _stack.clearStates();
+            _stack.pushState<MainMenuState>();
+        }}
+    };
 
-    tgui::Button::Ptr saveButton{tgui::Button::create("Save game")};
-    saveButton->onPress([this] {
-        _stack.pushState<SaveGameState>(_serializer);
-    });
-    saveButton->setTextSize(18);
-    layout->add(saveButton);
-    layout->addSpace(0.1f);
+    for (auto& [text, function] : buttons) {
+        tgui::Button::Ptr button{tgui::Button::create(text)};
+        button->onPress(function);
+        button->setTextSize(26);
+        layout->add(button);
+        layout->addSpace(0.15f);
+    }
 
-    tgui::Button::Ptr loadButton{tgui::Button::create("Load game")};
-    loadButton->onPress([this] {
-        _stack.pushState<LoadGameState>();
-    });
-    loadButton->setTextSize(18);
-    layout->add(loadButton);
-    layout->addSpace(0.1f);
-
-    tgui::Button::Ptr settingsButton{tgui::Button::create("Settings")};
-    settingsButton->onPress([this] {
-        _stack.pushState<SettingsState>();
-    });
-    settingsButton->setTextSize(18);
-    layout->add(settingsButton);
-    layout->addSpace(0.1f);
-
-    tgui::Button::Ptr mainMenuButton{tgui::Button::create("Main menu")};
-    mainMenuButton->onPress([this]{
-        _stack.clearStates();
-        _stack.pushState<MainMenuState>();
-    });
-    mainMenuButton->setTextSize(18);
-    layout->add(mainMenuButton);
-    layout->addSpace(0.1f);
-
-    return window;
+    return panel;
 }
 
 bool PauseState::update(sf::Time) {

@@ -1,5 +1,5 @@
 #include <SFML/Window/Event.hpp>
-#include <TGUI/Widgets/ChildWindow.hpp>
+#include <TGUI/Widgets/Panel.hpp>
 #include <TGUI/Widgets/Button.hpp>
 #include <TGUI/Widgets/Grid.hpp>
 #include <TGUI/Widgets/Label.hpp>
@@ -14,23 +14,18 @@ LoadGameState::LoadGameState(StateStack& stack):
 }
 
 tgui::Widget::Ptr LoadGameState::buildGui() {
-    tgui::ChildWindow::Ptr window{tgui::ChildWindow::create("Load game")};
-    window->setSize(350, 350);
-    window->setPosition("50%", "50%");
-    window->setOrigin(0.5f, 0.5f);
-    window->onClose([this] {
-        _stack.popStatesUntil(*this);
-    });
+    tgui::Panel::Ptr panel{tgui::Panel::create({"25%", "100%"})};
+    panel->setPosition("25%", "0%");
 
     tgui::Grid::Ptr grid{tgui::Grid::create()};
     grid->setPosition("5%", "5%");
-    window->add(grid);
+    panel->add(grid);
 
     // TODO Use tgui::ScrollablePanel instead of Grid
     std::size_t row{0};
     for (auto& path : Paths::getSavePaths()) {
         tgui::Label::Ptr label{tgui::Label::create(std::string(path.stem()))};
-        label->setSize(tgui::bindInnerWidth(window) * 0.7, 40);
+        label->setSize(tgui::bindInnerWidth(panel) * 0.7, 40);
         grid->addWidget(label, row, 0, tgui::Grid::Alignment::Left);
 
         tgui::Button::Ptr loadButton{tgui::Button::create("Load")};
@@ -39,7 +34,7 @@ tgui::Widget::Ptr LoadGameState::buildGui() {
             _stack.pushState<GameState, const std::filesystem::path&>(path);
         });
         loadButton->setTextSize(20);
-        loadButton->setSize(tgui::bindInnerWidth(window) * 0.2, 30);
+        loadButton->setSize(tgui::bindInnerWidth(panel) * 0.2, 30);
         grid->addWidget(loadButton, row, 1, tgui::Grid::Alignment::Right, {10, 0});
         row++;
     }
@@ -48,12 +43,12 @@ tgui::Widget::Ptr LoadGameState::buildGui() {
     cancelButton->onPress([this] {
         _stack.popStatesUntil(*this);
     });
-    cancelButton->setTextSize(18);
-    cancelButton->setPosition("95%", "95%");
-    cancelButton->setOrigin(1.f, 1.f);
-    window->add(cancelButton);
+    cancelButton->setTextSize(26);
+    cancelButton->setPosition("50%", "95%");
+    cancelButton->setOrigin(0.5f, 1.f);
+    panel->add(cancelButton);
 
-    return window;
+    return panel;
 }
 
 bool LoadGameState::handleEvent(const sf::Event& event) {

@@ -22,7 +22,6 @@ private:
     Settings& _settings;
     const Settings _initialSettings;
     sf::Window& _window;
-    Vector2u _initalScreenSize;
     std::map<std::string, sf::VideoMode> _videoModes;
     std::vector<std::string> _videoModeOrder;
 

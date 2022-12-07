@@ -2,7 +2,7 @@
 #define SAVEGAMESTATE_HPP
 
 #include <vector>
-#include <TGUI/Widgets/ChildWindow.hpp>
+#include <TGUI/Widgets/Panel.hpp>
 #include <TGUI/Widgets/Grid.hpp>
 #include <states/AbstractState.hpp>
 
@@ -17,7 +17,7 @@ public:
 
 private:
     const SceneSerializer& _serializer;
-    tgui::ChildWindow::Ptr _window;
+    tgui::Panel::Ptr _panel;
     tgui::Grid::Ptr _grid;
     std::vector<tgui::Widget::Ptr> _savesListWidgets;
 
