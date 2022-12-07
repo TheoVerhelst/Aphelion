@@ -4,22 +4,20 @@
 #include <states/StateStack.hpp>
 #include <states/MapState.hpp>
 #include <Scene.hpp>
+#include <Settings.hpp>
 #include <ResourceManager.hpp>
 #include <components/Body.hpp>
 #include <components/components.hpp>
 
-MapState::MapState(StateStack& stack, ResourceManager<tgui::Texture>& tguiTextureManager, Scene& scene):
+MapState::MapState(
+        StateStack& stack,
+        ResourceManager<tgui::Texture>& tguiTextureManager,
+        const Settings& settings,
+        Scene& scene):
     AbstractState{stack},
     _tguiTextureManager{tguiTextureManager},
     _scene{scene},
-    _inputManager{{
-        {sf::Keyboard::LShift, MapInput::ZoomIn},
-        {sf::Keyboard::RShift, MapInput::ZoomIn},
-        {sf::Keyboard::LControl, MapInput::ZoomOut},
-        {sf::Keyboard::RControl, MapInput::ZoomOut},
-        {sf::Keyboard::M, MapInput::Exit},
-        {sf::Keyboard::Escape, MapInput::Exit}
-    }},
+    _inputManager{settings.mapKeyboardMapping, settings.mapControllerMapping},
     _background{tgui::Picture::create(_tguiTextureManager.get("mapBackground"))} {
 }
 

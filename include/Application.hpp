@@ -7,7 +7,7 @@
 #include <TGUI/TGUI.hpp>
 #include <TGUI/Backend/SFML-Graphics.hpp>
 #include <states/StateStack.hpp>
-#include <SoundSettings.hpp>
+#include <Settings.hpp>
 #include <MusicManager.hpp>
 #include <ResourceManager.hpp>
 
@@ -27,7 +27,7 @@ private:
     ResourceManager<tgui::Texture> _tguiTextureManager;
     ResourceManager<sf::Shader> _shaderManager;
     ResourceManager<sf::SoundBuffer> _soundBufferManager;
-    SoundSettings _soundSettings;
+    Settings _settings;
     MusicManager _musicManager;
 
     void registerResources();

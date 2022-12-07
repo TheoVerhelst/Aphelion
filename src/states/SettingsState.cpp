@@ -14,10 +14,10 @@
 #include <Input.hpp>
 
 
-SettingsState::SettingsState(StateStack& stack, SoundSettings& soundSettings, sf::Window& window):
+SettingsState::SettingsState(StateStack& stack, Settings& settings, sf::Window& window):
     AbstractState{stack},
-    _soundSettings{soundSettings},
-    _initialSoundSettings{soundSettings},
+    _settings{settings},
+    _initialSettings{settings},
     _window{window},
     _initalScreenSize{window.getSize()} {
     // Find all fullscreen video modes, with the highest bits per pixel rating
@@ -76,9 +76,9 @@ tgui::Widget::Ptr SettingsState::buildGui() {
 
     tgui::Slider::Ptr mainVolumeSlider{tgui::Slider::create(0, 100)};
     mainVolumeSlider->setSize(widgetWidth, widgetHeight);
-    mainVolumeSlider->setValue(_soundSettings.mainVolume);
+    mainVolumeSlider->setValue(_settings.soundSettings.mainVolume);
     mainVolumeSlider->onValueChange([this](float value) noexcept {
-        _soundSettings.mainVolume = value;
+        _settings.soundSettings.mainVolume = value;
     });
     grid->addWidget(mainVolumeSlider, row++, 1, tgui::Grid::Alignment::Right);
 
@@ -88,9 +88,9 @@ tgui::Widget::Ptr SettingsState::buildGui() {
 
     tgui::Slider::Ptr effectsVolumeSlider{tgui::Slider::create(0, 100)};
     effectsVolumeSlider->setSize(widgetWidth, widgetHeight);
-    effectsVolumeSlider->setValue(_soundSettings.effectsVolume);
+    effectsVolumeSlider->setValue(_settings.soundSettings.effectsVolume);
     effectsVolumeSlider->onValueChange([this](float value) noexcept {
-        _soundSettings.effectsVolume = value;
+        _settings.soundSettings.effectsVolume = value;
     });
     grid->addWidget(effectsVolumeSlider, row++, 1, tgui::Grid::Alignment::Right);
 
@@ -100,9 +100,9 @@ tgui::Widget::Ptr SettingsState::buildGui() {
 
     tgui::Slider::Ptr musicVolumeSlider{tgui::Slider::create(0, 100)};
     musicVolumeSlider->setSize(widgetWidth, widgetHeight);
-    musicVolumeSlider->setValue(_soundSettings.musicVolume);
+    musicVolumeSlider->setValue(_settings.soundSettings.musicVolume);
     musicVolumeSlider->onValueChange([this](float value) noexcept {
-        _soundSettings.musicVolume = value;
+        _settings.soundSettings.musicVolume = value;
     });
     grid->addWidget(musicVolumeSlider, row++, 1, tgui::Grid::Alignment::Right);
 
@@ -113,7 +113,7 @@ tgui::Widget::Ptr SettingsState::buildGui() {
 
     tgui::Button::Ptr cancelButton{tgui::Button::create("Cancel")};
     cancelButton->onPress([this] {
-        _soundSettings = _initialSoundSettings;
+        _settings = _initialSettings;
         _stack.popStatesUntil(*this);
     });
     cancelButton->setTextSize(18);

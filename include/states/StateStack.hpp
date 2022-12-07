@@ -28,7 +28,9 @@ public:
 
     template <typename T, typename... Args>
     void pushState(Args&&... args) {
-        const auto& stateBuilder = std::any_cast<std::function<T*(Args...)>>(_stateBuilders.at(std::type_index(typeid(T))));
+        const auto& stateBuilder = std::any_cast<std::function<T*(Args...)>>(
+            _stateBuilders.at(std::type_index(typeid(T)))
+        );
         AbstractState* state{stateBuilder(std::forward<Args>(args)...)};
         _actionQueue.push([this, state] {
             tgui::Widget::Ptr widget{state->buildGui()};

@@ -341,8 +341,9 @@ CollisionSystem::ContactInfo CollisionSystem::createContactInfo(
     float alpha{dot(D_j - D_i, -D_i) / norm2(D_j - D_i)};
     if (inside) {
         assert(0.f <= alpha and alpha <= 1.f);
+    } else {
+        alpha = std::clamp(alpha, 0.f, 1.f);
     }
-    alpha = std::clamp(alpha, 0.f, 1.f);
     const Vector2f A{A_i * (1 - alpha) + A_j * alpha};
     const Vector2f B{B_i * (1 - alpha) + B_j * alpha};
     const Vector2f normal{- D_i * (1 - alpha) - D_j * alpha};

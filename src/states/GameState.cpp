@@ -9,6 +9,7 @@
 #include <ResourceManager.hpp>
 #include <Input.hpp>
 #include <Event.hpp>
+#include <Settings.hpp>
 #include <components/Body.hpp>
 #include <components/Animations.hpp>
 #include <components/components.hpp>
@@ -18,28 +19,13 @@ GameState::GameState(StateStack& stack,
         ResourceManager<tgui::Texture>& tguiTextureManager,
         ResourceManager<sf::Shader>& shaderManager,
         ResourceManager<sf::SoundBuffer>& soundBufferManager,
-        SoundSettings& soundSettings,
+        const Settings& settings,
         const std::filesystem::path& savePath):
     AbstractState{stack},
     _canvas{tgui::CanvasSFML::create()},
     _shaderManager{shaderManager},
     _background{tgui::Picture::create(tguiTextureManager.get("background"))},
-    _inputManager{{
-        {sf::Keyboard::Z, GameInput::RcsUp},
-        {sf::Keyboard::Q, GameInput::RcsLeft},
-        {sf::Keyboard::S, GameInput::RcsDown},
-        {sf::Keyboard::D, GameInput::RcsRight},
-        {sf::Keyboard::A, GameInput::RcsCounterClockwise},
-        {sf::Keyboard::E, GameInput::RcsClockwise},
-        {sf::Keyboard::Space, GameInput::Engine},
-        {sf::Keyboard::LShift, GameInput::ZoomIn},
-        {sf::Keyboard::RShift, GameInput::ZoomIn},
-        {sf::Keyboard::LControl, GameInput::ZoomOut},
-        {sf::Keyboard::RControl, GameInput::ZoomOut},
-        {sf::Keyboard::M, GameInput::ToggleMap},
-        {sf::Keyboard::LAlt, GameInput::RotateView},
-        {sf::Keyboard::Escape, GameInput::Pause}
-    }},
+    _inputManager{settings.gameKeyboardMapping, settings.gameControllerMapping},
     _eventMapping{
         {GameInput::Engine, {0, false, Event::EngineEvent()}},
         {GameInput::RcsUp, {0, false, Event::RcsEvent::Up}},
@@ -49,14 +35,14 @@ GameState::GameState(StateStack& stack,
         {GameInput::RcsClockwise, {0, false, Event::RcsEvent::Clockwise}},
         {GameInput::RcsCounterClockwise, {0, false, Event::RcsEvent::CounterClockwise}}
     },
-    _animationSystem{_scene, soundSettings},
+    _animationSystem{_scene, settings.soundSettings},
     _autoPilotSystem{_scene},
     _collisionSystem{_scene},
     _gameplaySystem{_scene},
     _lightSystem{_scene, _canvas->getRenderTexture(), shaderManager.get("light")},
     _physicsSystem{_scene},
     _renderSystem{_scene},
-    _soundEffectsSystem{_scene, soundSettings},
+    _soundEffectsSystem{_scene, settings.soundSettings},
     _serializer{_scene, textureManager, tguiTextureManager, soundBufferManager} {
     registerComponents();
     // TODO Display a message when the save is invalid (e.g. JSON error), rather than crashing

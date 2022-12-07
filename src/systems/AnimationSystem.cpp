@@ -2,7 +2,7 @@
 #include <systems/AnimationSystem.hpp>
 #include <Scene.hpp>
 #include <Animation.hpp>
-#include <SoundSettings.hpp>
+#include <Settings.hpp>
 #include <Event.hpp>
 #include <components/Animations.hpp>
 #include <components/components.hpp>

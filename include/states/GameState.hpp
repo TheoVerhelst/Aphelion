@@ -32,7 +32,7 @@ namespace tgui {
 }
 template <typename T>
 class ResourceManager;
-struct SoundSettings;
+struct Settings;
 
 class GameState : public AbstractState {
 public:
@@ -41,7 +41,7 @@ public:
         ResourceManager<tgui::Texture>& tguiTextureManager,
         ResourceManager<sf::Shader>& shaderManager,
         ResourceManager<sf::SoundBuffer>& soundBufferManager,
-        SoundSettings& soundSettings,
+        const Settings& settings,
         const std::filesystem::path& savePath);
 
     virtual tgui::Widget::Ptr buildGui() override;

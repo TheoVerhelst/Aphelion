@@ -15,10 +15,15 @@ namespace tgui {
 template <typename T>
 class ResourceManager;
 class Scene;
+struct Settings;
 
 class MapState : public AbstractState {
 public:
-    MapState(StateStack& stack, ResourceManager<tgui::Texture>& tguiTextureManager, Scene& scene);
+    MapState(
+        StateStack& stack,
+        ResourceManager<tgui::Texture>& tguiTextureManager,
+        const Settings& settings,
+        Scene& scene);
     virtual tgui::Widget::Ptr buildGui() override;
     virtual bool update(sf::Time dt) override;
     virtual bool handleEvent(const sf::Event& event) override;

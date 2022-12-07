@@ -1,7 +1,7 @@
 #include <stdexcept>
 #include <SFML/Audio/Music.hpp>
 #include <MusicManager.hpp>
-#include <SoundSettings.hpp>
+#include <Settings.hpp>
 
 MusicManager::MusicManager(const SoundSettings& soundSettings):
     _soundSettings{soundSettings} {

@@ -13,8 +13,37 @@ Application::Application():
     _window{sf::VideoMode::getDesktopMode(), "Aphelion", sf::Style::Fullscreen},
     _gui{_window},
     _stack{_gui},
-    _soundSettings{100, 50, 70},
-    _musicManager{_soundSettings} {
+    _settings{
+        {100, 50, 70},
+        sf::VideoMode::getDesktopMode(),
+        {
+            {sf::Keyboard::Z, GameInput::RcsUp},
+            {sf::Keyboard::Q, GameInput::RcsLeft},
+            {sf::Keyboard::S, GameInput::RcsDown},
+            {sf::Keyboard::D, GameInput::RcsRight},
+            {sf::Keyboard::A, GameInput::RcsCounterClockwise},
+            {sf::Keyboard::E, GameInput::RcsClockwise},
+            {sf::Keyboard::Space, GameInput::Engine},
+            {sf::Keyboard::LShift, GameInput::ZoomIn},
+            {sf::Keyboard::RShift, GameInput::ZoomIn},
+            {sf::Keyboard::LControl, GameInput::ZoomOut},
+            {sf::Keyboard::RControl, GameInput::ZoomOut},
+            {sf::Keyboard::M, GameInput::ToggleMap},
+            {sf::Keyboard::LAlt, GameInput::RotateView},
+            {sf::Keyboard::Escape, GameInput::Pause}
+        },
+        {},
+        {
+            {sf::Keyboard::LShift, MapInput::ZoomIn},
+            {sf::Keyboard::RShift, MapInput::ZoomIn},
+            {sf::Keyboard::LControl, MapInput::ZoomOut},
+            {sf::Keyboard::RControl, MapInput::ZoomOut},
+            {sf::Keyboard::M, MapInput::Exit},
+            {sf::Keyboard::Escape, MapInput::Exit}
+        },
+        {}
+    },
+    _musicManager{_settings.soundSettings} {
     _window.setKeyRepeatEnabled(false);
     registerResources();
     tgui::Theme::setDefault("resources/gui/pixelTheme.txt");
@@ -79,11 +108,11 @@ void Application::registerResources() {
 void Application::registerStateBuilders() {
     _stack.registerStateBuilder<GameState, const std::filesystem::path&>(_stack,
             _textureManager, _tguiTextureManager, _shaderManager,
-            _soundBufferManager, _soundSettings);
+            _soundBufferManager, _settings);
     _stack.registerStateBuilder<LoadGameState>(_stack);
     _stack.registerStateBuilder<MainMenuState>(_stack, _tguiTextureManager);
-    _stack.registerStateBuilder<MapState, Scene&>(_stack, _tguiTextureManager);
+    _stack.registerStateBuilder<MapState, Scene&>(_stack, _tguiTextureManager, _settings);
     _stack.registerStateBuilder<PauseState, const SceneSerializer&>(_stack);
     _stack.registerStateBuilder<SaveGameState, const SceneSerializer&>(_stack);
-    _stack.registerStateBuilder<SettingsState>(_stack, _soundSettings, _window);
+    _stack.registerStateBuilder<SettingsState>(_stack, _settings, _window);
 }

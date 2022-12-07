@@ -10,7 +10,6 @@
 #include <states/SaveGameState.hpp>
 #include <states/SettingsState.hpp>
 #include <Input.hpp>
-#include <SoundSettings.hpp>
 #include <SceneSerializer.hpp>
 
 PauseState::PauseState(StateStack& stack, const SceneSerializer& serializer):

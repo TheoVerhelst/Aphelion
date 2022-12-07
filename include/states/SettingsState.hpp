@@ -5,7 +5,7 @@
 #include <string>
 #include <SFML/Window/VideoMode.hpp>
 #include <states/AbstractState.hpp>
-#include <SoundSettings.hpp>
+#include <Settings.hpp>
 #include <vector.hpp>
 
 namespace sf {
@@ -14,13 +14,13 @@ namespace sf {
 
 class SettingsState : public AbstractState {
 public:
-    SettingsState(StateStack& stack, SoundSettings& soundSettings, sf::Window& window);
+    SettingsState(StateStack& stack, Settings& settings, sf::Window& window);
     virtual tgui::Widget::Ptr buildGui() override;
     virtual bool handleEvent(const sf::Event& event) override;
 
 private:
-    SoundSettings& _soundSettings;
-    const SoundSettings _initialSoundSettings;
+    Settings& _settings;
+    const Settings _initialSettings;
     sf::Window& _window;
     Vector2u _initalScreenSize;
     std::map<std::string, sf::VideoMode> _videoModes;
