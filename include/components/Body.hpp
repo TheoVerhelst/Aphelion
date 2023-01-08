@@ -9,6 +9,7 @@
 #include <serializers.hpp>
 #include <polygon.hpp>
 #include <GridField.hpp>
+#include <PolarField.hpp>
 
 class Scene;
 typedef uint32_t EntityId;
@@ -58,6 +59,16 @@ struct Temperature {
     float conductivity;
     float specificCapacity;
 };
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(Temperature, field, conductivity, specificCapacity)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(Temperature, conductivity, specificCapacity)
+
+struct CircleTemperature {
+    PolarField<float> field;
+};
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(CircleTemperature, field)
+
+struct PolygonTemperature {
+    GridField<float> field;
+};
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(PolygonTemperature, field)
 
 #endif // BODY_HPP
