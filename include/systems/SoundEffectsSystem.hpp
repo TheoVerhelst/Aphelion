@@ -2,9 +2,6 @@
 #define SOUNDEFFECTSSYSTEM_HPP
 
 // Forward declarations
-namespace sf {
-    class Time;
-}
 class Scene;
 struct SoundSettings;
 struct Event;
