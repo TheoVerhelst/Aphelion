@@ -43,6 +43,12 @@ void PolygonTemperatureGraphics::draw(sf::RenderTarget& target, sf::RenderStates
     target.draw(_vertices, states);
 }
 
+CircleTemperatureGraphics::CircleTemperatureGraphics() {
+    _whiteTexture.create(1, 1);
+    sf::Image image;
+    image.create(1, 1, sf::Color::White);
+    _whiteTexture.update(image);
+}
 
 void CircleTemperatureGraphics::setupVertices(const PolarField<float>& field) {
     const std::size_t rhoSteps{field.getRhoSteps()};
@@ -95,7 +101,6 @@ void CircleTemperatureGraphics::update(const PolarField<float>& field) {
 
 void CircleTemperatureGraphics::draw(sf::RenderTarget& target, sf::RenderStates states) const {
     states.transform *= getTransform();
-    states.texture = nullptr;
-    states.shader = nullptr;
+    states.texture = &_whiteTexture;
     target.draw(_vertices, states);
 }

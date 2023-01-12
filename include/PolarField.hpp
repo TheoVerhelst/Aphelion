@@ -30,11 +30,16 @@ public:
     }
 
     friend void from_json(const nlohmann::json& json, PolarField& field) {
-        json.at("values").get_to(field._values);
         json.at("rhoSteps").get_to(field._rhoSteps);
         json.at("thetaSteps").get_to(field._thetaSteps);
         json.at("centerValue").get_to(field._centerValue);
-        assert(field._values.size() == (field._rhoSteps - 1) * field._thetaSteps);
+        if (json.contains("values")) {
+            json.at("values").get_to(field._values);
+            assert(field._values.size() == (field._rhoSteps - 1) * field._thetaSteps);
+        } else {
+            // Insert zeros if there is nothing in the json
+            field._values.resize((field._rhoSteps - 1) * field._thetaSteps, static_cast<T>(0));
+        }
     }
 
 private:

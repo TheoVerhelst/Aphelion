@@ -4,6 +4,7 @@
 #include <SFML/Graphics/Drawable.hpp>
 #include <SFML/Graphics/Transformable.hpp>
 #include <SFML/Graphics/VertexArray.hpp>
+#include <SFML/Graphics/Texture.hpp>
 
 template <typename T>
 class GridField;
@@ -23,11 +24,13 @@ private:
 
 class CircleTemperatureGraphics : public sf::Drawable, public sf::Transformable {
 public:
+    CircleTemperatureGraphics();
     void setupVertices(const PolarField<float>& field);
     void update(const PolarField<float>& field);
 
 private:
     sf::VertexArray _vertices{sf::Triangles};
+    sf::Texture _whiteTexture;
 
     virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 };

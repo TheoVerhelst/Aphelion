@@ -26,14 +26,8 @@ private:
     const sf::RenderTarget& _renderTarget;
     sf::Shader& _shader;
     sf::RenderTexture _renderTexture;
-    // Limited because we cannot pass variable size array to the shader
-    static constexpr std::size_t _maxLightSources{16};
-    std::array<Vector2f, _maxLightSources> _lightPositions;
-    std::array<float, _maxLightSources> _lightBrightnesses;
-    int _numberLightSources;
     Vector2f _screenSize;
 
-    void updateLightSources();
     std::vector<sf::ConvexShape> computeShadowShapes();
     std::vector<Vector2f> computeShadowGeometry(const std::vector<Vector2f>& shadowVertices,
             const Vector2f& lightSource, const std::array<Vector2f, 4>& view);

@@ -23,7 +23,6 @@ void LightSystem::update() {
         _renderTexture.create(uScreenSize.x, uScreenSize.y);
     }
 
-    updateLightSources();
     auto shadowShapes = computeShadowShapes();
 
     _renderTexture.clear(sf::Color::White);
@@ -35,23 +34,7 @@ void LightSystem::update() {
 
     _shader.setUniform("texture", sf::Shader::CurrentTexture);
     _shader.setUniform("shadowTexture", _renderTexture.getTexture());
-    _shader.setUniformArray("lightPositions", _lightPositions.data(), _maxLightSources);
-    _shader.setUniformArray("lightBrightnesses", _lightBrightnesses.data(), _maxLightSources);
-    _shader.setUniform("numberLightSources", _numberLightSources);
-    _shader.setUniform("viewMatrix", sf::Glsl::Mat3(_renderTarget.getView().getInverseTransform()));
     _shader.setUniform("screenSize", _screenSize);
-}
-
-void LightSystem::updateLightSources() {
-    _numberLightSources = 0;
-    for (auto& [lightId, body, lightSource] : _scene.view<Body, LightSource>()) {
-        _lightPositions[_numberLightSources] = body.position;
-        _lightBrightnesses[_numberLightSources] = lightSource.brightness;
-        ++_numberLightSources;
-        if (_numberLightSources >= static_cast<int>(_maxLightSources)) {
-            break;
-        }
-    }
 }
 
 std::vector<sf::ConvexShape> LightSystem::computeShadowShapes() {

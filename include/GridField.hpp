@@ -32,7 +32,13 @@ public:
         json.at("gridSize").get_to(field._gridSize);
         json.at("cellSize").get_to(field._cellSize);
         json.at("origin").get_to(field._origin);
-        assert(field._values.size() == field._gridSize.x * field._gridSize.y);
+        if (json.contains("values")) {
+            json.at("values").get_to(field._values);
+            assert(field._values.size() == field._gridSize.x * field._gridSize.y);
+        } else {
+            // Insert zeros if there is nothing in the json
+            field._values.resize(field._gridSize.x * field._gridSize.y, static_cast<T>(0));
+        }
     }
 
 private:

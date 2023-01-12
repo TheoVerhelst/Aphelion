@@ -11,12 +11,7 @@
             "field": {
                 "centerValue": 0,
                 "rhoSteps": 4,
-                "thetaSteps": 4,
-                "values": [
-                    0, 0, 0, 0,
-                    0, 0, 0, 0,
-                    0, 0, 0, 0
-                ]
+                "thetaSteps": 4
             }
         },
         "sprite": {
@@ -52,12 +47,7 @@
             "field": {
                 "centerValue": 0,
                 "rhoSteps": 4,
-                "thetaSteps": 4,
-                "values": [
-                    0, 0, 0, 0,
-                    0, 0, 0, 0,
-                    0, 0, 0, 0
-                ]
+                "thetaSteps": 4
             }
         },
         "sprite": {
@@ -90,12 +80,7 @@
             "field": {
                 "centerValue": 0,
                 "rhoSteps": 4,
-                "thetaSteps": 4,
-                "values": [
-                    0, 0, 0, 0,
-                    0, 0, 0, 0,
-                    0, 0, 0, 0
-                ]
+                "thetaSteps": 4
             }
         },
         "sprite": {
@@ -128,12 +113,7 @@
             "field": {
                 "centerValue": 0,
                 "rhoSteps": 4,
-                "thetaSteps": 4,
-                "values": [
-                    0, 0, 0, 0,
-                    0, 0, 0, 0,
-                    0, 0, 0, 0
-                ]
+                "thetaSteps": 4
             }
         },
         "sprite": {
@@ -166,12 +146,7 @@
             "field": {
                 "centerValue": 0,
                 "rhoSteps": 4,
-                "thetaSteps": 4,
-                "values": [
-                    0, 0, 0, 0,
-                    0, 0, 0, 0,
-                    0, 0, 0, 0
-                ]
+                "thetaSteps": 4
             }
         },
         "sprite": {
