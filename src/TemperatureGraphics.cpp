@@ -1,9 +1,15 @@
 #include <cstddef>
+#include <algorithm>
 #include <SFML/Graphics/RenderTarget.hpp>
 #include <TemperatureGraphics.hpp>
 #include <components/Temperature.hpp>
 #include <GridField.hpp>
 #include <PolarField.hpp>
+
+sf::Color temperatureToColor(float temperature) {
+    sf::Uint8 c{static_cast<sf::Uint8>(std::clamp(temperature, 0.f, 100.f) * 2.54f)};
+    return sf::Color(255, c, 0);
+}
 
 void PolygonTemperatureGraphics::setupVertices(const GridField<float>& field) {
     const std::size_t rows{field.getGridSize().x};
@@ -82,19 +88,21 @@ void CircleTemperatureGraphics::update(const PolarField<float>& field) {
     const std::size_t verticesPerSection{(rhoSteps - 1) * 6 - 3};
 
     for (std::size_t theta_i{0}; theta_i < thetaSteps; ++theta_i) {
+        const std::size_t theta_ip{(theta_i + 1) % thetaSteps};
         const std::size_t idx{theta_i * verticesPerSection};
-        _vertices[idx + 0].color = sf::Color::Red;
-        _vertices[idx + 1].color = sf::Color::Red;
-        _vertices[idx + 2].color = sf::Color::Red;
+        _vertices[idx + 0].color = temperatureToColor(field.at(0, 0));
+        _vertices[idx + 1].color = temperatureToColor(field.at(1, theta_i));
+        _vertices[idx + 2].color = temperatureToColor(field.at(1, theta_ip));
 
         for (std::size_t rho_i{1}; rho_i < rhoSteps - 1; ++rho_i) {
+            const std::size_t rho_ip{rho_i + 1};
             const std::size_t jdx{idx + 3 + (rho_i - 1) * 6};
-            _vertices[jdx + 0].color = sf::Color::Red;
-            _vertices[jdx + 1].color = sf::Color::Red;
-            _vertices[jdx + 2].color = sf::Color::Red;
-            _vertices[jdx + 3].color = sf::Color::Red;
-            _vertices[jdx + 4].color = sf::Color::Red;
-            _vertices[jdx + 5].color = sf::Color::Red;
+            _vertices[jdx + 0].color = temperatureToColor(field.at(rho_i,  theta_i));
+            _vertices[jdx + 1].color = temperatureToColor(field.at(rho_ip, theta_i));
+            _vertices[jdx + 2].color = temperatureToColor(field.at(rho_ip, theta_ip));
+            _vertices[jdx + 3].color = temperatureToColor(field.at(rho_i,  theta_i));
+            _vertices[jdx + 4].color = temperatureToColor(field.at(rho_ip, theta_ip));
+            _vertices[jdx + 5].color = temperatureToColor(field.at(rho_i,  theta_ip));
         }
     }
 }

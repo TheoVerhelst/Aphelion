@@ -44,6 +44,7 @@ GameState::GameState(StateStack& stack,
     _physicsSystem{_scene},
     _renderSystem{_scene},
     _soundEffectsSystem{_scene, settings.soundSettings},
+    _thermodynamicsSystem{_scene},
     _serializer{_scene, textureManager, tguiTextureManager, soundBufferManager} {
     registerComponents();
     // TODO Display a message when the save is invalid (e.g. JSON error), rather than crashing
@@ -66,6 +67,7 @@ bool GameState::update(sf::Time dt) {
     _physicsSystem.update(dt);
     _renderSystem.update();
     _gameplaySystem.update(dt);
+    _thermodynamicsSystem.update(dt);
     // Update the view
     updateView(1.f, false, dt);
     // Draw on the canvas

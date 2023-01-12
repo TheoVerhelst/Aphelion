@@ -15,6 +15,7 @@
 #include <systems/PhysicsSystem.hpp>
 #include <systems/RenderSystem.hpp>
 #include <systems/SoundEffectsSystem.hpp>
+#include <systems/ThermodynamicsSystem.hpp>
 #include <InputManager.hpp>
 #include <Scene.hpp>
 #include <SceneSerializer.hpp>
@@ -65,6 +66,7 @@ private:
     PhysicsSystem _physicsSystem;
     RenderSystem _renderSystem;
     SoundEffectsSystem _soundEffectsSystem;
+    ThermodynamicsSystem _thermodynamicsSystem;
     SceneSerializer _serializer;
     const float _rotationSpeed{3};
     const float _zoomSpeed{15.f};

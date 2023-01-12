@@ -111,9 +111,9 @@
         },
         "circleTemperature": {
             "field": {
-                "centerValue": 0,
-                "rhoSteps": 4,
-                "thetaSteps": 4
+                "centerValue": 5000,
+                "rhoSteps": 10,
+                "thetaSteps": 50
             }
         },
         "sprite": {

@@ -15,6 +15,11 @@ ThermodynamicsSystem::ThermodynamicsSystem(Scene& scene):
 void ThermodynamicsSystem::update(sf::Time timeStep) {
     float dt{timeStep.asSeconds()};
 
+    // Accelerate thermal diffusion in order to be able to see its effect
+    // in a few second even on the extremely dense planets in the game
+    float factor{10000000000.f};
+    dt *= factor;
+
     for (auto& [id, body, temperature, polygonTemperature] :
             _scene.view<Body, Temperature, PolygonTemperature>()) {
         const GridField<float> field{polygonTemperature.field};
@@ -52,6 +57,7 @@ void ThermodynamicsSystem::update(sf::Time timeStep) {
             meanValue += field.at(1, theta_i);
         }
         meanValue /= static_cast<float>(thetaSteps);
+
         // No idea if this is the right way to solve the heat equation at the
         // pole, but it makes sense
         circleTemperature.field.at(0, 0) = field.at(0, 0) + 2 * dt * temperature.diffusivity * (

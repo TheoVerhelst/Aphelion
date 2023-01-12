@@ -11,6 +11,8 @@ class GridField;
 template <typename T>
 class PolarField;
 
+sf::Color temperatureToColor(float temperature);
+
 class PolygonTemperatureGraphics : public sf::Drawable, public sf::Transformable {
 public:
     void setupVertices(const GridField<float>& field);
