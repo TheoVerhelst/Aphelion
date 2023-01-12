@@ -73,6 +73,10 @@ std::vector<fs::path> Paths::getSoundPaths() {
     return getPaths(_resourceDirectory/"sounds", ".wav");
 }
 
+fs::path Paths::getBlackBodyDataPath() {
+    return _resourceDirectory/"black_body_data.json";
+}
+
 std::vector<fs::path> Paths::getPaths(const std::string& directory, const std::string& extension) {
     std::vector<fs::path> res;
     for (auto const& entry : fs::directory_iterator{directory}) {

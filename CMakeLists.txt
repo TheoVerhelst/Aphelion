@@ -76,6 +76,7 @@ set(SOURCE_FILES
 	src/systems/ThermodynamicsSystem.cpp
 	src/Animation.cpp
 	src/Application.cpp
+	src/BlackBodyTable.cpp
 	src/main.cpp
 	src/MusicManager.cpp
 	src/Paths.cpp

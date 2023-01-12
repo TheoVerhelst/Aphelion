@@ -69,12 +69,12 @@ x, y = XYZ[0:2,:] / M
 Y = np.full(XYZ.shape[1], 0.3)
 
 j = {
-    "R": sRGB[0,:].tolist(),
-    "G": sRGB[1,:].tolist(),
-    "B": sRGB[2,:].tolist(),
+    "R": (sRGB[0,:] * 255).astype("int").tolist(),
+    "G": (sRGB[1,:] * 255).astype("int").tolist(),
+    "B": (sRGB[2,:] * 255).astype("int").tolist(),
     "T": list(T_range),
     "M": M.tolist()
 }
 
-with open("../resources/black_body.json", "w") as f:
+with open("../resources/black_body_data.json", "w") as f:
     json.dump(j, f)

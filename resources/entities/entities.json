@@ -111,7 +111,7 @@
         },
         "circleTemperature": {
             "field": {
-                "centerValue": 5000,
+                "centerValue": 100000,
                 "rhoSteps": 10,
                 "thetaSteps": 50
             }

@@ -3,6 +3,7 @@
 
 #include <SFML/Graphics/Drawable.hpp>
 #include <Scene.hpp>
+#include <BlackBodyTable.hpp>
 
 // Forward declarations
 namespace sf {
@@ -18,6 +19,7 @@ public:
 
 private:
     Scene& _scene;
+    BlackBodyTable _table;
 };
 
 #endif // RENDERSYSTEM_HPP

@@ -5,6 +5,7 @@
 #include <components/Temperature.hpp>
 #include <GridField.hpp>
 #include <PolarField.hpp>
+#include <BlackBodyTable.hpp>
 
 sf::Color temperatureToColor(float temperature) {
     sf::Uint8 c{static_cast<sf::Uint8>(std::clamp(temperature, 0.f, 100.f) * 2.54f)};
@@ -19,27 +20,27 @@ void PolygonTemperatureGraphics::setupVertices(const GridField<float>& field) {
     for (std::size_t i{0}; i < rows - 1; ++i) {
         for (std::size_t j{0}; j < cols - 1; ++j) {
             const std::size_t idx{(i * cols + j) * 6};
-            _vertices[idx + 0].position = field.getPos(i, j);
+            _vertices[idx + 0].position = field.getPos(i,     j);
             _vertices[idx + 1].position = field.getPos(i + 1, j);
             _vertices[idx + 2].position = field.getPos(i + 1, j + 1);
-            _vertices[idx + 3].position = field.getPos(i, j);
+            _vertices[idx + 3].position = field.getPos(i,     j);
             _vertices[idx + 4].position = field.getPos(i + 1, j + 1);
-            _vertices[idx + 5].position = field.getPos(i, j + 1);
+            _vertices[idx + 5].position = field.getPos(i,     j + 1);
         }
     }
 }
 
-void PolygonTemperatureGraphics::update(const GridField<float>& field) {
+void PolygonTemperatureGraphics::update(const GridField<float>& field, const BlackBodyTable& table) {
     const std::size_t cols{field.getGridSize().y};
     for (std::size_t i{0}; i < field.getGridSize().x - 1; ++i) {
         for (std::size_t j{0}; j < cols - 1; ++j) {
             const std::size_t idx{(i * cols + j) * 6};
-            _vertices[idx + 0].color = sf::Color::Red;
-            _vertices[idx + 1].color = sf::Color::Red;
-            _vertices[idx + 2].color = sf::Color::Red;
-            _vertices[idx + 3].color = sf::Color::Red;
-            _vertices[idx + 4].color = sf::Color::Red;
-            _vertices[idx + 5].color = sf::Color::Red;
+            _vertices[idx + 0].color = table.getColor(field.at(i,     j));
+            _vertices[idx + 1].color = table.getColor(field.at(i + 1, j));
+            _vertices[idx + 2].color = table.getColor(field.at(i + 1, j + 1));
+            _vertices[idx + 3].color = table.getColor(field.at(i,     j));
+            _vertices[idx + 4].color = table.getColor(field.at(i + 1, j + 1));
+            _vertices[idx + 5].color = table.getColor(field.at(i,     j + 1));
         }
     }
 }
@@ -82,7 +83,7 @@ void CircleTemperatureGraphics::setupVertices(const PolarField<float>& field) {
     }
 }
 
-void CircleTemperatureGraphics::update(const PolarField<float>& field) {
+void CircleTemperatureGraphics::update(const PolarField<float>& field, const BlackBodyTable& table) {
     const std::size_t rhoSteps{field.getRhoSteps()};
     const std::size_t thetaSteps{field.getThetaSteps()};
     const std::size_t verticesPerSection{(rhoSteps - 1) * 6 - 3};
@@ -90,19 +91,19 @@ void CircleTemperatureGraphics::update(const PolarField<float>& field) {
     for (std::size_t theta_i{0}; theta_i < thetaSteps; ++theta_i) {
         const std::size_t theta_ip{(theta_i + 1) % thetaSteps};
         const std::size_t idx{theta_i * verticesPerSection};
-        _vertices[idx + 0].color = temperatureToColor(field.at(0, 0));
-        _vertices[idx + 1].color = temperatureToColor(field.at(1, theta_i));
-        _vertices[idx + 2].color = temperatureToColor(field.at(1, theta_ip));
+        _vertices[idx + 0].color = table.getColor(field.at(0, 0));
+        _vertices[idx + 1].color = table.getColor(field.at(1, theta_i));
+        _vertices[idx + 2].color = table.getColor(field.at(1, theta_ip));
 
         for (std::size_t rho_i{1}; rho_i < rhoSteps - 1; ++rho_i) {
             const std::size_t rho_ip{rho_i + 1};
             const std::size_t jdx{idx + 3 + (rho_i - 1) * 6};
-            _vertices[jdx + 0].color = temperatureToColor(field.at(rho_i,  theta_i));
-            _vertices[jdx + 1].color = temperatureToColor(field.at(rho_ip, theta_i));
-            _vertices[jdx + 2].color = temperatureToColor(field.at(rho_ip, theta_ip));
-            _vertices[jdx + 3].color = temperatureToColor(field.at(rho_i,  theta_i));
-            _vertices[jdx + 4].color = temperatureToColor(field.at(rho_ip, theta_ip));
-            _vertices[jdx + 5].color = temperatureToColor(field.at(rho_i,  theta_ip));
+            _vertices[jdx + 0].color = table.getColor(field.at(rho_i,  theta_i));
+            _vertices[jdx + 1].color = table.getColor(field.at(rho_ip, theta_i));
+            _vertices[jdx + 2].color = table.getColor(field.at(rho_ip, theta_ip));
+            _vertices[jdx + 3].color = table.getColor(field.at(rho_i,  theta_i));
+            _vertices[jdx + 4].color = table.getColor(field.at(rho_ip, theta_ip));
+            _vertices[jdx + 5].color = table.getColor(field.at(rho_i,  theta_ip));
         }
     }
 }

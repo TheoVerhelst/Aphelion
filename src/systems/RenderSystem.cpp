@@ -36,12 +36,12 @@ void RenderSystem::update() {
         sprite.sprite.setRotation(radToDeg(body.rotation));
     }
     for (auto& [id, body, temperature] : _scene.view<Body, CircleTemperature>()) {
-        temperature.graphics.update(temperature.field);
+        temperature.graphics.update(temperature.field, _table);
         temperature.graphics.setPosition(body.position);
         temperature.graphics.setRotation(radToDeg(body.rotation));
     }
     for (auto& [id, body, temperature] : _scene.view<Body, PolygonTemperature>()) {
-        temperature.graphics.update(temperature.field);
+        temperature.graphics.update(temperature.field, _table);
         temperature.graphics.setPosition(body.position);
         temperature.graphics.setRotation(radToDeg(body.rotation));
     }
