@@ -14,6 +14,7 @@ typedef Vector2<double> Vector2d;
 typedef Vector2<float> Vector2f;
 typedef Vector2<int> Vector2i;
 typedef Vector2<unsigned> Vector2u;
+typedef Vector2<std::size_t> Vector2s;
 
 const float pi{static_cast<float>(std::acos(-1))};
 
@@ -90,18 +91,18 @@ Vector2<T> rotate(const Vector2<T>& v, T angle) {
 	        v.x * std::sin(angle) + v.y * std::cos(angle)};
 }
 
-// Compute the intersection P between the line AB and CD. The result is the
+// Computes the intersection P between the line AB and CD. The result is the
 // barycentric coordinate u, v of P on the line AB and CD. It is such that
 // P = A + u * (B - A) = C + v * (D - C). So when 0 < u < 1, P is located
 // between A and B, and when 0 < v < 1, P is located between C and D
 template <std::floating_point T>
 constexpr std::pair<T, T> intersection(const Vector2<T>& A, const Vector2<T>& B,
 		const Vector2<T>& C, const Vector2<T>& D) {
-	const Vector2<T> S{B - A};
-	const Vector2<T> R{D - C};
+	const Vector2<T> AB{B - A};
+	const Vector2<T> CD{D - C};
 	const Vector2<T> CA{A - C};
-	const T RxS{cross(R, S)};
-	return {cross(CA, R) / RxS, cross(CA, S) / RxS};
+	const T CDxAB{cross(CD, AB)};
+	return {cross(CA, CD) / CDxAB, cross(CA, AB) / CDxAB};
 }
 
 

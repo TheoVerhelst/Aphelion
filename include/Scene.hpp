@@ -150,6 +150,8 @@ private:
 
     template <typename T>
     inline const ArrayModel<T>& getArray() const {
+        // If this assert triggers, we probably forgot to register a component
+        // in GameState::registerComponents.
         assert(_arrays.contains(typeid(T)));
         return dynamic_cast<const ArrayModel<T>&>(*_arrays.at(typeid(T)));
     }

@@ -3,6 +3,22 @@
         "circleBody": {
             "radius": 1024
         },
+        "temperature": {
+            "conductivity": 1,
+            "specificCapacity": 1
+        },
+        "circleTemperature": {
+            "field": {
+                "centerValue": 0,
+                "rhoSteps": 4,
+                "thetaSteps": 4,
+                "values": [
+                    0, 0, 0, 0,
+                    0, 0, 0, 0,
+                    0, 0, 0, 0
+                ]
+            }
+        },
         "sprite": {
             "texture": "sun",
             "offset": {"x": 0, "y": 0},
@@ -28,6 +44,22 @@
         "circleBody": {
             "radius": 215.5
         },
+        "temperature": {
+            "conductivity": 1,
+            "specificCapacity": 1
+        },
+        "circleTemperature": {
+            "field": {
+                "centerValue": 0,
+                "rhoSteps": 4,
+                "thetaSteps": 4,
+                "values": [
+                    0, 0, 0, 0,
+                    0, 0, 0, 0,
+                    0, 0, 0, 0
+                ]
+            }
+        },
         "sprite": {
             "texture": "mercury",
             "offset": {"x": 0, "y": 0},
@@ -49,6 +81,22 @@
     "venus": {
         "circleBody": {
             "radius": 570
+        },
+        "temperature": {
+            "conductivity": 1,
+            "specificCapacity": 1
+        },
+        "circleTemperature": {
+            "field": {
+                "centerValue": 0,
+                "rhoSteps": 4,
+                "thetaSteps": 4,
+                "values": [
+                    0, 0, 0, 0,
+                    0, 0, 0, 0,
+                    0, 0, 0, 0
+                ]
+            }
         },
         "sprite": {
             "texture": "venus",
@@ -72,6 +120,22 @@
         "circleBody": {
             "radius": 600
         },
+        "temperature": {
+            "conductivity": 1,
+            "specificCapacity": 1
+        },
+        "circleTemperature": {
+            "field": {
+                "centerValue": 0,
+                "rhoSteps": 4,
+                "thetaSteps": 4,
+                "values": [
+                    0, 0, 0, 0,
+                    0, 0, 0, 0,
+                    0, 0, 0, 0
+                ]
+            }
+        },
         "sprite": {
             "texture": "earth",
             "offset": {"x": -100, "y": -100},
@@ -93,6 +157,22 @@
     "mars": {
         "circleBody": {
             "radius": 320
+        },
+        "temperature": {
+            "conductivity": 1,
+            "specificCapacity": 1
+        },
+        "circleTemperature": {
+            "field": {
+                "centerValue": 0,
+                "rhoSteps": 4,
+                "thetaSteps": 4,
+                "values": [
+                    0, 0, 0, 0,
+                    0, 0, 0, 0,
+                    0, 0, 0, 0
+                ]
+            }
         },
         "sprite": {
             "texture": "mars",

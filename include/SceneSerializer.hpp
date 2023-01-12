@@ -40,6 +40,9 @@ private:
     void loadBody(const nlohmann::json& value, EntityId id);
     void loadCircleBody(const nlohmann::json& value, EntityId id);
     void loadPolygonBody(const nlohmann::json& value, EntityId id);
+    void loadTemperature(const nlohmann::json& value, EntityId id);
+    void loadCircleTemperature(const nlohmann::json& value, EntityId id);
+    void loadPolygonTemperature(const nlohmann::json& value, EntityId id);
     void loadSprite(const nlohmann::json& value, EntityId id);
     void loadAnimations(const nlohmann::json& value, EntityId id);
     void loadPlayer(const nlohmann::json& value, EntityId id);

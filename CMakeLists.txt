@@ -73,18 +73,21 @@ set(SOURCE_FILES
 	src/systems/PhysicsSystem.cpp
 	src/systems/RenderSystem.cpp
 	src/systems/SoundEffectsSystem.cpp
+	src/systems/ThermodynamicsSystem.cpp
 	src/Animation.cpp
 	src/Application.cpp
+	src/main.cpp
 	src/MusicManager.cpp
 	src/Paths.cpp
     src/polygon.cpp
 	src/Scene.cpp
 	src/SceneSerializer.cpp
 	src/Settings.cpp
+	src/TemperatureGraphics.cpp
 )
 
 # Create the main executable
-add_executable(${CMAKE_PROJECT_NAME} ${SOURCE_FILES} src/main.cpp)
+add_executable(${CMAKE_PROJECT_NAME} ${SOURCE_FILES})
 target_link_libraries(${CMAKE_PROJECT_NAME} tgui sfml-audio sfml-graphics sfml-window sfml-system)
 
 # Create the test executable

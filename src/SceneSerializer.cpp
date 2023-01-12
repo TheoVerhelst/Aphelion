@@ -11,8 +11,9 @@
 #include <TGUI/TGUI.hpp>
 #include <ResourceManager.hpp>
 #include <components/Animations.hpp>
-#include <components/Body.hpp>
 #include <components/components.hpp>
+#include <components/Body.hpp>
+#include <components/Temperature.hpp>
 #include <SceneSerializer.hpp>
 #include <Animation.hpp>
 
@@ -38,6 +39,9 @@ void SceneSerializer::load(const std::filesystem::path& path) {
         {"body", &SceneSerializer::loadBody},
         {"circleBody", &SceneSerializer::loadCircleBody},
         {"polygonBody", &SceneSerializer::loadPolygonBody},
+        {"temperature", &SceneSerializer::loadTemperature},
+        {"circleTemperature", &SceneSerializer::loadCircleTemperature},
+        {"polygonTemperature", &SceneSerializer::loadPolygonTemperature},
         {"sprite", &SceneSerializer::loadSprite},
         {"animations", &SceneSerializer::loadAnimations},
         {"player", &SceneSerializer::loadPlayer},
@@ -74,6 +78,9 @@ void SceneSerializer::save(const std::filesystem::path& path) const {
         saveComponent<Body>(entityValue, id, "body");
         saveComponent<CircleBody>(entityValue, id, "circleBody");
         saveComponent<PolygonBody>(entityValue, id, "polygonBody");
+        saveComponent<Temperature>(entityValue, id, "temperature");
+        saveComponent<CircleTemperature>(entityValue, id, "circleTemperature");
+        saveComponent<PolygonTemperature>(entityValue, id, "polygonTemperature");
         saveComponent<Sprite>(entityValue, id, "sprite");
         saveComponent<Animations>(entityValue, id, "animations");
         saveComponent<Player>(entityValue, id, "player");
@@ -129,6 +136,26 @@ void SceneSerializer::loadPolygonBody(const json& value, EntityId id) {
     PolygonBody& polygon{_scene.assignComponent<PolygonBody>(id)};
     value.get_to(polygon);
     polygon = PolygonBody(_scene.getComponent<Body>(id), polygon.vertices);
+}
+
+void SceneSerializer::loadTemperature(const json& value, EntityId id) {
+    Temperature& temperature{_scene.assignComponent<Temperature>(id)};
+    value.get_to(temperature);
+    temperature.diffusivity = temperature.conductivity / (
+        _scene.getComponent<Body>(id).density * temperature.specificCapacity);
+}
+
+void SceneSerializer::loadCircleTemperature(const json& value, EntityId id) {
+    CircleTemperature& temperature{_scene.assignComponent<CircleTemperature>(id)};
+    value.get_to(temperature);
+    temperature.field.setRadius(_scene.getComponent<CircleBody>(id).radius);
+    temperature.graphics.setupVertices(temperature.field);
+}
+
+void SceneSerializer::loadPolygonTemperature(const json& value, EntityId id) {
+    PolygonTemperature& temperature{_scene.assignComponent<PolygonTemperature>(id)};
+    value.get_to(temperature);
+    temperature.graphics.setupVertices(temperature.field);
 }
 
 void SceneSerializer::loadSprite(const json& value, EntityId id) {

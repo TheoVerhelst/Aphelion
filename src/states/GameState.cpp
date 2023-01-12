@@ -10,9 +10,10 @@
 #include <Input.hpp>
 #include <Event.hpp>
 #include <Settings.hpp>
-#include <components/Body.hpp>
-#include <components/Animations.hpp>
 #include <components/components.hpp>
+#include <components/Body.hpp>
+#include <components/Temperature.hpp>
+#include <components/Animations.hpp>
 
 GameState::GameState(StateStack& stack,
         ResourceManager<sf::Texture>& textureManager,
@@ -157,6 +158,9 @@ void GameState::registerComponents() {
     _scene.registerComponent<Body>();
     _scene.registerComponent<CircleBody>();
     _scene.registerComponent<PolygonBody>();
+    _scene.registerComponent<Temperature>();
+    _scene.registerComponent<CircleTemperature>();
+    _scene.registerComponent<PolygonTemperature>();
     _scene.registerComponent<SoundEffects>();
     _scene.registerComponent<Animations>();
     _scene.registerComponent<LightSource>();

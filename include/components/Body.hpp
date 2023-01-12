@@ -8,8 +8,6 @@
 #include <vector.hpp>
 #include <serializers.hpp>
 #include <polygon.hpp>
-#include <GridField.hpp>
-#include <PolarField.hpp>
 
 class Scene;
 typedef uint32_t EntityId;
@@ -54,21 +52,5 @@ struct PolygonBody {
 	static Vector2f supportFunction(const Vector2f& direction, const ConvexPolygon& component, const Body& body);
 };
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(PolygonBody, vertices)
-
-struct Temperature {
-    float conductivity;
-    float specificCapacity;
-};
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(Temperature, conductivity, specificCapacity)
-
-struct CircleTemperature {
-    PolarField<float> field;
-};
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(CircleTemperature, field)
-
-struct PolygonTemperature {
-    GridField<float> field;
-};
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(PolygonTemperature, field)
 
 #endif // BODY_HPP
