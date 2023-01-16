@@ -13,12 +13,7 @@ ThermodynamicsSystem::ThermodynamicsSystem(Scene& scene):
 }
 
 void ThermodynamicsSystem::update(sf::Time timeStep) {
-    float dt{timeStep.asSeconds()};
-
-    // Accelerate thermal diffusion in order to be able to see its effect
-    // in a few second even on the extremely dense planets in the game
-    float factor{10000000000.f};
-    dt *= factor;
+    float dt{timeStep.asSeconds() * 1e3f};
 
     for (auto& [id, body, temperature, polygonTemperature] :
             _scene.view<Body, Temperature, PolygonTemperature>()) {
@@ -51,18 +46,7 @@ void ThermodynamicsSystem::update(sf::Time timeStep) {
         const float thetaStep{field.getTheta(1)};
         const std::size_t rhoSteps{field.getRhoSteps()};
         const std::size_t thetaSteps{field.getThetaSteps()};
-
-        float meanValue{0.f};
-        for (std::size_t theta_i{0}; theta_i < thetaSteps; ++theta_i) {
-            meanValue += field.at(1, theta_i);
-        }
-        meanValue /= static_cast<float>(thetaSteps);
-
-        // No idea if this is the right way to solve the heat equation at the
-        // pole, but it makes sense
-        circleTemperature.field.at(0, 0) = field.at(0, 0) + 2 * dt * temperature.diffusivity * (
-            (meanValue - field.at(0, 0)) / (rhoStep * rhoStep)
-        );
+        float totalDeltaT{0};
 
         for (std::size_t theta_i{0}; theta_i < thetaSteps; ++theta_i) {
             for (std::size_t rho_i{1}; rho_i < rhoSteps; ++rho_i) {
@@ -74,12 +58,15 @@ void ThermodynamicsSystem::update(sf::Time timeStep) {
                 // Boundary conditions
                 const float T_rho_p{field.at(rho_i == rhoSteps - 1 ? rho_i - 1 : rho_i + 1, theta_i)};
 
-                circleTemperature.field.at(rho_i, theta_i) = T + dt * temperature.diffusivity * (
+                const float deltaT{dt * temperature.diffusivity * (
                     (T_rho_m + T_rho_p - 2 * T) / (rhoStep * rhoStep) +
                     (T_rho_p - T_rho_m) / (2 * rhoStep * rho) +
                     (T_theta_m + T_theta_p - 2 * T) / (thetaStep * thetaStep * rho * rho)
-                );
+                )};
+                circleTemperature.field.at(rho_i, theta_i) += deltaT;
+                totalDeltaT -= deltaT;
             }
         }
+        circleTemperature.field.at(0, 0) += totalDeltaT;
     }
 }
