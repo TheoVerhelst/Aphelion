@@ -13,7 +13,7 @@ set(SFML_STATIC_LIBRARIES ${COMPILE_STATIC})
 set(TGUI_STATIC_LIBRARIES ${COMPILE_STATIC})
 
 find_package(SFML 2.5 COMPONENTS system graphics window audio REQUIRED)
-find_package(TGUI 0.10 REQUIRED)
+find_package(TGUI 1.0 REQUIRED)
 
 # Set the include directory of the project
 include_directories("${CMAKE_SOURCE_DIR}/include")
