@@ -18,7 +18,7 @@ Application::Application():
     _window.setKeyRepeatEnabled(false);
     registerResources();
     tgui::Theme::setDefault("resources/gui/pixelTheme.txt");
-    tgui::Font font{"resources/fonts/Ipixelu.ttf"};
+    tgui::Font font{"resources/fonts/dogicapixel.ttf"};
     font.setSmooth(false);
     tgui::Font::setGlobalFont(font);
     registerStateBuilders();

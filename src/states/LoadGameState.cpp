@@ -14,7 +14,7 @@ LoadGameState::LoadGameState(StateStack& stack):
 }
 
 tgui::Widget::Ptr LoadGameState::buildGui() {
-    tgui::Panel::Ptr panel{tgui::Panel::create({"25%", "100%"})};
+    tgui::Panel::Ptr panel{tgui::Panel::create({"50%", "100%"})};
     panel->setPosition("25%", "0%");
 
     tgui::Grid::Ptr grid{tgui::Grid::create()};
@@ -33,21 +33,11 @@ tgui::Widget::Ptr LoadGameState::buildGui() {
             _stack.clearStates();
             _stack.pushState<GameState, const std::filesystem::path&>(path);
         });
-        loadButton->setTextSize(20);
+        loadButton->setTextSize(16);
         loadButton->setSize(tgui::bindInnerWidth(panel) * 0.2, 30);
         grid->addWidget(loadButton, row, 1, tgui::Grid::Alignment::Right, {10, 0});
         row++;
     }
-
-    tgui::Button::Ptr cancelButton{tgui::Button::create("Cancel")};
-    cancelButton->onPress([this] {
-        _stack.popStatesUntil(*this);
-    });
-    cancelButton->setTextSize(26);
-    cancelButton->setPosition("50%", "95%");
-    cancelButton->setOrigin(0.5f, 1.f);
-    panel->add(cancelButton);
-
     return panel;
 }
 

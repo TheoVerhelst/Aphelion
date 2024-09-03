@@ -62,7 +62,7 @@ tgui::Widget::Ptr MainMenuState::buildGui() {
     for (auto& [text, function] : buttons) {
         tgui::Button::Ptr button{tgui::Button::create(text)};
         button->onPress(function);
-        button->setTextSize(30);
+        button->setTextSize(28);
         layout->add(button);
         layout->addSpace(0.2f);
     }

@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <cstddef>
+#include <cstdint>
 #include <functional>
 #include <queue>
 #include <utility>
@@ -122,7 +123,6 @@ private:
 	// simplex vertex that is not part of the simplex feature closest to the
 	// origin. To use only when simplex.size() == 3.
 	Vector2f updateSimplexDistance(MinkowskyPolygon& simplex);
-
 };
 
 #endif // COLLISIONSYSTEM_HPP

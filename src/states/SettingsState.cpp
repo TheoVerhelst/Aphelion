@@ -38,7 +38,7 @@ SettingsState::SettingsState(StateStack& stack, Settings& settings, sf::Window& 
 
 tgui::Widget::Ptr SettingsState::buildGui() {
     /// Main layout ///
-    tgui::Panel::Ptr panel{tgui::Panel::create({"25%", "100%"})};
+    tgui::Panel::Ptr panel{tgui::Panel::create({"50%", "100%"})};
     panel->setPosition("25%-1px", "0%");
 
     tgui::Grid::Ptr grid{tgui::Grid::create()};
@@ -106,7 +106,7 @@ tgui::Widget::Ptr SettingsState::buildGui() {
         _settings = _initialSettings;
         _stack.popStatesUntil(*this);
     });
-    cancelButton->setTextSize(18);
+    cancelButton->setTextSize(16);
     bottomLayout->add(cancelButton);
     bottomLayout->addSpace(0.1f);
 
@@ -118,7 +118,7 @@ tgui::Widget::Ptr SettingsState::buildGui() {
         Settings::saveSettings(_settings);
         _stack.popStatesUntil(*this);
     });
-    okButton->setTextSize(18);
+    okButton->setTextSize(16);
     bottomLayout->add(okButton);
     bottomLayout->addSpace(0.1f);
 

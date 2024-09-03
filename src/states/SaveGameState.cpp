@@ -14,7 +14,7 @@ SaveGameState::SaveGameState(StateStack& stack, const SceneSerializer& serialize
 }
 
 tgui::Widget::Ptr SaveGameState::buildGui() {
-    _panel = tgui::Panel::create({"25%", "100%"});
+    _panel = tgui::Panel::create({"50%", "100%"});
     _panel->setPosition("25%", "0%");
 
     _grid = tgui::Grid::create();
@@ -36,20 +36,11 @@ tgui::Widget::Ptr SaveGameState::buildGui() {
         _serializer.save(Paths::savePathFromStem(stem));
         populateSavesList();
     });
-    newSaveButton->setTextSize(20);
+    newSaveButton->setTextSize(16);
     newSaveButton->setSize(tgui::bindInnerWidth(_panel) * 0.2, 30);
     _grid->addWidget(newSaveButton, 0, 1, tgui::Grid::Alignment::Right, {10, 0});
 
     populateSavesList();
-
-    tgui::Button::Ptr okButton{tgui::Button::create("OK")};
-    okButton->onPress([this] {
-        _stack.popStatesUntil(*this);
-    });
-    okButton->setTextSize(26);
-    okButton->setPosition("50%", "95%");
-    okButton->setOrigin(0.5f, 1.f);
-    _panel->add(okButton);
 
     return _panel;
 }
@@ -83,7 +74,7 @@ void SaveGameState::populateSavesList() {
             saveButton->setText("Saved!");
             _serializer.save(path);
         });
-        saveButton->setTextSize(20);
+        saveButton->setTextSize(16);
         saveButton->setSize(tgui::bindInnerWidth(_panel) * 0.2, 30);
         _grid->addWidget(saveButton, row, 1, tgui::Grid::Alignment::Right, {10, 0});
         _savesListWidgets.push_back(saveButton);
