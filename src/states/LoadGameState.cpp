@@ -14,6 +14,10 @@ LoadGameState::LoadGameState(StateStack& stack):
 }
 
 tgui::Widget::Ptr LoadGameState::buildGui() {
+    float labelHeight{34};
+    float widgetHeight{32};
+    unsigned int labelTextSize{14};
+
     tgui::Panel::Ptr panel{tgui::Panel::create({"50%", "100%"})};
     panel->setPosition("25%", "0%");
 
@@ -25,7 +29,9 @@ tgui::Widget::Ptr LoadGameState::buildGui() {
     std::size_t row{0};
     for (auto& path : Paths::getSavePaths()) {
         tgui::Label::Ptr label{tgui::Label::create(std::string(path.stem()))};
-        label->setSize(tgui::bindInnerWidth(panel) * 0.7, 40);
+        label->setSize(tgui::bindInnerWidth(panel) * 0.7, labelHeight);
+        label->setTextSize(labelTextSize);
+        label->setVerticalAlignment(tgui::VerticalAlignment::Center);
         grid->addWidget(label, row, 0, tgui::Grid::Alignment::Left);
 
         tgui::Button::Ptr loadButton{tgui::Button::create("Load")};
@@ -33,8 +39,8 @@ tgui::Widget::Ptr LoadGameState::buildGui() {
             _stack.clearStates();
             _stack.pushState<GameState, const std::filesystem::path&>(path);
         });
-        loadButton->setTextSize(16);
-        loadButton->setSize(tgui::bindInnerWidth(panel) * 0.2, 30);
+        loadButton->setTextSize(labelTextSize);
+        loadButton->setSize(tgui::bindInnerWidth(panel) * 0.2, widgetHeight);
         grid->addWidget(loadButton, row, 1, tgui::Grid::Alignment::Right, {10, 0});
         row++;
     }

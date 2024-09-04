@@ -18,6 +18,7 @@ MainMenuState::MainMenuState(StateStack& stack, ResourceManager<tgui::Texture>& 
 }
 
 tgui::Widget::Ptr MainMenuState::buildGui() {
+    unsigned int buttonTextSize{16};
     tgui::Group::Ptr group{tgui::Group::create()};
 
     tgui::Picture::Ptr background{tgui::Picture::create(_tguiTextureManager.get("background"))};
@@ -62,7 +63,7 @@ tgui::Widget::Ptr MainMenuState::buildGui() {
     for (auto& [text, function] : buttons) {
         tgui::Button::Ptr button{tgui::Button::create(text)};
         button->onPress(function);
-        button->setTextSize(28);
+        button->setTextSize(buttonTextSize);
         layout->add(button);
         layout->addSpace(0.2f);
     }

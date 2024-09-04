@@ -23,7 +23,7 @@ tgui::Widget::Ptr SaveGameState::buildGui() {
 
     tgui::EditBox::Ptr newSaveEdit{tgui::EditBox::create()};
     newSaveEdit->setDefaultText("New save...");
-    newSaveEdit->setSize(tgui::bindInnerWidth(_panel) * 0.7, 40);
+    newSaveEdit->setSize(tgui::bindInnerWidth(_panel) * 0.7, _widgetHeight);
     _grid->addWidget(newSaveEdit, 0, 0, tgui::Grid::Alignment::Left);
 
     tgui::Button::Ptr newSaveButton{tgui::Button::create("Save")};
@@ -36,8 +36,8 @@ tgui::Widget::Ptr SaveGameState::buildGui() {
         _serializer.save(Paths::savePathFromStem(stem));
         populateSavesList();
     });
-    newSaveButton->setTextSize(16);
-    newSaveButton->setSize(tgui::bindInnerWidth(_panel) * 0.2, 30);
+    newSaveButton->setTextSize(_labelTextSize);
+    newSaveButton->setSize(tgui::bindInnerWidth(_panel) * 0.2, _widgetHeight);
     _grid->addWidget(newSaveButton, 0, 1, tgui::Grid::Alignment::Right, {10, 0});
 
     populateSavesList();
@@ -65,7 +65,9 @@ void SaveGameState::populateSavesList() {
     std::size_t row{1};
     for (auto& path : Paths::getSavePaths()) {
         tgui::Label::Ptr label{tgui::Label::create(std::string(path.stem()))};
-        label->setSize(tgui::bindInnerWidth(_panel) * 0.7, 40);
+        label->setSize(tgui::bindInnerWidth(_panel) * 0.7, _labelHeight);
+        label->setTextSize(_labelTextSize);
+        label->setVerticalAlignment(tgui::VerticalAlignment::Center);
         _grid->addWidget(label, row, 0, tgui::Grid::Alignment::Left);
         _savesListWidgets.push_back(label);
 
@@ -74,8 +76,8 @@ void SaveGameState::populateSavesList() {
             saveButton->setText("Saved!");
             _serializer.save(path);
         });
-        saveButton->setTextSize(16);
-        saveButton->setSize(tgui::bindInnerWidth(_panel) * 0.2, 30);
+        saveButton->setTextSize(_labelTextSize);
+        saveButton->setSize(tgui::bindInnerWidth(_panel) * 0.2, _widgetHeight);
         _grid->addWidget(saveButton, row, 1, tgui::Grid::Alignment::Right, {10, 0});
         _savesListWidgets.push_back(saveButton);
         row++;

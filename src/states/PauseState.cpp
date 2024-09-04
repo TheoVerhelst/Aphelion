@@ -18,6 +18,7 @@ PauseState::PauseState(StateStack& stack, const SceneSerializer& serializer):
 }
 
 tgui::Widget::Ptr PauseState::buildGui() {
+    unsigned int buttonTextSize{16};
     tgui::Panel::Ptr panel{tgui::Panel::create({"25%", "100%"})};
     panel->setPosition(0, 0);
 
@@ -51,7 +52,7 @@ tgui::Widget::Ptr PauseState::buildGui() {
     for (auto& [text, function] : buttons) {
         tgui::Button::Ptr button{tgui::Button::create(text)};
         button->onPress(function);
-        button->setTextSize(26);
+        button->setTextSize(buttonTextSize);
         layout->add(button);
         layout->addSpace(0.15f);
     }

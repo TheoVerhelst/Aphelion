@@ -37,6 +37,7 @@ SettingsState::SettingsState(StateStack& stack, Settings& settings, sf::Window& 
 }
 
 tgui::Widget::Ptr SettingsState::buildGui() {
+
     /// Main layout ///
     tgui::Panel::Ptr panel{tgui::Panel::create({"50%", "100%"})};
     panel->setPosition("25%-1px", "0%");
@@ -45,15 +46,20 @@ tgui::Widget::Ptr SettingsState::buildGui() {
     grid->setPosition("10%", "10%");
     panel->add(grid);
     std::size_t row{0};
-
-    float labelHeight{35};
+    
+    /// Parameters ///
+    float labelHeight{34};
+    float widgetHeight{32};
+    unsigned int labelTextSize{14};
+    unsigned int buttonTextSize{16};
     auto labelWidth = tgui::bindInnerWidth(panel) * 0.35;
-    float widgetHeight{20};
     auto widgetWidth = tgui::bindInnerWidth(panel) * 0.45;
 
     /// Resolution combo box ///
     tgui::Label::Ptr resolutionLabel{tgui::Label::create("Resolution")};
     resolutionLabel->setSize(labelWidth, labelHeight);
+    resolutionLabel->setTextSize(labelTextSize);
+    resolutionLabel->setVerticalAlignment(tgui::VerticalAlignment::Center);
     grid->addWidget(resolutionLabel, row, 0, tgui::Grid::Alignment::Left);
 
     tgui::ComboBox::Ptr resolutionListBox{tgui::ComboBox::create()};
@@ -83,6 +89,8 @@ tgui::Widget::Ptr SettingsState::buildGui() {
     for (auto& [text, settingReference] : sliders) {
         tgui::Label::Ptr label{tgui::Label::create(text)};
         label->setSize(labelWidth, labelHeight);
+        label->setVerticalAlignment(tgui::VerticalAlignment::Center);
+        label->setTextSize(labelTextSize);
         grid->addWidget(label, row, 0, tgui::Grid::Alignment::Left);
 
         tgui::Slider::Ptr slider{tgui::Slider::create(0, 100)};
@@ -106,7 +114,7 @@ tgui::Widget::Ptr SettingsState::buildGui() {
         _settings = _initialSettings;
         _stack.popStatesUntil(*this);
     });
-    cancelButton->setTextSize(16);
+    cancelButton->setTextSize(buttonTextSize);
     bottomLayout->add(cancelButton);
     bottomLayout->addSpace(0.1f);
 
@@ -118,7 +126,7 @@ tgui::Widget::Ptr SettingsState::buildGui() {
         Settings::saveSettings(_settings);
         _stack.popStatesUntil(*this);
     });
-    okButton->setTextSize(16);
+    okButton->setTextSize(buttonTextSize);
     bottomLayout->add(okButton);
     bottomLayout->addSpace(0.1f);
 

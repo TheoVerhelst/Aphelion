@@ -20,6 +20,9 @@ private:
     tgui::Panel::Ptr _panel;
     tgui::Grid::Ptr _grid;
     std::vector<tgui::Widget::Ptr> _savesListWidgets;
+    const float _labelHeight{34};
+    const float _widgetHeight{32};
+    const unsigned int _labelTextSize{14};
 
     void populateSavesList();
 };
